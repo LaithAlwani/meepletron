@@ -4,6 +4,10 @@ import { getChunkedDocsFromPDF } from "@/lib/pdf-loader";
 import { NextResponse } from "next/server";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
+
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
 export async function POST(req) {
   const data = await req.formData();
   const file = data.get("file");
