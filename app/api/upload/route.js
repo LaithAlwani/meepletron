@@ -4,7 +4,13 @@ import { getChunkedDocsFromPDF } from "@/lib/pdf-loader";
 import { NextResponse } from "next/server";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
-
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '20mb',
+    },
+  },
+};
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
