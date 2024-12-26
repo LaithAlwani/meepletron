@@ -4,16 +4,6 @@ import { getChunkedDocsFromPDF } from "@/lib/pdf-loader";
 import { NextResponse } from "next/server";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '20mb',
-    },
-  },
-};
-export const maxDuration = 300;
-export const dynamic = 'force-dynamic';
-
 export async function POST(req) {
   const data = await req.formData();
   const file = data.get("file");
@@ -22,18 +12,18 @@ export async function POST(req) {
   }
   try {
     
-    const chunks = await getChunkedDocsFromPDF(file);
-    console.log(chunks[0]);
-    const embeddings = new OpenAIEmbeddings({
-      model: "text-embedding-3-small",
-    });
-    const pinecone = new PineconeClient();
-    const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
-    const vectorStore = new PineconeStore(embeddings, {
-      pineconeIndex,
-      maxConcurrency: 5,
-    });
-    await vectorStore.addDocuments(chunks);
+    const chunks = await getChunkedDocsFromPDF("https://cdn.1j1ju.com/medias/88/21/c2-blood-rage-rulebook.pdf");
+    console.log("chunks[0]");
+    // const embeddings = new OpenAIEmbeddings({
+    //   model: "text-embedding-3-small",
+    // });
+    // const pinecone = new PineconeClient();
+    // const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
+    // const vectorStore = new PineconeStore(embeddings, {
+    //   pineconeIndex,
+    //   maxConcurrency: 5,
+    // });
+    // await vectorStore.addDocuments(chunks);
     
     return NextResponse.json({ message: "Data Embedded" }, { status: 200 });
   }
