@@ -10,19 +10,26 @@ export async function POST(req) {
   if (!file) {
     return NextResponse.json({ success: false });
   }
-  const chunks = await getChunkedDocsFromPDF(file);
-  console.log(chunks[0]);
-  const embeddings = new OpenAIEmbeddings({
-    model: "text-embedding-3-small",
-  });
-  const pinecone = new PineconeClient();
-  const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
-  const vectorStore = new PineconeStore(embeddings, {
-    pineconeIndex,
-    maxConcurrency: 5,
-  });
-  await vectorStore.addDocuments(chunks);
-
-  return NextResponse.json({ message: "Data Embedded" }, { status: 200 });
+  try {
+    
+    const chunks = await getChunkedDocsFromPDF(file);
+    console.log(chunks[0]);
+    const embeddings = new OpenAIEmbeddings({
+      model: "text-embedding-3-small",
+    });
+    const pinecone = new PineconeClient();
+    const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
+    const vectorStore = new PineconeStore(embeddings, {
+      pineconeIndex,
+      maxConcurrency: 5,
+    });
+    await vectorStore.addDocuments(chunks);
+    
+    return NextResponse.json({ message: "Data Embedded" }, { status: 200 });
+  }
+  catch (err) {
+    console.log(err)
+    return NextResponse.json({message:"Failed to upload"}, {status:500})
+  }
   
 }
