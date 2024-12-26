@@ -11,7 +11,7 @@ export const config = {
     },
   },
 };
-export const maxDuration = 60;
+export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
