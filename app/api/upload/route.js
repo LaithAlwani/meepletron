@@ -13,10 +13,11 @@ export async function POST(req) {
   try {
     
     const chunks = await getChunkedDocsFromPDF(file);
-    console.log(chunks[0]);
+    
     const embeddings = new OpenAIEmbeddings({
-      model: "text-embedding-3-small",
+      model: "text-embedding-3-large",
     });
+    
     const pinecone = new PineconeClient();
     const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
     const vectorStore = new PineconeStore(embeddings, {
@@ -25,7 +26,7 @@ export async function POST(req) {
     });
     await vectorStore.addDocuments(chunks);
     
-    return NextResponse.json({ message: "Data Embedded" }, { status: 200 });
+    return NextResponse.json({data:chunks, message: "Data Embedded" }, { status: 200 });
   }
   catch (err) {
     console.log(err)
