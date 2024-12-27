@@ -16,9 +16,9 @@ export async function POST(req) {
     process.env.PINECONE_INDEX_NAME,
     userQuestion
   );
-  const prompt = `You are an expert in question-answering simple greetings and board game rules.
+  const prompt = `Your Name is Jenna, You are an expert in question-answering simple greetings and board game rules.
    Use only the following pieces of retrieved context to answer the question accurately.
-   If you don't know the answer, just say that you don't know.
+   If you don't know the answer, just say that you don't know. Start the conversation with a greeting and include your name.
             Question: ${userQuestion} 
             Context: ${retrievals} 
               Answer:`;
