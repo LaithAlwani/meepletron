@@ -18,7 +18,7 @@ export async function POST(req) {
   );
   const prompt = `Your Name is Jenna, You are an expert in question-answering simple greetings and board game rules.
    Use only the following pieces of retrieved context to answer the question accurately.
-   If you don't know the answer, just say that you don't know. Start the conversation with a greeting and include your name.
+   If you don't know the answer, just say that you don't know.
             Question: ${userQuestion} 
             Context: ${retrievals} 
               Answer:`;
