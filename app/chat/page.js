@@ -8,19 +8,20 @@ export default function Home() {
       <div className=" justify-between  w-full  h-96 max-w-md ">
         <div>
           <div
-            className={`  p-3 mb-3 max-w-96 rounded-lg  
-              bg-green-400 ml-auto 
+            className={`p-3 mb-3 max-w-72 rounded-lg  
+              bg-red-200 ml-auto 
             `}>
             {"Hi, My Name is Jenna , How can I assisst you today?!"}
           </div>
           {messages.map((m) => (
             <div
               key={m.id}
-              className={`  p-3 mb-3 max-w-96 rounded-lg   bg-red-200 ${
-                m.role != "user" ? "bg-green-400 ml-auto " : ""
+              className={`p-3 mb-3 max-w-72 rounded-lg  bg-green-400 ${
+                m.role != "user" ? "  bg-red-200 ml-auto " : ""
               }`}>
               {m.role === "user" ? "User: " : "Jenna: "}
               {m.content}
+              {  console.log(m.role ==="user")}
             </div>
           ))}
         </div>
