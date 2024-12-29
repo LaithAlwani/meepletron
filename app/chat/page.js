@@ -5,11 +5,11 @@ export default function Home() {
 
   return (
     <>
-      <div className=" justify-between w-full overflow-y-scroll p-2 pt-5 h-[100svh]  ">
+      <div className=" justify-between w-full overflow-y-scroll p-2 pt-5 h-[85svh]  ">
         <div>
           <div
             className={`p-3 mb-3 max-w-72 rounded-lg  
-              bg-red-500 ml-auto text-black
+              bg-[--bubble-ai] ml-auto
             `}>
             <strong className="block">Jenna</strong>
 
@@ -18,8 +18,8 @@ export default function Home() {
           {messages.map((m) => (
             <div
               key={m.id}
-              className={`p-3 mb-3 max-w-72 rounded-lg text-black  ${
-                m.role === "user" ? " bg-amber-600" : " bg-red-500 ml-auto"
+              className={`p-3 mb-3 max-w-72 rounded-lg  ${
+                m.role === "user" ? " bg-[--bubble-user]" : " bg-[--bubble-ai] ml-auto"
               }`}>
               <strong className="block">{m.role === "user" ? "You " : "Jenna "}</strong>
               {m.content}

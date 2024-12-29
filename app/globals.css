@@ -5,12 +5,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --nav-bg:rgb(243, 243, 243);
+  --bubble-user: rgb(243, 243, 243);
+  --bubble-ai:rgb(217, 217, 217);
+
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #102a43;
     --foreground: #ededed;
+    --nav-bg:#486581;
+    --bubble-user:#829ab1;
+    --bubble-ai:#486581;
   }
 }
 
