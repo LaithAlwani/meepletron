@@ -2,22 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --nav-bg:rgb(243, 243, 243);
-  --bubble-user: rgb(243, 243, 243);
-  --bubble-ai:rgb(217, 217, 217);
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+      display: none;
+  }
+ /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+}
+}
 
+:root {
+  --background: #ecf0f1;
+  --foreground: #171717;
+  --nav-bg: #e74c3c;
+  --bubble-user: #f2f2f2;
+  --bubble-ai: #f77b6e;
+  --btn-primary: #e74c3c;
+  --btn-secondary: #2d3436;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #102a43;
+    --background: #1e2a47;
     --foreground: #ededed;
-    --nav-bg:#486581;
-    --bubble-user:#829ab1;
-    --bubble-ai:#486581;
+    --nav-bg: #486581;
+    --bubble-user: #385d7c;
+    --bubble-ai: #144e7d;
+    --btn-primary: #1887ba;
+    --btn-secondary: #385d7c;
   }
 }
 
@@ -27,6 +42,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-input{
+input {
   background: var(--background);
 }

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Board Game Rules AI",
+  title: "Rules Guru",
   description: `Instantly search and understand board game rules with ease! Powered by AI,
    our app eliminates the need to flip through manuals,
    so you can focus on playing and having fun.
@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`h-[100svh] mx-auto ${geistSans.variable} ${geistMono.variable} antialiased h-svh`}>
         <Navbar />
-        <main className="max-w-md mx-auto">
+        <main className="max-w-md mx-auto px-3">
           {children}
         </main>
       </body>

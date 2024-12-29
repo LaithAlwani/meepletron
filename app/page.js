@@ -1,10 +1,26 @@
+import Image from "next/image";
 import Link from "next/link";
 export default function Home() {
   return (
     <>
-      <div>
-        <h1>Welcome To Board Game Rules . AI </h1>
-        <Link href={"/chat"}>Chat Now!</Link>
+      <div className="text-center pt-10 relative">
+        <div className="relative w-[20rem] h-[20rem] mx-auto left-5">
+          <Image src="/chatbot.png" fill priority alt="robot logo" />
+        </div>
+
+        <h1 className="text-4xl font-bold py-5">
+          Welcome to Rules Guru!
+        </h1>
+        <Link
+          href={"/chat"}
+          className="inline-block rounded  mx-1 font-bold bg-[--btn-primary] p-3">
+          Chat Now!
+        </Link>
+        <Link
+          href={"#learn"}
+          className="inline-block rounded  mx-1 font-bold bg-[--btn-secondary] p-3">
+          Learn More!
+        </Link>
       </div>
     </>
   );
