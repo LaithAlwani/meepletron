@@ -29,7 +29,7 @@ export default function Home() {
       </div>
       <form onSubmit={handleSubmit} className=" w-full max-w-md mx-auto">
         <input
-          className=" w-full p-2 mb-8 border border-gray-700 rounded shadow-xl"
+          className=" w-full p-2 border-t focus:outline-0 border-gray-700  "
           value={input}
           placeholder="Ask a board game rules question..."
           onChange={handleInputChange}
