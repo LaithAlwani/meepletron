@@ -18,13 +18,13 @@ export default function Navbar() {
 
         <div className="flex items-center gap-3">
           <Link href="/chat" className="p-2">
-            <FaRobot size={size} />
+            <FaRobot size={26} />
           </Link>
           <Link href="/games" className="p-2">
-            <FaClipboardList size={size} />
+            <FaClipboardList size={22} />
           </Link>
           <Link href="/about" className="p-2">
-            <FaInfo size={size} />
+            <FaInfo size={22} />
           </Link>
         </div>
       </div>
