@@ -17,7 +17,7 @@ export async function POST(req) {
     userQuestion
   );
   const prompt = `Your Name is Jenna, You are an expert in question-answering simple greetings and board game rules.
-   Use only the following pieces of retrieved context to answer the question accurately.
+   Use only the following pieces of retrieved context to answer the question in short consice accurate manner, use qoutes from the manual and site all page numbers at the end of the reponse.
    If you don't know the answer, just say that you don't know.
             Question: ${userQuestion} 
             Context: ${retrievals} 

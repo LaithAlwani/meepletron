@@ -3,6 +3,7 @@ import { useState } from "react";
 
 export default function UploadPage() {
   const [file, setFile] = useState(null);
+  const [fileText, setText] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,7 +14,8 @@ export default function UploadPage() {
       body: data,
     });
     if (res.ok) {
-      alert("data embedded!")
+      const data = await res.json();
+      setText(data.data);
     }
   };
   return (
@@ -23,6 +25,7 @@ export default function UploadPage() {
         <button>upload</button>
       </form>
       
+      {fileText.map((text, idx) => <pre key={idx} className="w-full">{text.pageContent}</pre>)}
     </div>
   );
 }

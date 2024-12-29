@@ -27,6 +27,7 @@ export async function POST(req) {
     await vectorStore.addDocuments(chunks);
     
     return NextResponse.json({data:chunks, message: "Data Embedded" }, { status: 200 });
+    
   }
   catch (err) {
     console.log(err)

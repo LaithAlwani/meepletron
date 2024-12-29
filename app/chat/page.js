@@ -5,28 +5,29 @@ export default function Home() {
 
   return (
     <>
-      <div className=" justify-between  w-full  h-96 max-w-md ">
+      <div className=" justify-between w-full overflow-y-scroll p-2 pt-5 h-[100svh]  ">
         <div>
           <div
             className={`p-3 mb-3 max-w-72 rounded-lg  
-              bg-red-200 ml-auto 
+              bg-red-500 ml-auto text-black
             `}>
+            <strong className="block">Jenna</strong>
+
             {"Hi, My Name is Jenna , How can I assisst you today?!"}
           </div>
           {messages.map((m) => (
             <div
               key={m.id}
-              className={`p-3 mb-3 max-w-72 rounded-lg  bg-green-400 ${
-                m.role != "user" ? "  bg-red-200 ml-auto " : ""
+              className={`p-3 mb-3 max-w-72 rounded-lg text-black  ${
+                m.role === "user" ? " bg-amber-600" : " bg-red-500 ml-auto"
               }`}>
-              {m.role === "user" ? "User: " : "Jenna: "}
+              <strong className="block">{m.role === "user" ? "You " : "Jenna "}</strong>
               {m.content}
-              {  console.log(m.role ==="user")}
             </div>
           ))}
         </div>
       </div>
-      <form onSubmit={handleSubmit} className=" w-full max-w-md ">
+      <form onSubmit={handleSubmit} className=" w-full max-w-md mx-auto">
         <input
           className=" w-full p-2 mb-8 border border-gray-700 rounded shadow-xl"
           value={input}

@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function Navbar() {
   return (
-    <nav className='flex justify-between p-2'>
+    <nav className='flex justify-between p-2 w-full'>
       <div><Link href="/"><h3>GameRules.ai</h3></Link></div>
       <div>
         <Link href="/chat" className='p-2'>Chat</Link>
