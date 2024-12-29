@@ -17,22 +17,22 @@
 :root {
   --background: #ecf0f1;
   --foreground: #171717;
-  --nav-bg: #e74c3c;
+  --nav-bg: #f95644;
   --bubble-user: #f2f2f2;
   --bubble-ai: #f77b6e;
-  --btn-primary: #e74c3c;
-  --btn-secondary: #2d3436;
+  --btn-primary: #f95644;
+  --btn-secondary: #808283;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1e2a47;
+    --background: #151e32;
     --foreground: #ededed;
     --nav-bg: #486581;
-    --bubble-user: #385d7c;
-    --bubble-ai: #144e7d;
+    --bubble-user: #6ea1cd;
+    --bubble-ai: #3b6a96;
     --btn-primary: #1887ba;
-    --btn-secondary: #385d7c;
+    --btn-secondary: #486581;
   }
 }
 

@@ -18,7 +18,7 @@ export default function Home() {
           {messages.map((m) => (
             <div
               key={m.id}
-              className={`p-3 mb-3 max-w-72 rounded-lg shadow-md ${
+              className={`p-3 mb-3 max-w-72 rounded-lg shadow-lg ${
                 m.role === "user" ? " bg-[--bubble-user]" : " bg-[--bubble-ai] ml-auto"
               }`}>
               <strong className="block">{m.role === "user" ? "You " : "Jenna "}</strong>
