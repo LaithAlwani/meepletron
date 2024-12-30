@@ -15,9 +15,8 @@
 }
 
 :root {
-  --background: #ecf0f1;
+  --background: #f7f7f7;
   --foreground: #171717;
-  --nav-bg: #f95644;
   --bubble-user: #f2f2f2;
   --bubble-ai: #f77b6e;
   --btn-primary: #f95644;
@@ -28,7 +27,6 @@
   :root {
     --background: #151e32;
     --foreground: #ededed;
-    --nav-bg: #486581;
     --bubble-user: #6ea1cd;
     --bubble-ai: #3b6a96;
     --btn-primary: #1887ba;

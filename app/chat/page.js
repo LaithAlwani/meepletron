@@ -1,7 +1,8 @@
 "use client";
 import { useChat } from "ai/react";
-export default function Home() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+import { FcReading } from "react-icons/fc";
+export default function ChatPage() {
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
 
   return (
     <>
@@ -25,6 +26,7 @@ export default function Home() {
               {m.content}
             </div>
           ))}
+          {isLoading && <FcReading size={48} />}
         </div>
       </div>
       <form onSubmit={handleSubmit} className=" w-full max-w-md mx-auto">
@@ -33,6 +35,7 @@ export default function Home() {
           value={input}
           placeholder="Ask a board game rules question..."
           onChange={handleInputChange}
+          disabled={isLoading}
         />
       </form>
     </>

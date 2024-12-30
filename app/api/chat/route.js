@@ -1,7 +1,7 @@
 import { queryPineconeVectorStore } from "@/lib/vector-store";
 import { openai } from "@ai-sdk/openai";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
-import { streamText, tool } from "ai";
+import { streamText } from "ai";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -16,9 +16,9 @@ export async function POST(req) {
     process.env.PINECONE_INDEX_NAME,
     userQuestion
   );
-  const prompt = `Your Name is Jenna, You are an expert in question-answering simple greetings and board game rules.
+  const prompt = `Your Name is Jenna, You are a well mannered expert in question-answering board game rules.
    Use only the following pieces of retrieved context to answer the question accurately in short consice manner,
-   use qoutes from the manual and site all page numbers at the end of the response.
+   use qoutes from the manual and site all page numbers if any at the end of the response.
    If you don't know the answer, just say that you don't know.
             Question: ${userQuestion} 
             Context: ${retrievals} 
