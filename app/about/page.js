@@ -4,12 +4,21 @@ export default function AboutPage() {
   return (
     <>
       <section>
-        <h2>Our Mission</h2>
+        <h2 className="text-xl">Our Mission</h2>
         <p>
-          Boar Game Rules AI was created to revolutionize the way people play board games. We
-          understand how frustrating it can be to pause your game to search for rules in a manual.
-          Our mission is to make board games more enjoyable by giving players instant access to
-          clear, concise rule explanations using the power of AI.
+          Our mission is to eliminate the need for rulebook flipping during gameplay by providing
+          instant, accurate, and easily accessible rule clarifications through AI. We aim to keep
+          players immersed in the game, ensuring a smoother and more enjoyable gaming experience for
+          everyone.
+        </p>
+      </section>
+      <section>
+        <h2 className="text-xl">Our Vision</h2>
+        <p>
+          Our vision is to revolutionize board gaming by creating an AI-powered tool that keeps
+          players fully immersed in the experience, free from interruptions caused by forgotten
+          rules. We strive to be the ultimate resource for seamless gameplay, fostering connection,
+          creativity, and enjoyment for players of all levels
         </p>
       </section>
       <section>

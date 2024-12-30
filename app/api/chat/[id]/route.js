@@ -7,19 +7,22 @@ import { streamText } from "ai";
 export const maxDuration = 30;
 const pinecone = new PineconeClient();
 
-export async function POST(req) {
-  const { messages } = await req.json();
+export async function POST(req, {params}) {
+  const {id} = await params;
+  const { messages} = await req.json();
   const userQuestion = messages[messages.length - 1].content;
-
+console.log(id)
   const retrievals = await queryPineconeVectorStore(
     pinecone,
     process.env.PINECONE_INDEX_NAME,
-    userQuestion
+    userQuestion,
+    id
   );
   const prompt = `Your Name is Jenna, You are a well mannered expert in question-answering board game rules.
-   Use only the following pieces of retrieved context to answer the question accurately in short consice manner,
-   use qoutes from the manual and site all page numbers if any at the end of the response.
+   Use only the following pieces of retrieved context to answer the question pricisley ,
+   use qoutes from the manual and site all page numbers in the metadata if any at the end of the response.
    If you don't know the answer, just say that you don't know.
+            History:${messages}
             Question: ${userQuestion} 
             Context: ${retrievals} 
               Answer:`;
