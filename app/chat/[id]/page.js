@@ -45,7 +45,7 @@ export default function ChatPage() {
                 m.role === "user" ? " bg-[--bubble-user]" : " bg-[--bubble-ai] ml-auto"
               }`}>
               <strong className="block">{m.role === "user" ? "You " : "Jenna "}</strong>
-              {m.content}
+              <pre className="text-wrap font-serif">{m.content}</pre>
             </div>
           ))}
           {isLoading && <FcReading size={48} />}

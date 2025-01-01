@@ -3,7 +3,7 @@ import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
 
 export async function GET(req, context) {
-  const { params } =  context;
+  const { params } = context;
   const id = params.id;
   try {
     await connectToDB();

@@ -43,14 +43,14 @@ export default function UploadPage() {
   };
   return (
     <div>
-      {!boardGame && !gameList.length && (
+      {!boardGame && !gameList?.length && (
         <form onSubmit={getBoardGames}>
           <input type="text" value={input} onChange={(e) => setInput(e.target.value)} />
           <button>get games</button>
         </form>
       )}
 
-      {gameList.map((game) => (
+      {gameList?.map((game) => (
         <p key={game["@_id"]} onClick={() => getBoardGame(game["@_id"], game.name["@_value"])}>
           {game.name["@_value"]}
         </p>
@@ -62,11 +62,11 @@ export default function UploadPage() {
         </>
       )}
       <form onSubmit={handleSubmit}>
-        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+        <input type="file" onChange={(e) => setFile(e.target.files[0])} required/>
         <button>upload</button>
       </form>
 
-      {fileText.map((text, idx) => (
+      {fileText?.map((text, idx) => (
         <pre key={idx} className="w-full">
           {text.pageContent}
         </pre>

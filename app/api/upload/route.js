@@ -18,24 +18,29 @@ export async function POST(req) {
     minPlayers: data.get("minPlayers"),
     maxPlayers: data.get("maxPlayers"),
     playTime: data.get("playTime"),
-    bggLink:data.get("bggLink"),
+    bggLink: data.get("bggLink"),
     bggId: data.get("bggId"),
     description: data.get("description"),
-  } 
+  };
   if (!file) {
     return NextResponse.json({ success: false });
   }
   try {
     await connectToDB();
-    const doc = await Boardgame.create(boardgame)
-    
     const chunks = await getChunkedDocsFromPDF(file);
+    
+    if (!chunks.length) {
+      return NextResponse.json({ message: "Failed" }, { status: 500 })
+    }
+    const doc = await Boardgame.create(boardgame);
+    
     for (const chunk in chunks) {
       chunks[chunk].metadata.bg_id = doc._id.toString();
+      chunks[chunk].metadata.bg_title = doc.title.toLowerCase();
     }
 
     const embeddings = new OpenAIEmbeddings({
-      model: "text-embedding-3-small",
+      model: "text-embedding-3-large",
     });
 
     const pinecone = new PineconeClient();
