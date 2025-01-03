@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Rules Guru",
+  title: "Board Game Guru",
   description: `Instantly search and understand board game rules with ease! Powered by AI,
    our app eliminates the need to flip through manuals,
    so you can focus on playing and having fun.

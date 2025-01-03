@@ -10,7 +10,10 @@ export default function Navbar() {
           <div className="relative w-[3rem] h-[3rem]">
             <Image src="/chatbot.png" fill priority alt="robot logo" />
           </div>
-          <strong>Rules Guru</strong>
+          <div className="flex flex-col">
+            <strong className="text-xl">Board Game Guru</strong>
+            <span className="text-xs text-[--btn-secondary]">No More Rulebook filiping!</span>
+          </div>
         </Link>
 
         <div className="flex items-center gap-3">

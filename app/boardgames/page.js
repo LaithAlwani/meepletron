@@ -42,7 +42,7 @@ export default function BoargamePage() {
             <div className="relative" key={bg._id}>
               <Link
                 href={`/boardgames/${bg._id}`}
-                className="block bg-slate-400 rounded-md w-[8rem] h-[8rem] sm:w-[11rem] sm:h-[11rem]">
+                className="block  w-[8rem] h-[8rem] sm:w-[11rem] sm:h-[11rem]">
                 <Image
                   src={bg.image}
                   alt={bg.title}

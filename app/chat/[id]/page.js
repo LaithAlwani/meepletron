@@ -33,8 +33,8 @@ export default function ChatPage() {
             `}>
               <strong className="block">Jenna</strong>
               <p>
-                Welcome to <strong>{boardgame?.title}</strong> <br />
-                How can I assisst you today?!
+                Welcome to <strong className="uppercase">{boardgame?.title}</strong> <br />
+                Ask me about the rules of the game!
               </p>
             </div>
           )}

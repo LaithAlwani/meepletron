@@ -14,7 +14,7 @@ export default function Home() {
           </span>
         </div>
 
-        <h1 className="text-4xl uppercase font-bold pt-5 bg-gradient-to-br from-purple-500 to-red-500 text-transparent bg-clip-text">
+        <h1 className="text-4xl uppercase font-bold pt-5 bg-gradient-to-br from-yellow-500 via-red-500 to-purple-500 text-transparent bg-clip-text">
           Rules Guru
         </h1>
         <p className="italic text-sm pb-5">Say goodbye to rulebook flipping!</p>
