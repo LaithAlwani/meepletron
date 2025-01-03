@@ -19,10 +19,10 @@ export default function BoardgamePage() {
     getBoardgame();
   }, []);
   return (
-    <div className="text-center pt-12 ">
+    <div className=" pt-12 ">
       {boardgame && (
-        <div className="flex justify-center items-center">
-          <div className="relative mx-auto w-[10rem] h-[10rem]">
+        <div className="flex justify-start gap-4 items-center">
+          <div className="relative  min-w-[12rem] h-[12rem]">
             {console.log(boardgame)}
             <Image
               src={boardgame.image}
@@ -34,15 +34,14 @@ export default function BoardgamePage() {
             />
           </div>
           <div>
-            <h2 className="text-2xl font-bold capitalize">{boardgame.title}</h2>
+            <h2 className="text-2xl font-bold capitalize">{boardgame.title} <span className="text-xs font-light">({boardgame.year}) </span></h2>
             <p>
               players: {boardgame.minPlayers} - {boardgame.maxPlayers}
             </p>
-            <p>playTime: {boardgame.playTime} </p>
-            <p>{boardgame.year} </p>
+            <p>play time: {boardgame.playTime} </p>
             <Link
               href={`/chat/${boardgame._id}`}
-              className="inline-block rounded min-w-32  mx-1 font-bold bg-[--btn-primary] p-3">
+              className="inline-block rounded  mt-3 font-bold bg-[--btn-primary] p-3">
               Chat Now
             </Link>
           </div>
