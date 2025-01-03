@@ -28,8 +28,8 @@ export default function ChatPage() {
         <div>
           {boardgame && (
             <div
-              className={`p-3 mb-3 max-w-72 rounded-lg  
-              bg-[--bubble-ai] shadow-md mb-4
+              className={`p-3 mb-4 max-w-72 rounded-lg  
+              bg-[--bubble-ai] shadow-md 
             `}>
               <strong className="block">Jenna</strong>
               <p>
