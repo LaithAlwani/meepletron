@@ -42,7 +42,7 @@ export default function BoargamePage() {
             <div className="relative" key={bg._id}>
               <Link
                 href={`/boardgames/${bg._id}`}
-                className="block  w-[8rem] h-[8rem] sm:w-[11rem] sm:h-[11rem]">
+                className="block w-[8rem] h-[8rem] sm:w-[11rem] sm:h-[11rem]">
                 <Image
                   src={bg.image}
                   alt={bg.title}
@@ -54,7 +54,7 @@ export default function BoargamePage() {
               </Link>
               <Link
                 href={`/chat/${bg._id}`}
-                className="absolute bottom-1 right-1 rounded  bg-red-500 p-2 text-white">
+                className="absolute bottom-1 right-1 rounded  bg-[--btn-primary] bg-opacity-50 p-2">
                 <BsChatDots size={22} />
               </Link>
             </div>

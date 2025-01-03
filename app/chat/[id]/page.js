@@ -8,7 +8,7 @@ import { FaRegPaperPlane } from "react-icons/fa";
 export default function ChatPage() {
   const params = useParams();
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api:`/api/chat/${params.id}`
+    api: `/api/chat/${params.id}`,
   });
   const [boardgame, setBoardgame] = useState(null);
   const getBoardgame = async () => {
@@ -29,7 +29,7 @@ export default function ChatPage() {
           {boardgame && (
             <div
               className={`p-3 mb-3 max-w-72 rounded-lg  
-              bg-[--bubble-ai] ml-auto shadow-md
+              bg-[--bubble-ai] shadow-md mb-4
             `}>
               <strong className="block">Jenna</strong>
               <p>
@@ -39,13 +39,15 @@ export default function ChatPage() {
             </div>
           )}
           {messages.map((m) => (
-            <div
-              key={m.id}
-              className={`p-3 mb-3 max-w-72 rounded-lg shadow-lg ${
-                m.role === "user" ? " bg-[--bubble-user]" : " bg-[--bubble-ai] ml-auto"
-              }`}>
-              <strong className="block">{m.role === "user" ? "You " : "Jenna "}</strong>
-              <pre className="text-wrap font-serif">{m.content}</pre>
+            <div className={`mb-4 ${m.role === "user" ? " text-right" : ""}`}>
+              <div
+                key={m.id}
+                className={`inline-block p-3 mb-3 min-w-24 max-w-sm rounded-lg shadow-lg ${
+                  m.role === "user" ? " bg-[--bubble-user] text-left" : " bg-[--bubble-ai] "
+                }`}>
+                <strong className="block">{m.role === "user" ? "You " : "Jenna "}</strong>
+                <pre className="text-wrap font-serif">{m.content}</pre>
+              </div>
             </div>
           ))}
           {isLoading && <FcReading size={48} />}
