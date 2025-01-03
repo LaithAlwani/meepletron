@@ -10,32 +10,48 @@ export default function BoargamePage() {
   const getBoardgames = async () => {
     setLoding(true);
     setBoardgames([]);
-    const res = await fetch("/api/boardgame");
-    if (res.ok) {
-      const data = await res.json();
-      setBoardgames(data);
+    try {
+      const res = await fetch("/api/boardgame");
+      if (res.ok) {
+        const data = await res.json();
+        setBoardgames(data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoding(false);
     }
-    setLoding(false);
   };
 
   useEffect(() => {
     getBoardgames();
   }, []);
   return (
-    <section className="">
-      <input type="text" placeholder="search..." className="w-full border rounded p-2 my-2" />
-      <h2>Click on a game to chat!</h2>
+    <section>
+      <input
+        type="text"
+        placeholder="enter game name..."
+        className="w-full border rounded p-2 my-2"
+      />
+      <h3 className="text-xl font-bold italic">Recently Added</h3>
+      <p>Click on a game to chat!</p>
       <div className="flex flex-wrap gap-1">
-        {boardgames.map((bg) => (
-          <div className="relative" key={bg._id}>
-            <Link href={`/boardgames/${bg._id}`} >
-              <img src={bg.image} className="max-h-[10rem]" />
-            </Link>
-            <Link href={`/chat/${bg._id}`}  className="inline-block absolute bottom-1 right-1 rounded  bg-red-500 p-2 text-white" >
-              <BsChatDots size={22} />
-            </Link>
-          </div>
-        ))}
+        {!loading ? (
+          boardgames?.map((bg) => (
+            <div className="relative" key={bg._id}>
+              <Link href={`/boardgames/${bg._id}`}>
+                <img src={bg.image} className="max-h-[10rem]" />
+              </Link>
+              <Link
+                href={`/chat/${bg._id}`}
+                className="absolute bottom-1 right-1 rounded  bg-red-500 p-2 text-white">
+                <BsChatDots size={22} />
+              </Link>
+            </div>
+          ))
+        ) : (
+          <p>Loading...</p>
+        )}
       </div>
     </section>
   );

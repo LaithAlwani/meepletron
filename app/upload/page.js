@@ -13,13 +13,14 @@ export default function UploadPage() {
   const getBoardGames = async (e) => {
     e.preventDefault();
     const list = await fetchBggGame(input);
+  
     setGameList(list);
   };
 
   const getBoardGame = async (id, title) => {
     const bg = await fetchBoardGameBGG(id);
+    console.log(bg)
     const boardgame = createBoardgame(bg, title);
-    console.log(boardgame)
     setBoardGame(boardgame);
     setGameList([]);
   };

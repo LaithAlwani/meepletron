@@ -30,7 +30,7 @@ export async function POST(req) {
     const chunks = await getChunkedDocsFromPDF(file);
     
     if (!chunks.length) {
-      return NextResponse.json({ message: "Failed" }, { status: 500 })
+      return NextResponse.json({ message: "Failed to chunk file" }, { status: 500 })
     }
     const doc = await Boardgame.create(boardgame);
     
