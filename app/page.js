@@ -19,7 +19,7 @@ export default function Home() {
         </h1>
         <p className="italic text-sm pb-5">Say goodbye to rulebook flipping!</p>
         <Link
-          href={"/chat"}
+          href={"/boardgames"}
           className="inline-block rounded min-w-32  mx-1 font-bold bg-[--btn-primary] p-3">
           Chat Now
         </Link>

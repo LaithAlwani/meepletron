@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { BsChatDots } from "react-icons/bs";
@@ -35,12 +36,21 @@ export default function BoargamePage() {
       />
       <h3 className="text-xl font-bold italic">Recently Added</h3>
       <p>Click on a game to chat!</p>
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap justify-center gap-2">
         {!loading ? (
           boardgames?.map((bg) => (
             <div className="relative" key={bg._id}>
-              <Link href={`/boardgames/${bg._id}`}>
-                <img src={bg.image} className="max-h-[10rem]" />
+              <Link
+                href={`/boardgames/${bg._id}`}
+                className="block bg-slate-400 rounded-md w-[8rem] h-[8rem] sm:w-[11rem] sm:h-[11rem]">
+                <Image
+                  src={bg.image}
+                  alt={bg.title}
+                  className="w-full h-full rounded-md object-cover object-center"
+                  fill
+                  sizes={"25vw"}
+                  quality={10}
+                />
               </Link>
               <Link
                 href={`/chat/${bg._id}`}
