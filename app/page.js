@@ -14,10 +14,10 @@ export default function Home() {
           </span>
         </div>
 
-        <h1 className="text-4xl uppercase font-bold pt-5 bg-gradient-to-br from-yellow-500 via-red-500 to-purple-500 text-transparent bg-clip-text">
-          Rules Guru
+        <h1 className="text-2xl sm:text-4xl uppercase font-bold pt-5 bg-gradient-to-br from-yellow-500 via-red-500 to-purple-500 text-transparent bg-clip-text">
+          Board Game Wizard
         </h1>
-        <p className="italic text-sm pb-5">Say goodbye to rulebook flipping!</p>
+        <p className="italic text-sm pb-5">No more rulebook flipping!</p>
         <Link
           href={"/boardgames"}
           className="inline-block rounded min-w-32  mx-1 font-bold bg-[--btn-primary] p-3">

@@ -11,7 +11,7 @@ export default function Navbar() {
             <Image src="/chatbot.png" fill priority alt="robot logo" />
           </div>
           <div className="flex flex-col">
-            <strong className="text-xl">Board Game Guru</strong>
+            <strong className="text-xl">Board Game Wizard</strong>
             <span className="text-xs text-[--btn-secondary]">No More Rulebook filiping!</span>
           </div>
         </Link>
