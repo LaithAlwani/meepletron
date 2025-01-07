@@ -6,11 +6,11 @@ export default function Home() {
       <div className="text-center pt-32 relative">
         <div className="relative w-[18rem] sm:w-[20rem] h-[18rem] sm:h-[20rem] mx-auto left-5">
           <Image src="/chatbot-ed.png" fill priority alt="robot logo"/>
-          <span className="absolute text-left font-bold text-[10px] top-[1.8rem] sm:top-[2.1rem] right-[1.2rem] sm:right-[1.6rem] bg-gradient-to-tr from-purple-500 to-red-500 text-transparent bg-clip-text">
+          <span className="absolute text-left font-bold text-[10px] top-[1.8rem] sm:top-[2.1rem] right-[1.4rem] sm:right-[1.8rem] bg-gradient-to-tr from-purple-500 to-red-500 text-transparent bg-clip-text">
             Hi, I'm Jenna!
             <br />
-            The Rules Guru. 
-            <br/>Ready to Help!
+            The rules AI. 
+            <br/>Ready to help!
           </span>
         </div>
 
