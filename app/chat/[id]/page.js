@@ -39,9 +39,8 @@ export default function ChatPage() {
             </div>
           )}
           {messages.map((m) => (
-            <div className={`mb-4 ${m.role === "user" ? " text-right" : ""}`}>
+            <div key={m.id} className={`mb-4 ${m.role === "user" ? " text-right" : ""}`}>
               <div
-                key={m.id}
                 className={`inline-block p-3 mb-3 min-w-24 max-w-sm rounded-lg shadow-lg ${
                   m.role === "user" ? " bg-[--bubble-user] text-left" : " bg-[--bubble-ai] "
                 }`}>

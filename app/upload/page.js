@@ -2,7 +2,6 @@
 import { createBoardgame, fetchBggGame, fetchBoardGameBGG } from "@/lib/bgg-functions";
 import { useState } from "react";
 
-
 export default function UploadPage() {
   const [input, setInput] = useState("");
   const [gameList, setGameList] = useState([]);
@@ -13,13 +12,18 @@ export default function UploadPage() {
   const getBoardGames = async (e) => {
     e.preventDefault();
     const list = await fetchBggGame(input);
-  
-    setGameList(list);
+    if (list.length != undefined) {
+      console.log(typeof list);
+      setGameList(list);
+    } else {
+      const temp = [];
+      temp.push(list);
+      setGameList(temp);
+    }
   };
 
   const getBoardGame = async (id, title) => {
     const bg = await fetchBoardGameBGG(id);
-    console.log(bg)
     const boardgame = createBoardgame(bg, title);
     setBoardGame(boardgame);
     setGameList([]);
@@ -51,11 +55,12 @@ export default function UploadPage() {
         </form>
       )}
 
-      {gameList?.map((game) => (
-        <p key={game["@_id"]} onClick={() => getBoardGame(game["@_id"], game.name["@_value"])}>
-          {game.name["@_value"]}
-        </p>
-      ))}
+      {gameList.length > 0 &&
+        gameList?.map((game) => (
+          <p key={game["@_id"]} onClick={() => getBoardGame(game["@_id"], game.name["@_value"])}>
+            {game.name["@_value"]}
+          </p>
+        ))}
       {boardGame && (
         <>
           <img src={boardGame.thumbnail} alt={boardGame.title} />
@@ -63,7 +68,7 @@ export default function UploadPage() {
         </>
       )}
       <form onSubmit={handleSubmit}>
-        <input type="file" onChange={(e) => setFile(e.target.files[0])} required/>
+        <input type="file" onChange={(e) => setFile(e.target.files[0])} required />
         <button>upload</button>
       </form>
 
