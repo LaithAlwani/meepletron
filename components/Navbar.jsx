@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FaRobot, FaInfo, FaClipboardList } from "react-icons/fa";
 import Image from "next/image";
+import ThemeSwitch from "./ThemeSwitch";
 
 export default function Navbar() {
   return (
@@ -11,18 +12,19 @@ export default function Navbar() {
             <Image src="/chatbot.png" fill priority alt="robot logo" />
           </div>
           <div className="flex flex-col">
-            <strong className="text-xl">Board Game Wizard</strong>
-            <span className="text-xs text-[--btn-secondary]">No More Rulebook filiping!</span>
+            <strong className="text-3xl">BGW</strong>
+            {/* <span className="font-semibold text-xs text-[#b5b5b5] dark:text-[#486581]">A Rules AI Wizard</span> */}
           </div>
         </Link>
 
         <div className="flex items-center gap-3">
-          <Link href="/boardgames" className="p-2">
+          <Link href="/boardgames" className="">
             <FaRobot size={26} />
           </Link>
-          <Link href="/about" className="p-2">
+          <Link href="/about" className="">
             <FaInfo size={22} />
           </Link>
+          <ThemeSwitch />
         </div>
       </div>
     </nav>

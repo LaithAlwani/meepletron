@@ -54,7 +54,7 @@ export default function BoargamePage() {
               </Link>
               <Link
                 href={`/chat/${bg._id}`}
-                className="absolute bottom-1 right-1 rounded  bg-[--btn-primary] bg-opacity-50 p-2">
+                className="absolute bottom-1 right-1  bg-[#f95644] dark:bg-[#1887ba] rounded-full p-2">
                 <BsChatDots size={22} />
               </Link>
             </div>

@@ -41,8 +41,8 @@ export default function BoardgamePage() {
             <p>play time: {boardgame.playTime} </p>
             <Link
               href={`/chat/${boardgame._id}`}
-              className="inline-block rounded  mt-3 font-bold bg-[--btn-primary] p-3">
-              Chat Now
+              className="inline-block rounded  mt-3 font-bold bg-[#f95644] dark:bg-[#1887ba] p-3">
+              Ask a question!
             </Link>
           </div>
         </div>
