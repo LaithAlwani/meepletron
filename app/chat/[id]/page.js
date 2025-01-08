@@ -31,9 +31,8 @@ export default function ChatPage() {
               className={`p-3 mb-4 max-w-72 rounded-lg  
               bg-[--bubble-ai] shadow-md 
             `}>
-              <strong className="block">Jenna</strong>
               <p>
-                Welcome to <strong className="uppercase">{boardgame?.title}</strong> <br />
+                Hi I'm Jenna, Welcome to <strong className="uppercase">{boardgame?.title}</strong> <br />
                 Ask me about the rules of the game!
               </p>
             </div>
@@ -44,7 +43,6 @@ export default function ChatPage() {
                 className={`inline-block p-3 mb-3 min-w-24 max-w-sm rounded-lg shadow-lg ${
                   m.role === "user" ? " bg-[--bubble-user] text-left" : " bg-[--bubble-ai] "
                 }`}>
-                <strong className="block">{m.role === "user" ? "You " : "Jenna "}</strong>
                 <pre className="text-wrap font-serif">{m.content}</pre>
               </div>
             </div>
@@ -55,7 +53,7 @@ export default function ChatPage() {
       <form onSubmit={handleSubmit} className=" w-full max-w-md mx-auto">
         <div className="flex items-center w-full border border-gray-700 rounded p-2">
           <input
-            className=" w-full   focus:outline-0  "
+            className="w-full focus:outline-0  bg-inherit"
             value={input}
             placeholder="Ask a board game rules question..."
             onChange={handleInputChange}

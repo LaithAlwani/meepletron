@@ -32,17 +32,20 @@ export default function BoargamePage() {
       <input
         type="text"
         placeholder="enter game name..."
-        className="w-full border rounded p-2 my-2"
+        className="w-full bg-inherit border rounded p-2 my-2"
       />
-      <h3 className="text-xl font-bold italic">Recently Added</h3>
-      <p>Click on a game to chat!</p>
-      <div className="flex flex-wrap justify-center gap-2">
+      <div class="relative flex py-5 items-center">
+        <div class="w-[3rem] border-t border-gray-400"></div>
+        <h2 class=" px-4 text-2xl font-bold italic">Recently Added</h2>
+        <div class="flex-grow border-t border-gray-400"></div>
+      </div>
+      <div className="flex flex-wrap justify-center gap-3">
         {!loading ? (
           boardgames?.map((bg) => (
             <div className="relative" key={bg._id}>
               <Link
                 href={`/boardgames/${bg._id}`}
-                className="block w-[8rem] h-[8rem] sm:w-[11rem] sm:h-[11rem]">
+                className="block w-[11rem] h-[11rem]">
                 <Image
                   src={bg.image}
                   alt={bg.title}
