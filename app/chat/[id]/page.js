@@ -29,7 +29,7 @@ export default function ChatPage() {
           {boardgame && (
             <div
               className={`p-3 mb-4 max-w-72 rounded-lg  
-              bg-[--bubble-ai] shadow-md 
+              bg-[#f77b6e] dark:bg-[#246199] shadow-md dark:shadow-cyan-900
             `}>
               <p>
                 Hi I'm Jenna, Welcome to <strong className="uppercase">{boardgame?.title}</strong> <br />
@@ -40,8 +40,8 @@ export default function ChatPage() {
           {messages.map((m) => (
             <div key={m.id} className={`mb-4 ${m.role === "user" ? " text-right" : ""}`}>
               <div
-                className={`inline-block p-3 mb-3 min-w-24 max-w-sm rounded-lg shadow-lg ${
-                  m.role === "user" ? " bg-[--bubble-user] text-left" : " bg-[--bubble-ai] "
+                className={`inline-block p-3 mb-3 min-w-24 max-w-sm rounded-lg shadow-md dark:shadow-cyan-900 ${
+                  m.role === "user" ? " bg-[#e9e9e9] dark:bg-[#56748e] text-left" : " bg-[#f77b6e] dark:bg-[#246199] "
                 }`}>
                 <pre className="text-wrap font-serif">{m.content}</pre>
               </div>
