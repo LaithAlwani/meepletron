@@ -46,7 +46,7 @@ export default function BoargamePage() {
                 <Image
                   src={bg.image}
                   alt={bg.title}
-                  className="w-full h-full rounded-md object-cover object-center"
+                  className="w-full h-full rounded-md object-cover object-top"
                   fill
                   sizes={"25vw"}
                   quality={10}
