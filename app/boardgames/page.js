@@ -34,38 +34,38 @@ export default function BoargamePage() {
         placeholder="enter game name..."
         className="w-full bg-inherit border rounded p-2 my-2"
       />
-      <div class="relative flex py-5 items-center">
-        <div class="w-[3rem] border-t border-gray-400"></div>
-        <h2 class=" px-4 text-2xl font-bold italic">Recently Added</h2>
-        <div class="flex-grow border-t border-gray-400"></div>
-      </div>
-      <div className="flex flex-wrap justify-center gap-3">
-        {!loading ? (
-          boardgames?.map((bg) => (
-            <div className="relative" key={bg._id}>
-              <Link
-                href={`/boardgames/${bg._id}`}
-                className="block w-[11rem] h-[11rem]">
-                <Image
-                  src={bg.image}
-                  alt={bg.title}
-                  className="w-full h-full rounded-md object-cover object-top"
-                  fill
-                  sizes={"25vw"}
-                  quality={10}
-                />
-              </Link>
-              <Link
-                href={`/chat/${bg._id}`}
-                className="absolute bottom-1 right-1  bg-[#f95644] dark:bg-[#1887ba] rounded-full p-2">
-                <BsChatDots size={22} />
-              </Link>
-            </div>
-          ))
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
+      {!loading ? (
+        <>
+          <div className="relative flex py-5 items-center">
+            <div className="w-[3rem] border-t border-gray-400"></div>
+            <h2 className=" px-4 text-2xl font-bold italic">Recently Added</h2>
+            <div className="flex-grow border-t border-gray-400"></div>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            {boardgames?.map((bg) => (
+              <div className="relative" key={bg._id}>
+                <Link href={`/boardgames/${bg._id}`} className="block w-[11rem] h-[11rem]">
+                  <Image
+                    src={bg.image}
+                    alt={bg.title}
+                    className="w-full h-full rounded-md object-cover object-top"
+                    fill
+                    sizes={"25vw"}
+                    quality={10}
+                  />
+                </Link>
+                <Link
+                  href={`/chat/${bg._id}`}
+                  className="absolute bottom-1 right-1  bg-[#f95644] dark:bg-[#1887ba] rounded-full p-2">
+                  <BsChatDots size={22} />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <img src="/loader.svg" className="animate-spin mt-[10rem] mx-auto" alt="loader" />
+      )}
     </section>
   );
 }
