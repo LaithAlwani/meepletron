@@ -36,7 +36,7 @@ export default function Home() {
         <p className="italic text-sm font-semibold pb-5">No more rulebook flipping!</p>
         <Link
           href={user ? "/boardgames" : "/sign-in"}
-          className="inline-block rounded min-w-32  mx-1 font-bold bg-[#f95644] dark:bg-[#1887ba] p-3">
+          className="inline-block rounded min-w-64  mx-1 font-bold bg-[#f95644] dark:bg-[#1887ba] p-3">
           Get Started
         </Link>
       </div>

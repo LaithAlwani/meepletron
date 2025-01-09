@@ -25,11 +25,11 @@ export default function ChatPage() {
   }, []);
   return (
     <>
-      <div className=" justify-between w-full overflow-y-scroll no-scrollbar pt-5 h-[85svh]  ">
+      <div className=" justify-between w-full overflow-y-scroll no-scrollbar p-5 h-[85svh]  ">
         <div>
           {boardgame && (
             <div
-              className={`p-3 mb-4 max-w-72 rounded-lg  
+              className={`p-3 mb-4 max-w-80 rounded-lg  
               bg-[#f77b6e] dark:bg-[#246199] shadow-md dark:shadow-cyan-900
             `}>
               <p>
@@ -41,7 +41,7 @@ export default function ChatPage() {
           {messages.map((m) => (
             <div key={m.id} className={`mb-4 ${m.role === "user" ? " text-right" : ""}`}>
               <div
-                className={`inline-block p-3 mb-3 min-w-24 max-w-sm rounded-lg shadow-md dark:shadow-cyan-900 ${
+                className={`inline-block p-3 mb-3 min-w-24  max-w-[375px] rounded-lg shadow-md dark:shadow-cyan-900 ${
                   m.role === "user" ? " bg-[#e9e9e9] dark:bg-[#56748e] text-left" : " bg-[#f77b6e] dark:bg-[#246199] "
                 }`}>
                 <pre className="text-wrap font-serif">{m.content}</pre>
