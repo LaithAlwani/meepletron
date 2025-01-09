@@ -19,6 +19,22 @@ export const metadata = {
    our app eliminates the need to flip through manuals,
    so you can focus on playing and having fun.
   Perfect for casual players and board game enthusiasts alike!`,
+  generator: "Next.js",
+  manifest: "/manifest.json",
+  keywords: ["boardgames", "board game rules", "board game wizard", "board game assistant"],
+  themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
+  authors: [
+    {
+      name: "imvinojanv",
+      url: "https://www.linkedin.com/in/imvinojanv/",
+    },
+  ],
+  viewport:
+    "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
+  icons: [
+    { rel: "apple-touch-icon", url: "icons/icon-128x128.png" },
+    { rel: "icon", url: "icons/icon-128x128.png" },
+  ],
 };
 
 export default function RootLayout({ children }) {
