@@ -7,10 +7,11 @@ import { FaRegPaperPlane } from "react-icons/fa";
 
 export default function ChatPage() {
   const params = useParams();
+  const [boardgame, setBoardgame] = useState(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: `/api/chat/${params.id}`,
+    body:{boardgame}
   });
-  const [boardgame, setBoardgame] = useState(null);
   const getBoardgame = async () => {
     const res = await fetch(`/api/boardgame/${params.id}`);
     if (res.ok) {
