@@ -1,16 +1,32 @@
+"use client";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 export default function Home() {
+  const { user } = useUser();
   return (
     <>
       <div className="text-center pt-32 relative">
         <div className="relative w-[18rem] sm:w-[20rem] h-[18rem] sm:h-[20rem] mx-auto left-5">
-          <Image src="/chatbot-ed.png" fill priority alt="robot logo"/>
-          <span className="absolute text-left font-bold text-[10px] top-[1.8rem] sm:top-[2.1rem] right-[1.4rem] sm:right-[1.8rem] bg-gradient-to-tr from-purple-500 to-red-500 text-transparent bg-clip-text">
-            Hi, I'm Jenna!
-            <br />
-            The rules AI. 
-            <br/>Ready to help!
+          <Image src="/chatbot-ed.png" fill priority alt="robot logo" />
+          <span
+            className={`absolute text-left font-bold ${
+              user
+                ? "text-[18px] top-[2.4rem] sm:top-[2.8rem]"
+                : "text-[10px] top-[1.8rem] sm:top-[2.1rem]"
+            }  
+          right-[1.4rem] sm:right-[1.8rem] bg-gradient-to-tr from-purple-500 to-red-500 text-transparent bg-clip-text`}>
+            {user ? (
+              <span>Hi {user.firstName}!</span>
+            ) : (
+              <span>
+                Hi, I'm Jenna!
+                <br />
+                The rules AI.
+                <br />
+                Ready to help!
+              </span>
+            )}
           </span>
         </div>
 
@@ -19,14 +35,9 @@ export default function Home() {
         </h1>
         <p className="italic text-sm font-semibold pb-5">No more rulebook flipping!</p>
         <Link
-          href={"/boardgames"}
+          href={user ? "/boardgames" : "/sign-in"}
           className="inline-block rounded min-w-32  mx-1 font-bold bg-[#f95644] dark:bg-[#1887ba] p-3">
-          Chat Now
-        </Link>
-        <Link
-          href={"#learn"}
-          className="inline-block rounded min-w-32  mx-1 font-bold bg-[#b5b5b5] dark:bg-[#486581] p-3">
-          Learn More
+          Get Started
         </Link>
       </div>
     </>

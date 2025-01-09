@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { FaRobot, FaInfo, FaClipboardList } from "react-icons/fa";
+import { FaRobot, FaInfo, FaSignInAlt } from "react-icons/fa";
+import { MdLogin } from "react-icons/md";
 import Image from "next/image";
 import ThemeSwitch from "./ThemeSwitch";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export default function Navbar() {
   return (
@@ -25,6 +27,16 @@ export default function Navbar() {
             <FaInfo size={22} />
           </Link>
           <ThemeSwitch />
+          <span  className="flex items-center w-[28px] h-[28px]">
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <Link href="/sign-in">
+                <MdLogin size={24} />
+              </Link>
+            </SignedOut>
+          </span>
         </div>
       </div>
     </nav>
