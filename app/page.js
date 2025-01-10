@@ -15,7 +15,7 @@ export default function Home() {
                 ? "text-[18px] top-[2.4rem] sm:top-[2.8rem]"
                 : "text-[10px] top-[1.8rem] sm:top-[2.1rem]"
             }  
-          right-[1.4rem] sm:right-[1.8rem] bg-gradient-to-tr from-purple-500 to-red-500 text-transparent bg-clip-text`}>
+          right-[1.6rem] sm:right-[2rem] bg-gradient-to-tr from-purple-500 to-red-500 text-transparent bg-clip-text`}>
             {user ? (
               <span>Hi {user.firstName}!</span>
             ) : (
