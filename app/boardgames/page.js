@@ -28,7 +28,7 @@ export default function BoargamePage() {
     getBoardgames();
   }, []);
   return (
-    <section>
+    <section className="mb-[5rem]">
       <input
         type="text"
         placeholder="enter game name..."
