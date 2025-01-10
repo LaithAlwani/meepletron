@@ -10,7 +10,7 @@ export default function ChatPage() {
   const [boardgame, setBoardgame] = useState(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: `/api/chat/${params.id}`,
-    body:{boardgame}
+    body: { boardgame },
   });
   const getBoardgame = async () => {
     const res = await fetch(`/api/boardgame/${params.id}`);
@@ -25,7 +25,13 @@ export default function ChatPage() {
   }, []);
   return (
     <>
-      <div className=" justify-between w-full overflow-y-scroll no-scrollbar p-5 h-[85svh]  ">
+      <div className=" justify-between w-full overflow-y-scroll no-scrollbar p-5 h-[78svh]  ">
+        <img
+          src={boardgame?.thumbnail}
+          alt=""
+          className="fixed top-2 right-2 w-16 h-16 rounded-md shadow-lg"
+        />
+
         <div>
           {boardgame && (
             <div
@@ -33,7 +39,7 @@ export default function ChatPage() {
               bg-[#f77b6e] dark:bg-[#246199] shadow-md dark:shadow-cyan-900
             `}>
               <p>
-                Hi I'm Jenna, Welcome to <strong className="uppercase">{boardgame?.title}</strong> <br />
+                Hi I'm Jenna, Welcome to <strong className="uppercase">{boardgame?.title}! </strong>
                 Ask me about the rules of the game!
               </p>
             </div>
@@ -42,7 +48,9 @@ export default function ChatPage() {
             <div key={m.id} className={`mb-4 ${m.role === "user" ? " text-right" : ""}`}>
               <div
                 className={`inline-block p-3 mb-3 min-w-24  max-w-[375px] rounded-lg shadow-md dark:shadow-cyan-900 ${
-                  m.role === "user" ? " bg-[#e9e9e9] dark:bg-[#56748e] text-left" : " bg-[#f77b6e] dark:bg-[#246199] "
+                  m.role === "user"
+                    ? " bg-[#e9e9e9] dark:bg-[#56748e] text-left"
+                    : " bg-[#f77b6e] dark:bg-[#246199] "
                 }`}>
                 <pre className="text-wrap font-serif">{m.content}</pre>
               </div>

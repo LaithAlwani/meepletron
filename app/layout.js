@@ -46,10 +46,12 @@ export default function RootLayout({ children }) {
           className={`min-h-[100svh] mx-auto bg-[#f7f7f7] dark:bg-[#151e32]  t ${geistSans.variable} ${geistMono.variable} antialiased `}>
           <Providers>
             <Navbar />
-            <main className="max-w-xl mx-auto px-3">{children}</main>
+            <main className="max-w-xl mx-auto px-3 min-h-[86svh]">{children}</main>
+            
           </Providers>
         </body>
       </html>
     </ClerkProvider>
   );
 }
+
