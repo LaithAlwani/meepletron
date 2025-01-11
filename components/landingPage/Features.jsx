@@ -36,10 +36,10 @@ export default function Features() {
 
 const Card = ({ icon, header, text1, text2, text3 }) => {
   return (
-    <div className=" bg-white dark:bg-indigo-600 shadow-lg w-64 mx-auto p-6">
+    <div className=" bg-white dark:bg-indigo-600 shadow-lg w-64 mx-auto py-6 px-4">
       <span className="block mb-6">{icon}</span>
       <h4 className="text-3xl font-bold">{header}</h4>
-      <ul className="mt-8 list-inside space-y-2">
+      <ul className="mt-8 list-inside space-y-2 list-disc">
         <li>{text1}</li>
         <li>{text2}</li>
         <li>{text3}</li>
