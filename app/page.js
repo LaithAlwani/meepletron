@@ -1,13 +1,37 @@
 "use client";
+import Features from "@/components/landingPage/Features";
+import Pricing from "@/components/landingPage/Pricing";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import Link from "next/link";
+
 export default function Home() {
   const { user } = useUser();
   return (
     <>
-      <div className="text-center pt-32 relative">
-        <div className="relative w-[18rem] sm:w-[20rem] h-[18rem] sm:h-[20rem] mx-auto left-5">
+      {/* <div className="container mx-auto px-4 py-6 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Board Game Wizard</h1>
+        <nav>
+          <ul className="flex space-x-4">
+            <li>
+              <a href="#features" className="hover:underline">
+                Features
+              </a>
+            </li>
+            <li>
+              <a href="#how-it-works" className="hover:underline">
+                How It Works
+              </a>
+            </li>
+            <li>
+              <a href="#pricing" className="hover:underline">
+                Pricing
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div> */}
+      <section className="text-center relative max-w-lg mx-auto px-3">
+        <div className="relative max-w-[18rem] sm:w-[20rem] h-[18rem] sm:h-[20rem] mx-auto left-5 my-4">
           <Image src="/chatbot-ed.png" fill priority alt="robot logo" />
           <span
             className={`absolute text-left font-bold ${
@@ -30,16 +54,24 @@ export default function Home() {
           </span>
         </div>
 
-        <h1 className="text-2xl sm:text-4xl uppercase font-bold pt-5 bg-gradient-to-br from-yellow-500 via-red-500 to-purple-500 text-transparent bg-clip-text">
-          Board Game Wizard
-        </h1>
-        <p className="italic text-sm font-semibold pb-5">No more rulebook flipping!</p>
-        <Link
-          href={user ? "/boardgames" : "/sign-in"}
-          className="inline-block rounded min-w-64  mx-1 font-bold bg-[#f95644] dark:bg-[#1887ba] p-3">
-          Get Started
-        </Link>
-      </div>
+        <h2 className="text-2xl md:text-4xl inline-block font-extrabold bg-gradient-to-r from-indigo-500  to-indigo-600 text-transparent bg-clip-text">
+          No More Rulebooks. Just Play!
+        </h2>
+        <p className="italic text-sm font-semibold ">Your Ultimate Board Game Companion</p>
+        <p className="text-lg mt-4">
+          Board Game Wizard is your personal AI rules expert, providing instant, accurate answers to
+          your board game questions. Keep the game going!
+        </p>
+        <a
+          href="#get-started"
+          className="mt-6 inline-block bg-indigo-600 text-white py-3 px-6 rounded-lg shadow hover:bg-indigo-700">
+          Get Started Now
+        </a>
+      </section>
+
+      <Features />
+
+      <Pricing />
     </>
   );
 }

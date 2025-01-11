@@ -43,15 +43,18 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`min-h-[100svh] mx-auto bg-[#f7f7f7] dark:bg-[#151e32]  t ${geistSans.variable} ${geistMono.variable} antialiased `}>
+          className={`min-h-[100svh] mx-auto bg-[#f7f7f7] dark:bg-[#151e32] text-gray-800 dark:text-gray-200 ${geistSans.variable} ${geistMono.variable} antialiased `}>
           <Providers>
             <Navbar />
-            <main className="max-w-xl mx-auto px-3 min-h-[86svh]">{children}</main>
-            
+            <main className="w-screen mx-auto  min-h-[86svh]">{children}</main>
+            <footer className="py-6">
+              <div className="container mx-auto px-4 text-center">
+                <p>&copy; 2025 Board Game Wizard.<br/> All rights reserved.</p>
+              </div>
+            </footer>
           </Providers>
         </body>
       </html>
     </ClerkProvider>
   );
 }
-

@@ -19,25 +19,22 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <div className="fixed bottom-0 left-0 z-10 bg-[#f7f7f7] dark:bg-[#151e32] w-full border-t ">
-          <div className="flex max-w-xl mx-auto items-center justify-between p-3 px-5 gap-3">
-            <span className="flex items-center w-[28px] h-[28px]">
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
-              <SignedOut>
-                <Link href="/sign-in">
-                  <MdLogin size={24} />
-                </Link>
-              </SignedOut>
-            </span>
+        <div className=" ">
+          <div className="flex max-w-xl mx-auto items-center justify-between  gap-3">
             <Link href="/boardgames" className="">
               <FaRobot size={24} />
             </Link>
-            {/* <Link href="/about" className="">
-              <FaInfo size={24} />
-            </Link> */}
             <ThemeSwitch />
+              <span className="flex items-center w-[28px] h-[28px]">
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+                <SignedOut>
+                  <Link href="/sign-in">
+                    <MdLogin size={24} />
+                  </Link>
+                </SignedOut>
+              </span>
           </div>
         </div>
       </div>

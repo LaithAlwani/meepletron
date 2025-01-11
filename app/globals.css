@@ -33,9 +33,11 @@
     --btn-secondary: #486581;
   }
 }
-
+* {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
 body {
- 
   font-family: Arial, Helvetica, sans-serif;
 }
 
