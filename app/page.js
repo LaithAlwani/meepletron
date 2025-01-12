@@ -3,6 +3,7 @@ import Features from "@/components/landingPage/Features";
 import Pricing from "@/components/landingPage/Pricing";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   const { user } = useUser();
@@ -62,11 +63,11 @@ export default function Home() {
           Board Game Wizard is your personal AI rules expert, providing instant, accurate answers to
           your board game questions. Keep the game going!
         </p>
-        <a
-          href="#get-started"
+        <Link
+          href="/boardgames"
           className="mt-6 inline-block bg-indigo-600 text-white py-3 px-6 rounded-lg shadow hover:bg-indigo-700">
           Get Started Now
-        </a>
+        </Link>
       </section>
 
       <Features />
