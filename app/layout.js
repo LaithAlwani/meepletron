@@ -46,8 +46,8 @@ export default function RootLayout({ children }) {
           className={`min-h-[100svh] mx-auto bg-[#f7f7f7] dark:bg-[#151e32] text-gray-800 dark:text-gray-200 ${geistSans.variable} ${geistMono.variable} antialiased `}>
           <Providers>
             <Navbar />
-            <main className="w-screen mx-auto  min-h-[86svh]">{children}</main>
-            <footer className="py-6">
+            <main className="w-screen mx-auto  min-h-[78svh]">{children}</main>
+            <footer className="py-3">
               <div className="container mx-auto px-4 text-center">
                 <p>&copy; 2025 Board Game Wizard.<br/> All rights reserved.</p>
               </div>

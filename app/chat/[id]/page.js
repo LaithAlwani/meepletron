@@ -1,13 +1,14 @@
 "use client";
 import { useChat } from "ai/react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FcReading } from "react-icons/fc";
 import { FaRegPaperPlane } from "react-icons/fa";
 
 export default function ChatPage() {
   const params = useParams();
   const [boardgame, setBoardgame] = useState(null);
+  const messagesEndRef = useRef(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: `/api/chat/${params.id}`,
     body: { boardgame },
@@ -23,24 +24,31 @@ export default function ChatPage() {
   useEffect(() => {
     getBoardgame();
   }, []);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current?.scrollHeight;
+    }
+  }, [messages]);
   return (
     <section className="p-4">
-      <div className="relative max-w-lg mx-auto justify-between w-full overflow-y-scroll no-scrollbar h-[78svh]  ">
+      <div ref={messagesEndRef} className=" max-w-lg mx-auto justify-between w-full overflow-y-scroll no-scrollbar h-[76svh]  ">
         <img
-          src={boardgame?.thumbnail}
+          src={boardgame?.image}
           alt=""
-          className="absolute top-0 right-2 w-24 h-24 rounded-md shadow-lg"
+          className="block mx-auto max-w-[200px] max-auto rounded-md shadow-lg mb-5"
         />
+        <h2 className="text-xl font-bold capitalize text-center mb-5">{boardgame?.title}</h2>
 
-        <div>
+        <div className="overflow-y-auto">
           {boardgame && (
             <div
               className={`p-3 mb-4 max-w-80 rounded-lg  
               bg-indigo-400 dark:bg-[#246199] shadow-md dark:shadow-cyan-900
             `}>
               <p>
-                Hi I'm Jenna, Welcome to <strong className="uppercase">{boardgame?.title}! </strong>
-                Ask me about the rules of the game!
+                Hi I'm <strong>Jenna</strong>,<br />
+                How can I assisst?!
               </p>
             </div>
           )}
