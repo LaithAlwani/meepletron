@@ -24,8 +24,8 @@ export default function ChatPage() {
     getBoardgame();
   }, []);
   return (
-    <>
-      <div className=" justify-between w-full overflow-y-scroll no-scrollbar p-5 h-[78svh]  ">
+    <section className="p-4">
+      <div className="max-w-lg mx-auto justify-between w-full overflow-y-scroll no-scrollbar h-[78svh]  ">
         <img
           src={boardgame?.thumbnail}
           alt=""
@@ -36,7 +36,7 @@ export default function ChatPage() {
           {boardgame && (
             <div
               className={`p-3 mb-4 max-w-80 rounded-lg  
-              bg-[#f77b6e] dark:bg-[#246199] shadow-md dark:shadow-cyan-900
+              bg-indigo-400 dark:bg-[#246199] shadow-md dark:shadow-cyan-900
             `}>
               <p>
                 Hi I'm Jenna, Welcome to <strong className="uppercase">{boardgame?.title}! </strong>
@@ -47,10 +47,10 @@ export default function ChatPage() {
           {messages.map((m) => (
             <div key={m.id} className={`mb-4 ${m.role === "user" ? " text-right" : ""}`}>
               <div
-                className={`inline-block p-3 mb-3 min-w-24  max-w-[375px] rounded-lg shadow-md dark:shadow-cyan-900 ${
+                className={`inline-block p-3 mb-3 min-w-24  max-w-[375px] rounded-md shadow-md  ${
                   m.role === "user"
-                    ? " bg-[#e9e9e9] dark:bg-[#56748e] text-left"
-                    : " bg-[#f77b6e] dark:bg-[#246199] "
+                    ? " bg-indigo-200 dark:bg-indigo-600 text-left"
+                    : " bg-indigo-400 dark:bg-[#246199] "
                 }`}>
                 <pre className="text-wrap font-serif">{m.content}</pre>
               </div>
@@ -59,7 +59,7 @@ export default function ChatPage() {
           {isLoading && <FcReading size={48} />}
         </div>
       </div>
-      <form onSubmit={handleSubmit} className=" w-full max-w-md mx-auto">
+      <form onSubmit={handleSubmit} className=" w-full max-w-lg mx-auto">
         <div className="flex items-center w-full border border-gray-700 rounded p-2">
           <input
             className="w-full focus:outline-0  bg-inherit"
@@ -73,6 +73,6 @@ export default function ChatPage() {
           </button>
         </div>
       </form>
-    </>
+    </section>
   );
 }

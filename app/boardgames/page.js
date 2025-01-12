@@ -28,7 +28,7 @@ export default function BoargamePage() {
     getBoardgames();
   }, []);
   return (
-    <section className="mb-[5rem]">
+    <section className="px-2 max-w-xl mx-auto">
       <input
         type="text"
         placeholder="enter game name..."
@@ -56,7 +56,7 @@ export default function BoargamePage() {
                 </Link>
                 <Link
                   href={`/chat/${bg._id}`}
-                  className="absolute bottom-1 right-1  bg-[#f95644] dark:bg-[#1887ba] rounded-full p-2">
+                  className="absolute bottom-1 right-1 text-white bg-indigo-600 rounded-full p-2">
                   <BsChatDots size={22} />
                 </Link>
               </div>
