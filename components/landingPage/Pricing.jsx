@@ -14,19 +14,19 @@ export default function Pricing() {
       <div className="container mx-auto px-4">
         <h3 className="text-3xl text-center font-bold mb-6">Pricing</h3>
 
-        <div className="flex flex-col justify-start gap-8 mx-auto w-64 bg-white dark:bg-indigo-600 shadow-md h-[22rem]">
+        <div className="border border-gray-300 flex flex-col justify-start gap-8 mx-auto w-64 bg-white dark:bg-indigo-600 shadow-md h-[22rem]">
           <div className="flex justify-between items-center  ">
-            <span className={`${isMonthly ? "font-bold " : "text-sm drop-shadow-2xl border-b border-r border-gray-700"} text-center flex-1 p-5 underline`} onClick={()=>handleClick("month")}>
+            <span className={`${isMonthly ? "font-semibold text-lg " : "text-sm drop-shadow-2xl border-b border-r border-gray-300"} text-center flex-1 p-5 underline`} onClick={()=>handleClick("month")}>
               Monthly
             </span>
-            <span className={`${!isMonthly ? "font-bold " : "text-sm drop-shadow-2xl border-b border-l border-gray-700"} text-center flex-1 p-5 underline`} onClick={()=>handleClick("year")}>
+            <span className={`${!isMonthly ? "font-semibold text-lg" : "text-sm drop-shadow-2xl border-b border-l border-gray-300"} text-center flex-1 p-5 underline`} onClick={()=>handleClick("year")}>
               Annually
             </span>
           </div>
           {isMonthly ? (
-            <Card type="Monthly" price="2.99" />
+            <Card type="Monthly" price="3" />
           ) : (
-            <Card type="Annually" price="29.99" />
+            <Card type="Annually" price="30" />
           )}
         </div>
       </div>
@@ -42,8 +42,8 @@ const Card = ({ type, price }) => {
       <div>
         <h4 className="text-3xl font-bold border-b border-gray-400 pb-2">
           ${price}
-          <span className="text-sm font-light text-gray-400 ">
-            {type === "Monthly" ? "/mo." : type === "Annually" ? "/yr." : " "}
+          <span className="text-sm font-light text-gray-500 ">
+            {type === "Monthly" ? " /mo." : type === "Annually" ? " /yr." : " "}
           </span>
         </h4>
 

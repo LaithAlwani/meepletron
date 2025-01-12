@@ -25,11 +25,11 @@ export default function ChatPage() {
   }, []);
   return (
     <section className="p-4">
-      <div className="max-w-lg mx-auto justify-between w-full overflow-y-scroll no-scrollbar h-[78svh]  ">
+      <div className="relative max-w-lg mx-auto justify-between w-full overflow-y-scroll no-scrollbar h-[78svh]  ">
         <img
           src={boardgame?.thumbnail}
           alt=""
-          className="fixed top-2 right-2 w-16 h-16 rounded-md shadow-lg"
+          className="absolute top-0 right-2 w-24 h-24 rounded-md shadow-lg"
         />
 
         <div>
