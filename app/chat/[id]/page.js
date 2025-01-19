@@ -47,7 +47,7 @@ export default function ChatPage() {
               bg-indigo-400 dark:bg-[#246199] shadow-md dark:shadow-cyan-900
             `}>
               <p>
-                Hi I'm <strong>Jenna</strong>,<br />
+                Hi welcome to <strong>{boardgame.title}</strong>!<br/>
                 How can I assisst?!
               </p>
             </div>
