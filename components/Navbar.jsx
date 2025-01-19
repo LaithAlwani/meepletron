@@ -14,8 +14,7 @@ export default function Navbar() {
             <Image src="/chatbot.png" fill priority alt="robot logo" />
           </div>
           <div className="flex flex-col">
-            <strong className="text-xl">MeepleTron</strong>
-            {/* <span className="font-semibold text-xs text-[#b5b5b5] dark:text-[#486581]">A Rules AI Wizard</span> */}
+            <h1 className="text-xl font-bold">Meepletron</h1>
           </div>
         </Link>
 
