@@ -15,10 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Board Game Wizard",
-  description: `Instantly search and understand board game rules with ease! Powered by AI,
-   our app eliminates the need to flip through manuals,
-   so you can focus on playing and having fun.
+  title: { template: "%s | Meepletron", default: "Meepletron" },
+  description: `Meepletron is your personal AI rules expert, providing instant, accurate answers to your board game questions. Keep the game going!
   Perfect for casual players and board game enthusiasts alike!`,
   generator: "Next.js",
   manifest: "/manifest.json",
@@ -26,8 +24,8 @@ export const metadata = {
   themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
   authors: [
     {
-      name: "imvinojanv",
-      url: "https://www.linkedin.com/in/imvinojanv/",
+      name: "Laith Alwani",
+      url: "https://www.linkedin.com/in/laithalwani/",
     },
   ],
   viewport:
@@ -49,7 +47,10 @@ export default function RootLayout({ children }) {
             <main className="w-screen mx-auto  min-h-[78svh]">{children}</main>
             <footer className="py-3">
               <div className="container mx-auto px-4 text-center">
-                <p>&copy; 2025 Board Game Wizard.<br/> All rights reserved.</p>
+                <p>
+                  &copy; 2025 Board Game Wizard.
+                  <br /> All rights reserved.
+                </p>
               </div>
             </footer>
           </Providers>

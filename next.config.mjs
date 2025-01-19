@@ -5,7 +5,7 @@ const nextConfig = {
   swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV !== "development", // Remove console.log in production
-  },// Enable SWC minification for improved performance
+  }, // Enable SWC minification for improved performance
   images: {
     remotePatterns: [
       {
@@ -16,6 +16,11 @@ const nextConfig = {
         search: "",
       },
     ],
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "20mb",
+    },
   },
 };
 

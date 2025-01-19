@@ -23,7 +23,7 @@ export default function Home() {
               <span>Hi {user.firstName}!</span>
             ) : (
               <span>
-                Hi, I'm the Wizard!
+                Hi, I'm MeepleTron!
                 <br />
                 How can I help?!
               </span>
@@ -31,13 +31,13 @@ export default function Home() {
           </span>
         </div>
 
-        <h2 className="text-2xl md:text-4xl inline-block font-extrabold bg-gradient-to-r from-indigo-500  to-indigo-600 text-transparent bg-clip-text">
-          No More Rulebooks. Just Play!
+        <h2 className="text-2xl md:text-4xl inline-block font-extrabold bg-gradient-to-r from-indigo-500  to-indigo-600 text-transparent bg-clip-text ">
+          MeepleTron
         </h2>
         <p className="italic text-sm font-semibold ">Your Ultimate Board Game Companion</p>
         <p className="text-lg mt-4">
-          Board Game Wizard is your personal AI rules expert, providing instant, accurate answers to
-          your board game questions. Keep the game going!
+          Meepletron is your personal AI board game rules expert, providing instant, accurate answers to
+          your board game questions.<br/> Keep the game going!
         </p>
         <Link
           href="/boardgames"
