@@ -32,7 +32,7 @@ export default function UploadPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-    data.set("file", file);
+    data.append("file", file);
     for (var key in boardGame) {
       data.append(key, boardGame[key]);
     }
@@ -42,9 +42,26 @@ export default function UploadPage() {
       body: data,
     });
     if (res.ok) {
-      const data = await res.json();
-      setText(data.data);
+      const { data } = await res.json();
+      data.forEach((chunk) => (chunk.pageContent = cleanText(chunk.pageContent)));
+      setText(data);
     }
+  };
+
+  const cleanText = (rawText) => {
+    return (
+      rawText
+        .split("\n")
+        .map((line) => line.trim())
+        .join(" ")
+        // Replace multiple spaces with a single space
+        .replace(/\s+/g, " ")
+        // Add line breaks after periods that are followed by a space or the end of a line
+        .replace(/(\.\s+)/g, ".\n\n")
+        // Add line breaks for section breaks like "Page:2" or numbered headers
+        .replace(/(\bPage:\d+\b|\d+\n)/g, "\n\n$1\n\n")
+        .trim()
+    ); // Join lines with proper line breaks
   };
   return (
     <div>
@@ -73,8 +90,13 @@ export default function UploadPage() {
       </form>
 
       {fileText?.map((text, idx) => (
-        <pre key={idx} className="w-full">
-          {text.pageContent}
+        <pre key={idx} className="max-w-xl">
+          {console.log(text.metadata)}
+          <details>
+            <summary className="text-xl font-bold">Page:{text.metadata.loc.pageNumber}</summary>
+            {text.pageContent}
+          </details>
+          
         </pre>
       ))}
     </div>
