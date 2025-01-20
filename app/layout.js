@@ -51,6 +51,20 @@ export default function RootLayout({ children }) {
                   &copy; 2025 Board Game Wizard.
                   <br /> All rights reserved.
                 </p>
+                <nav className="text-center">
+                  <ul className="flex justify-center space-x-4">
+                    <li>
+                      <a href="/privacy-policy" className="hover:underline">
+                        Privacy Policy
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/terms-of-service" className="hover:underline">
+                        Terms of Service
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </footer>
           </Providers>
