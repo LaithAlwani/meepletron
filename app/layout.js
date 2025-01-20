@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Providers from "./providers";
 import { ClerkProvider } from "@clerk/nextjs";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,6 +70,7 @@ export default function RootLayout({ children }) {
             </footer>
           </Providers>
         </body>
+        <GoogleAnalytics gaId="G-1BPTDRXTZG" />
       </html>
     </ClerkProvider>
   );
