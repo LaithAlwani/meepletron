@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /upload
+
+Sitemap: https://www.meepletron.com/sitemap.xml

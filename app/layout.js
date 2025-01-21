@@ -3,7 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Providers from "./providers";
 import { ClerkProvider } from "@clerk/nextjs";
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,9 +16,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: { template: "%s | Meepletron", default: "Meepletron" },
-  description: `Meepletron is your personal AI rules expert, providing instant, accurate answers to your board game questions. Keep the game going!
-  Perfect for casual players and board game enthusiasts alike!`,
+  title: {
+    template: "%s | Meepletron",
+    default: "Meepletron: AI Expert for Board Game Manuals – Instant Rule Answers",
+  },
+  description: `Meepletron, the AI board game expert, answers rule questions instantly. 
+  No more wasting time searching manuals—keep game night fun and hassle-free!`,
   generator: "Next.js",
   manifest: "/manifest.json",
   keywords: ["boardgames", "board game rules", "board game wizard", "board game assistant"],
@@ -35,6 +38,40 @@ export const metadata = {
     { rel: "apple-touch-icon", url: "icons/icon-128x128.png" },
     { rel: "icon", url: "icons/icon-128x128.png" },
   ],
+  robots: {
+    index: false,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: false,
+      noimageindex: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    title: 'Meepletron',
+    description: 'Meepletron, the AI board game expert, answers rule questions instantly. No more wasting time searching manuals—keep game night fun and hassle-free!',
+    url: 'https://www.meepeletron.com',
+    siteName: 'meepeletron',
+    images: [
+      {
+        url: 'https://opengraph.b-cdn.net/production/images/75d304f7-cdae-4662-85b5-297899c96f27.png?token=RvF_l06L3rJjadfhVrdxGfohFf4kBx1zLRuciSdU9FM&height=630&width=1200&expires=33273419887', // Must be an absolute URL
+        width: 800,
+        height: 600,
+      },
+      {
+        url: 'https://opengraph.b-cdn.net/production/images/75d304f7-cdae-4662-85b5-297899c96f27.png?token=RvF_l06L3rJjadfhVrdxGfohFf4kBx1zLRuciSdU9FM&height=630&width=1200&expires=33273419887', // Must be an absolute URL
+        width: 1200,
+        height: 630,
+        alt: 'My custom alt',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({ children }) {

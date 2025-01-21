@@ -36,8 +36,9 @@ export default function Home() {
         </h2>
         <p className="italic text-sm font-semibold ">Your Ultimate Board Game Companion</p>
         <p className="text-lg mt-4">
-          Meepletron is your personal meeple AI board game rules expert, providing instant, accurate answers to
-          your board game questions. Keep the game going!
+          Meepletron is your AI-powered board game expert, answering questions directly from
+          manuals. Say goodbye to wasting time on game night searching for rule details—get instant
+          answers and keep the fun going!
         </p>
         <Link
           href="/boardgames"
