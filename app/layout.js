@@ -58,8 +58,17 @@ export const metadata = {
     url: 'https://www.meepeletron.com',
     siteName: 'meepeletron',
     images: [
-    "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png"
-    ],
+    {
+      url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png",
+      width: 1200,
+      height: 630,
+    },
+    {
+      url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png",
+      width: 400,
+      height: 400,
+    },
+  ],
     locale: 'en_US',
     type: 'website',
   },
