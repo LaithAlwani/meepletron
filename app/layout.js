@@ -53,22 +53,12 @@ export const metadata = {
     },
   },
   openGraph: {
-    title: 'Meepletron',
-    description: 'Meepletron, the AI board game expert, answers rule questions instantly. No more wasting time searching manuals—keep game night fun and hassle-free!',
+    title: 'Meepletron: The AI board game expert',
+    description: 'Answers rule questions instantly.',
     url: 'https://www.meepeletron.com',
     siteName: 'meepeletron',
     images: [
-      {
-        url: 'https://opengraph.b-cdn.net/production/images/75d304f7-cdae-4662-85b5-297899c96f27.png?token=RvF_l06L3rJjadfhVrdxGfohFf4kBx1zLRuciSdU9FM&height=630&width=1200&expires=33273419887', // Must be an absolute URL
-        width: 800,
-        height: 600,
-      },
-      {
-        url: 'https://opengraph.b-cdn.net/production/images/75d304f7-cdae-4662-85b5-297899c96f27.png?token=RvF_l06L3rJjadfhVrdxGfohFf4kBx1zLRuciSdU9FM&height=630&width=1200&expires=33273419887', // Must be an absolute URL
-        width: 1200,
-        height: 630,
-        alt: 'My custom alt',
-      },
+    "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png"
     ],
     locale: 'en_US',
     type: 'website',
