@@ -1,4 +1,5 @@
 "use client";
+import SearchBoardGame from "@/components/SearchBoardGame";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -29,17 +30,13 @@ export default function BoargamePage() {
   }, []);
   return (
     <section className="px-2 max-w-xl mx-auto">
-      <input
-        type="text"
-        placeholder="enter game name..."
-        className="w-full bg-inherit border rounded p-2 my-2"
-      />
+      <SearchBoardGame />
       {!loading ? (
         <>
           <div className="relative flex py-5 items-center">
-            <div className="w-[3rem] border-t border-gray-400"></div>
-            <h2 className=" px-4 text-2xl font-bold italic">Recently Added</h2>
-            <div className="flex-grow border-t border-gray-400"></div>
+            <div className="w-[3rem] border-t border-gray-400 dark:border-yellow-300"></div>
+            <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500">Recently Added</h2>
+            <div className="flex-grow border-t border-gray-400 dark:border-yellow-300"></div>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
             {boardgames?.map((bg) => (
