@@ -1,6 +1,7 @@
 "use client";
 import Features from "@/components/landingPage/Features";
 import Pricing from "@/components/landingPage/Pricing";
+import RoadMap from "@/components/RoadMap";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
@@ -48,6 +49,7 @@ export default function Home() {
       </section>
       <Features />
       <Pricing />
+      <RoadMap />
     </>
   );
 }

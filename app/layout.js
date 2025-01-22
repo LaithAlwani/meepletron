@@ -86,7 +86,7 @@ export default function RootLayout({ children }) {
             <footer className="py-3">
               <div className="container mx-auto px-4 text-center">
                 <p>
-                  &copy; 2025 Board Game Wizard.
+                  &copy; 2025 Meepletron.
                   <br /> All rights reserved.
                 </p>
                 <nav className="text-center">
