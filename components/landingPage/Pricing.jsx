@@ -6,9 +6,9 @@ import { FaCheck } from "react-icons/fa6";
 export default function Pricing() {
   const [isMonthly, setIsMonthly] = useState(true);
   const handleClick = (value) => {
-    value === "month" ? setIsMonthly(true) : setIsMonthly(false);
-    
+    setIsMonthly(value === "month")
   };
+
   return (
     <section id="pricing" className="py-12 max-w-4xl mx-auto">
       <div className="container mx-auto px-4">
@@ -16,49 +16,75 @@ export default function Pricing() {
 
         <div className="border border-gray-300 flex flex-col justify-start gap-8 mx-auto w-64 bg-white dark:bg-indigo-600 shadow-md h-[22rem]">
           <div className="flex justify-between items-center  ">
-            <span className={`${isMonthly ? "font-semibold text-lg " : "text-sm drop-shadow-2xl border-b border-r border-gray-300"} text-center flex-1 p-5 underline`} onClick={()=>handleClick("month")}>
+            {console.log(isMonthly)}
+            <PeriodTab isMonthly={isMonthly} label="monthly" onClick={handleClick} value="month"/>
+            <PeriodTab isMonthly={!isMonthly} label="annually" onClick={handleClick} value="year"/>
+            {/* <span
+              className={`${
+                isMonthly
+                  ? "font-semibold text-lg "
+                  : "text-sm drop-shadow-2xl border-b border-r border-gray-300"
+              } text-center flex-1 p-5 underline`}
+              onClick={() => handleClick("month")}>
               Monthly
             </span>
-            <span className={`${!isMonthly ? "font-semibold text-lg" : "text-sm drop-shadow-2xl border-b border-l border-gray-300"} text-center flex-1 p-5 underline`} onClick={()=>handleClick("year")}>
+            <span
+              className={`${
+                !isMonthly
+                  ? "font-semibold text-lg"
+                  : "text-sm drop-shadow-2xl border-b border-l border-gray-300"
+              } text-center flex-1 p-5 underline`}
+              onClick={() => handleClick("year")}>
               Annually
-            </span>
+            </span> */}
           </div>
-          {isMonthly ? (
-            <Card type="Monthly" price="3" />
-          ) : (
-            <Card type="Annually" price="30" />
-          )}
+          {isMonthly ? <Card type="Monthly" price="3" /> : <Card type="Annually" price="30" />}
         </div>
       </div>
     </section>
   );
 }
 
+const PeriodTab = ({ label, onClick, value, isMonthly }) => (
+  <span
+    className={`${
+      isMonthly
+        ? "font-semibold text-lg  "
+        : "text-sm drop-shadow-2xl border-b border-r border-l border-gray-300"
+    } text-center flex-1 p-5 underline`}
+    onClick={() => onClick(value)}>
+    {label}
+  </span>
+);
+
 const Card = ({ type, price }) => {
-  const color = "green";
+  const color = "text-green-500 dark:text-white";
   const size = 14;
+
   return (
     <div className="px-4 pb-8 flex flex-col justify-between h-full">
       <div>
         <h4 className="text-3xl font-bold border-b border-gray-400 pb-2">
           ${price}
-          <span className="text-sm font-light text-gray-500 ">
+          <span className="text-sm font-light text-gray-500 dark:text-gray-300">
             {type === "Monthly" ? " /mo." : type === "Annually" ? " /yr." : " "}
           </span>
         </h4>
 
-        <ul className="my-4 space-y-4">
+        <ul className="my-4 space-y-2">
           <li className="flex items-center gap-2">
-            <FaCheck size={size} color={color} /> Access Game Library
+            <FaCheck size={size} className={color} /> Access Game Library
           </li>
           <li className="flex items-center gap-2">
-            <FaCheck size={size} color={color} /> Chat history
+            <FaCheck size={size} className={color} /> Chat history
           </li>
-          
-          {type === "Annually" && <li className="flex items-center gap-2">
-            <FaCheck size={size} color={color} />
-            Best value
-          </li>}
+
+          {type === "Annually" && (
+            <li className="flex items-center gap-2">
+              <FaCheck size={size} className={color} />
+              Best value
+            </li>
+          )}
         </ul>
       </div>
       <Link
