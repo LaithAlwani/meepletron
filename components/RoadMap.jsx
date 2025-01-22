@@ -7,15 +7,21 @@ const RoadMap = () => {
       status: "complete", // Status: "complete", "ongoing", or "coming"
     },
     {
-      title: "Gathering Data",
-      description: "Collecting and organizing relevant information for the project.",
-      date: "Dec 2024 - Feb 2025",
-      status: "ongoing",
+      title: "Refining Text Extraction",
+      status: "ongoing", // or "complete" or "ongoing"
+      date: "Jan 2025 - Feb 2025",
+      description: "Improve the accuracy and relevancy of text extraction from PDF board game manuals for better search results."
     },
     {
       title: "Refining AI Answers",
       description: "Enhancing the precision and accuracy of AI responses.",
       date: "Jan 2025 - Feb 2025",
+      status: "ongoing",
+    },
+    {
+      title: "Gathering Data",
+      description: "Collecting and organizing relevant information for the project.",
+      date: "Dec 2024 - Feb 2025",
       status: "coming",
     },
     {
@@ -27,9 +33,15 @@ const RoadMap = () => {
     {
       title: "Launch",
       description: "Official release of the product to the public.",
-      date: "June 2025",
+      date: "Early Q3 - 2025",
       status: "coming",
     },
+    {
+      title: "Favorites List",
+      status: "coming", // or "complete" or "ongoing"
+      date: "Late Q3 - 2025",
+      description: "Allow users to add board games to a favorites list for quick access and easy reference."
+    }
   ];
 
   const getStatusDot = (status) => {
@@ -46,7 +58,7 @@ const RoadMap = () => {
 
   return (
     <div className="flex flex-col items-center py-12">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">Road Map</h2>
+      <h2 className="text-3xl font-bold mb-8">Road Map</h2>
       <div className="relative w-full max-w-xl">
         {/* Vertical Line */}
         <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-200"></div>
@@ -58,9 +70,13 @@ const RoadMap = () => {
             } mb-8 `}>
             {/* Content */}
             <div className="w-1/2 text-right px-4">
-              <h3 className="text-lg font-semibold text-gray-700">{stop.title}</h3>
-              <p className="text-sm text-gray-600">{stop.description}</p>
-              <p className="text-sm text-gray-500 font-light mt-1">{stop.date}</p>
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-yellow-500">
+                {stop.title}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-200">{stop.description}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-300 font-light mt-1">
+                {stop.date}
+              </p>
             </div>
 
             {/* Circle and Line */}
