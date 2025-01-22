@@ -17,7 +17,7 @@ export async function GET(req) {
 
     const results = await Boardgame.find(
       { title: { $regex: query, $options: "i" } }, // Case-insensitive regex search
-      { title: 1, year:1 } // Return only title and description
+      { title: 1, image:1 } // Return only title and description
     )
       .limit(10) // Limit to 10 results
       .exec();
