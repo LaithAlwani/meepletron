@@ -1,9 +1,7 @@
 "use client";
+import Boardgame from "@/components/Boardgame";
 import SearchBoardGame from "@/components/SearchBoardGame";
-import Image from "next/image";
-import Link from "next/link";
 import { useState, useEffect } from "react";
-import { BsChatDots } from "react-icons/bs";
 
 export default function BoargamePage() {
   const [boardgames, setBoardgames] = useState([]);
@@ -16,6 +14,7 @@ export default function BoargamePage() {
       const res = await fetch("/api/boardgame");
       if (res.ok) {
         const data = await res.json();
+        console.log(data);
         setBoardgames(data);
       }
     } catch (err) {
@@ -29,7 +28,7 @@ export default function BoargamePage() {
     getBoardgames();
   }, []);
   return (
-    <section className="px-2 max-w-xl mx-auto">
+    <section className="px-2 max-w-xl mx-auto mb-6">
       <SearchBoardGame />
       {!loading ? (
         <>
@@ -39,24 +38,8 @@ export default function BoargamePage() {
             <div className="flex-grow border-t border-gray-400 dark:border-yellow-300"></div>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
-            {boardgames?.map((bg) => (
-              <div className="relative" key={bg._id}>
-                <Link href={`/boardgames/${bg._id}`} className="block w-[11rem] h-[11rem]">
-                  <Image
-                    src={bg.image}
-                    alt={bg.title}
-                    className="w-full h-full rounded-md object-cover object-top"
-                    fill
-                    sizes={"25vw"}
-                    quality={10}
-                  />
-                </Link>
-                <Link
-                  href={`/chat/${bg._id}`}
-                  className="absolute bottom-1 right-1 text-white bg-indigo-600 rounded-full p-2">
-                  <BsChatDots size={22} />
-                </Link>
-              </div>
+            {boardgames?.map((boardgame) => (
+              <Boardgame key={boardgame._id} boardgame={boardgame} />
             ))}
           </div>
         </>
