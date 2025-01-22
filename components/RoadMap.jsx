@@ -3,43 +3,43 @@ const RoadMap = () => {
     {
       title: "Prototype",
       description: "Creating the initial prototype to test key functionalities.",
-      date: "Oct 2024 - Dec 2024",
+      date: "Oct 2024 • Dec 2024",
       status: "complete", // Status: "complete", "ongoing", or "coming"
     },
     {
       title: "Refining Text Extraction",
       status: "ongoing", // or "complete" or "ongoing"
-      date: "Jan 2025 - Feb 2025",
+      date: "Jan 2025 • Feb 2025",
       description: "Improve the accuracy and relevancy of text extraction from PDF board game manuals for better search results."
     },
     {
       title: "Refining AI Answers",
       description: "Enhancing the precision and accuracy of AI responses.",
-      date: "Jan 2025 - Feb 2025",
+      date: "Jan 2025 • Feb 2025",
       status: "ongoing",
     },
     {
       title: "Gathering Data",
       description: "Collecting and organizing relevant information for the project.",
-      date: "Dec 2024 - Feb 2025",
+      date: "Mar 2025 • Jun 2025",
       status: "coming",
     },
     {
       title: "Beta Testing",
       description: "Testing the product with real users to gather feedback.",
-      date: "March 2025",
+      date: "Mar 2025 - Jun 2025",
       status: "coming",
     },
     {
       title: "Launch",
       description: "Official release of the product to the public.",
-      date: "Early Q3 - 2025",
+      date: "Early Q3 • 2025",
       status: "coming",
     },
     {
       title: "Favorites List",
       status: "coming", // or "complete" or "ongoing"
-      date: "Late Q3 - 2025",
+      date: "Late Q3 • 2025",
       description: "Allow users to add board games to a favorites list for quick access and easy reference."
     }
   ];
