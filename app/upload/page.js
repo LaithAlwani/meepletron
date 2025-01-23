@@ -48,23 +48,8 @@ export default function UploadPage() {
     }
   };
 
-  const cleanText = (rawText) => {
-    return (
-      rawText
-        .split("\n")
-        .map((line) => line.trim())
-        .join(" ")
-        // Replace multiple spaces with a single space
-        .replace(/\s+/g, " ")
-        // Add line breaks after periods that are followed by a space or the end of a line
-        .replace(/(\.\s+)/g, ".\n\n")
-        // Add line breaks for section breaks like "Page:2" or numbered headers
-        .replace(/(\bPage:\d+\b|\d+\n)/g, "\n\n$1\n\n")
-        .trim()
-    ); // Join lines with proper line breaks
-  };
   return (
-    <div>
+    <div className="max-w-xl mx-auto">
       {!boardGame && !gameList?.length && (
         <form onSubmit={getBoardGames}>
           <input type="text" value={input} onChange={(e) => setInput(e.target.value)} />
