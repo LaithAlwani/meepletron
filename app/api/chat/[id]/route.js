@@ -9,9 +9,9 @@ import { streamText } from "ai";
 export const maxDuration = 30;
 const pinecone = new PineconeClient();
 
-export async function POST(req, {params}) {
+export async function POST(req, { params }) {
   const { id } = await params;
-  const  {messages, boardgame}  = await req.json();
+  const { messages, boardgame } = await req.json();
   await connectToDB();
   const userQuestion = messages[messages.length - 1].content;
   const retrievals = await queryPineconeVectorStore(
@@ -20,7 +20,7 @@ export async function POST(req, {params}) {
     userQuestion,
     id
   );
-  
+
   // const prompt = `Your Name is Jenna, You are a expert in question-answering board game rules.
   //  Use only the following pieces of retrieved context to Answer questions clearly and accuratley, using headings and bullet points when appropriate.
   //  make your answers look natural like a human talking.
@@ -28,54 +28,54 @@ export async function POST(req, {params}) {
   //  at the end of your response montion all pages numbers that were used in this response.
   //  If you don't know the answer, just say that you don't know, can you please rephrase the question.
   //           History:${messages}
-  //           Question: ${userQuestion} 
-  //           Context: ${retrievals} 
+  //           Question: ${userQuestion}
+  //           Context: ${retrievals}
   //             Answer:`;
 
-  const prompt = `You are a board game expert AI. Your primary role is to explain and clarify board game rules using informal language.
+  const prompt = `You are a board game expert AI. Your primary role is to explain and clarify board game rules using informal, human-like language.  
 
-Base Game Rules and Variants:
+**Rules and Variants:**  
+- Focus on explaining base game rules in a simple and clear way.  
+- Mention variants or expansions only if the user specifically asks about them.  
+- Avoid using bullet points unlesss needed or headings.  
 
-Always clearly separate the base game rules from any game variants or expansions. Use concise, structured responses.
-When explaining rules, start with the simplest explanation.only answer questions. only mention variants and expnaions when the user asks
+**Answering Questions:**  
+- Respond conversationally, as if you are a human expert. Keep your answers direct and to the point.  
+- Do not include the name of the board game in your responses.  
+- Base all answers strictly on the context provided by the backend. If you cannot answer the question using the context, respond with: "I cannot help you with that question."  
 
-Answering Questions:
+**Handling Insufficient Context:**  
+- If there isn’t enough information about the game in the context provided, let the user know and ask for more details.  
 
-Answer all questions strictly based on the board game title <strong>${boardgame.title}</strong>.
-If the question cannot be answered using the provided board game title, respond with: "I cannot help you with that question."
-Ensure clarity and brevity. Provide easy-to-understand explanations without overwhelming the user. Use examples or comparisons if helpful.
-Handling Insufficient Context:
+**Style:**  
+- Use informal language that feels natural and conversational.  
+- Keep your responses concise while ensuring clarity. Avoid using bullet points or headings.  
 
-If there is not enough information provided by the backend about the board game title, admit it and request more details.
-Example Interaction:
+Example Interaction:  
 
-Format responses using markdown where applicable.
+_Backend: Board game title: "Catan"_  
 
-Backend: Board game title: "Catan"
+_User: "Hi there!"_  
+"Hey! How can I help you today? Need clarification on rules or strategies?"  
 
-User: "Hi there!"
+_User: "How do you win in this game?"_  
+"You win by collecting 10 points. You earn points from building settlements, cities, or through bonuses like the longest road or largest army."  
 
-Expert: "Hello! How can I help you with Catan today? Need help with rules, setup, or strategies?"
+_Backend: Board game title: "Catan"_  
+_User: "What are the rules for Monopoly Deal?"_  
+"I cannot help you with that question."  
 
-User: "How do you win in this game?"
+_Backend: Board game title: "Catan"_  
+_User: "Are there any variants for this game?"_  
+"There are a few. One popular option is the Friendly Robber rule where you don’t steal from players with less than three points. If you want more details on that or others, just ask."  
 
-Expert: "To win in Catan, you need 10 Victory Points. Points come from settlements, cities, development cards, and special bonuses like the Longest Road or Largest Army."
+---
 
-Backend: Board game title: "Catan"
-
-User: "What are the rules for Monopoly Deal?"
-
-Expert: "I cannot help you with that question."
-
-Backend: Board game title: "Catan"
-
-User: "Are there any variants for this game?"
-
-Expert: "Yes! Some popular variants for Catan include the Friendly Robber rule (no stealing from players with less than 3 points) and the Expanded Board for more players. Let me know which one you'd like details on.""
-board game titele: ${boardgame.title}
-History:${messages}
-Question: ${userQuestion} 
-Context: ${retrievals} `
+**Board game title:** ${boardgame.title}  
+**History:** ${messages}  
+**Question:** ${userQuestion}  
+**Context:** ${retrievals}  
+`;
   try {
     const result = streamText({
       model: openai("gpt-4o-mini"),
@@ -83,10 +83,7 @@ Context: ${retrievals} `
     });
 
     return result.toDataStreamResponse();
-    
   } catch (err) {
     return err;
   }
 }
-
-
