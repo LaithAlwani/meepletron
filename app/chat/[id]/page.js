@@ -4,20 +4,30 @@ import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FcReading } from "react-icons/fc";
 import { FaRegPaperPlane } from "react-icons/fa";
+import Loader from "@/components/Loader";
 
 export default function ChatPage() {
   const params = useParams();
   const [boardgame, setBoardgame] = useState(null);
+  const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: `/api/chat/${params.id}`,
     body: { boardgame },
   });
+
   const getBoardgame = async () => {
-    const res = await fetch(`/api/boardgame/${params.id}`);
-    if (res.ok) {
-      const data = await res.json();
-      setBoardgame(data);
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/boardgame/${params.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setBoardgame(data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -30,9 +40,11 @@ export default function ChatPage() {
       messagesEndRef.current.scrollTop = messagesEndRef.current?.scrollHeight;
     }
   }, [messages]);
-  return (
+  return !loading ? (
     <section className="p-4">
-      <div ref={messagesEndRef} className=" max-w-lg mx-auto justify-between w-full overflow-y-scroll no-scrollbar h-[76svh]  ">
+      <div
+        ref={messagesEndRef}
+        className=" max-w-lg mx-auto justify-between w-full overflow-y-scroll no-scrollbar h-[76svh]  ">
         <img
           src={boardgame?.image}
           alt=""
@@ -47,7 +59,7 @@ export default function ChatPage() {
               bg-indigo-400 dark:bg-[#246199] shadow-md dark:shadow-cyan-900
             `}>
               <p>
-                Hi welcome to <strong>{boardgame.title}</strong>!<br/>
+                Hi welcome to <strong>{boardgame.title}</strong>!<br />
                 How can I assisst?!
               </p>
             </div>
@@ -82,5 +94,7 @@ export default function ChatPage() {
         </div>
       </form>
     </section>
+  ) : (
+    <Loader />
   );
 }

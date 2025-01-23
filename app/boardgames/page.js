@@ -1,5 +1,6 @@
 "use client";
 import Boardgame from "@/components/Boardgame";
+import Loader from "@/components/Loader";
 import SearchBoardGame from "@/components/SearchBoardGame";
 import { useState, useEffect } from "react";
 
@@ -44,7 +45,7 @@ export default function BoargamePage() {
           </div>
         </>
       ) : (
-        <img src="/loader.svg" className="animate-spin mt-[10rem] mx-auto" alt="loader" />
+        <Loader />
       )}
     </section>
   );

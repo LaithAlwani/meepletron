@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/components/Loader";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -7,19 +8,27 @@ import { useState, useEffect } from "react";
 export default function BoardgamePage() {
   const params = useParams();
   const [boardgame, setBoardgame] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const getBoardgame = async () => {
-    const res = await fetch(`/api/boardgame/${params.id}`);
-    if (res.ok) {
-      const data = await res.json();
-      setBoardgame(data);
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/boardgame/${params.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setBoardgame(data);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
     getBoardgame();
   }, []);
-  return (
-    <div className=" pt-12 ">
+  return !loading ? (
+    <div className=" pt-12 max-w-xl mx-auto ">
       {boardgame && (
         <div className="flex justify-start gap-4 items-center">
           <div className="relative  min-w-[12rem] h-[12rem]">
@@ -34,7 +43,9 @@ export default function BoardgamePage() {
             />
           </div>
           <div>
-            <h2 className="text-2xl font-bold capitalize">{boardgame.title} <span className="text-xs font-light">({boardgame.year}) </span></h2>
+            <h2 className="text-2xl font-bold capitalize">
+              {boardgame.title} <span className="text-xs font-light">({boardgame.year}) </span>
+            </h2>
             <p>
               players: {boardgame.minPlayers} - {boardgame.maxPlayers}
             </p>
@@ -48,5 +59,7 @@ export default function BoardgamePage() {
         </div>
       )}
     </div>
+  ) : (
+    <Loader />
   );
 }
