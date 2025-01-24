@@ -18,14 +18,14 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: {
-    template: "%s | Meepletron",
+    template: "%s | Meepletron | Boardgames",
     default: "Meepletron: AI Expert for Board Game Manuals – Instant Rule Answers",
   },
-  description: `Meepletron, the AI board game expert, answers rule questions instantly. 
+  description: `Meepletron, the AI boardgames amd tabletop games expert, answers rule questions instantly. 
   No more wasting time searching manuals—keep game night fun and hassle-free!`,
   generator: "Next.js",
   manifest: "/manifest.json",
-  keywords: ["boardgames", "board game rules", "board game wizard", "board game assistant"],
+  keywords: ["boardgames", "board game rules", "board game meeple", "board game assistant", "meeple", "board games", "tapletop games", "modren boardgames"],
   themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
   authors: [
     {
