@@ -92,10 +92,10 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`min-h-[100svh] mx-auto bg-[#f7f7f7] dark:bg-[#151e32] text-gray-800 dark:text-gray-200 ${geistSans.variable} ${geistMono.variable} antialiased `}>
+          className={`min-h-[100svh] mx-auto bg-[#f7f7f7] dark:bg-slate-900 text-gray-800 dark:text-gray-200 ${geistSans.variable} ${geistMono.variable} antialiased `}>
           <Providers>
             <Navbar />
-            <main className="w-screen mx-auto  min-h-[90svh]">{children}</main>
+            <main className="w-screen mx-auto  min-h-[84svh]">{children}</main>
             <footer className="py-3">
               <div className="container max-w-xl mx-auto px-4 text-center">
                 <div className="flex justify-center space-x-4 p-2">
@@ -104,14 +104,14 @@ export default function RootLayout({ children }) {
                     target="_blank"
                     rel="noreferrer noopener"
                     referrerPolicy="no-referrer">
-                    <FaFacebookF size={24} aria-label="facebook" />
+                    <FaFacebookF size={24} aria-label="facebook" className="" />
                   </a>
                   <a
                     href="https://www.instagram.com/meeple_tron/"
                     target="_blank"
                     rel="noreferrer noopener"
                     referrerPolicy="no-referrer">
-                    <FaInstagram size={24} aria-label="instagram" />
+                    <FaInstagram size={24} aria-label="instagram" className="" />
                   </a>
                 </div>
                 <nav className="text-center">
@@ -128,7 +128,7 @@ export default function RootLayout({ children }) {
                     </li>
                   </ul>
                 </nav>
-                <p>&copy; 2025 Meepletron • All rights reserved.</p>
+                <p>&copy; 2025 Meepletron • All rights reserved</p>
               </div>
             </footer>
           </Providers>

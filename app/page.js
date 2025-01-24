@@ -1,7 +1,7 @@
 import Features from "@/components/landingPage/Features";
 import Pricing from "@/components/landingPage/Pricing";
 import WelcomeMessage from "@/components/landingPage/WelcomeMessage";
-import RoadMap from "@/components/RoadMap";
+import RoadMap from "@/components/landingPage/RoadMap";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,7 +14,7 @@ export default function Home() {
           <WelcomeMessage />
         </div>
 
-        <h2 className="text-4xl inline-block font-extrabold bg-gradient-to-r from-indigo-500  to-indigo-600 text-transparent bg-clip-text">
+        <h2 className="text-4xl inline-block font-extrabold bg-gradient-to-r from-indigo-500  to-indigo-600 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
           Meepletron
         </h2>
         <p className="italic text-sm font-semibold ">Your Ultimate Board Game Companion</p>
@@ -25,7 +25,7 @@ export default function Home() {
         </p>
         <Link
           href="/boardgames"
-          className="mt-6 inline-block bg-indigo-600 text-white py-3 px-6 rounded-lg shadow hover:bg-indigo-700">
+          className="mt-6 inline-block bg-indigo-600 text-white py-3 px-6 rounded-lg shadow hover:bg-indigo-700 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-900 font-bold">
           Get Started Now
         </Link>
       </section>

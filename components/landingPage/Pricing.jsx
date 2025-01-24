@@ -14,7 +14,7 @@ export default function Pricing() {
       <div className="container mx-auto px-4">
         <h3 className="text-3xl text-center font-bold mb-6">Pricing</h3>
 
-        <div className="border border-gray-300 flex flex-col justify-start gap-8 mx-auto w-64 bg-white dark:bg-indigo-600 shadow-md h-[22rem]">
+        <div className="border border-gray-300 flex flex-col justify-start gap-8 mx-auto w-64 bg-white dark:bg-slate-800 shadow-md h-[22rem]">
           <div className="flex justify-between items-center  ">
             <PeriodTab isMonthly={isMonthly} label="monthly" onClick={handleClick} value="month"/>
             <PeriodTab isMonthly={!isMonthly} label="annually" onClick={handleClick} value="year"/>
@@ -70,7 +70,7 @@ const Card = ({ type, price }) => {
       </div>
       <Link
         href="#get-started"
-        className="block text-center font-semibold bg-indigo-600 hover:bg-indigo-500 dark:bg-indigo-200 dark:hover:bg-indigo-300 dark:text-gray-800 shadow-lg text-white py-2 px-4 rounded-lg ">
+        className="block text-center font-semibold bg-indigo-600 hover:bg-indigo-500 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-800  shadow-lg text-white py-2 px-4 rounded-lg ">
         Choose Plan
       </Link>
     </div>

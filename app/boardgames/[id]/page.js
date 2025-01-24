@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { MdGroups, MdAccessTime  } from "react-icons/md";
+
 
 export default function BoardgamePage() {
   const params = useParams();
@@ -30,7 +32,7 @@ export default function BoardgamePage() {
   return !loading ? (
     <div className=" pt-12 max-w-xl mx-auto ">
       {boardgame && (
-        <div className="flex justify-start gap-4 items-center">
+        <div className="flex flex-col justify-start gap-4 items-center">
           <div className="relative  min-w-[12rem] h-[12rem]">
             <Image
               src={boardgame.image}
@@ -42,16 +44,16 @@ export default function BoardgamePage() {
             />
           </div>
           <div>
-            <h2 className="text-2xl font-bold capitalize">
+            <h2 className="text-2xl font-bold capitalize mb-4">
               {boardgame.title} <span className="text-xs font-light">({boardgame.year}) </span>
             </h2>
-            <p>
-              players: {boardgame.minPlayers} - {boardgame.maxPlayers}
+            <p className="flex justify-start items-center gap-2 mb-2">
+              <MdGroups size={24}/> {boardgame.minPlayers} - {boardgame.maxPlayers}
             </p>
-            <p>play time: {boardgame.playTime} </p>
+            <p className="flex justify-start items-center gap-2 mb-2"><MdAccessTime size={24}/> {boardgame.playTime} </p>
             <Link
               href={`/chat/${boardgame._id}`}
-              className="inline-block rounded  mt-3 font-bold bg-[#f95644] dark:bg-[#1887ba] p-3">
+              className="w-full text-center inline-block rounded  mt-3 font-bold bg-indigo-600 hover:bg-indigo-500 dark:dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-900 p-3">
               Ask a question!
             </Link>
           </div>

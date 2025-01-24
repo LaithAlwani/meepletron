@@ -18,7 +18,7 @@ export default function Boardgame({ boardgame }) {
       </Link>
       <Link
         href={`/chat/${_id}`}
-        className="absolute bottom-1 right-1 text-white bg-indigo-600 rounded-full p-2">
+        className="absolute bottom-1 right-1 text-white bg-indigo-600 dark:bg-yellow-500 dark:text-slate-900 rounded-full p-2">
         <BsChatDots size={22} />
       </Link>
     </div>
