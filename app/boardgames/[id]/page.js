@@ -32,7 +32,6 @@ export default function BoardgamePage() {
       {boardgame && (
         <div className="flex justify-start gap-4 items-center">
           <div className="relative  min-w-[12rem] h-[12rem]">
-            {console.log(boardgame)}
             <Image
               src={boardgame.image}
               alt={boardgame.title}

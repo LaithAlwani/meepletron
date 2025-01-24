@@ -13,7 +13,6 @@ export default function UploadPage() {
     e.preventDefault();
     const list = await fetchBggGame(input);
     if (list.length != undefined) {
-      console.log(typeof list);
       setGameList(list);
     } else {
       const temp = [];

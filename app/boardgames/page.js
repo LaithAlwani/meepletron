@@ -15,7 +15,6 @@ export default function BoargamePage() {
       const res = await fetch("/api/boardgame");
       if (res.ok) {
         const data = await res.json();
-        console.log(data);
         setBoardgames(data);
       }
     } catch (err) {

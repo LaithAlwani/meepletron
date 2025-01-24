@@ -9,7 +9,7 @@ export default function Navbar() {
   return (
     <nav className="w-full text-lg p-3">
       <div className="flex justify-between items-center max-w-xl mx-auto">
-        <Link href="/" className="flex items-center justify-start gap-1 ">
+        <Link href="/" className="flex items-center justify-start gap-1" aria-label="logo">
           <div className="relative w-[2rem] h-[2rem]">
             <Image src="/chatbot.png" fill priority alt="robot logo" />
           </div>
@@ -21,15 +21,15 @@ export default function Navbar() {
         <div className=" ">
           <div className="flex max-w-xl mx-auto items-center justify-between  gap-3">
             <Link href="/boardgames" className="">
-              <FaRobot size={24} />
+              <FaRobot size={24} aria-label="board games" />
             </Link>
             <ThemeSwitch />
               <span className="flex items-center w-[28px] h-[28px]">
                 <SignedIn>
-                  <UserButton />
+                  <UserButton aria-label="user settings" />
                 </SignedIn>
                 <SignedOut>
-                  <Link href="/sign-in">
+                  <Link href="/sign-in" aria-label="sign-in">
                     <MdLogin size={24} />
                   </Link>
                 </SignedOut>

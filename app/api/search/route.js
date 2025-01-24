@@ -6,7 +6,6 @@ export async function GET(req) {
   const url = new URL(req.url);
   const searchParams = new URLSearchParams(url.searchParams);
   const query = searchParams.get("query");
-  console.log("params", query);
 
   if (!query) {
     return res.status(400).json({ message: "Query parameter is required" });
@@ -21,7 +20,7 @@ export async function GET(req) {
     )
       .limit(10) // Limit to 10 results
       .exec();
-    console.log(typeof results);
+  
     return NextResponse.json({ data: results }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

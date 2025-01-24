@@ -17,34 +17,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  viewport:
+    "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
+  themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
+};
+
 export const metadata = {
   title: {
-    template: "%s | Meepletron | Boardgames",
+    template: "%s | Meepletron | Board games",
     default: "Meepletron: AI Expert for Board Game Manuals – Instant Rule Answers",
   },
-  description: `Meepletron, the AI boardgames amd tabletop games expert, answers rule questions instantly. 
-  No more wasting time searching manuals—keep game night fun and hassle-free!`,
+  description: `Meepletron, the AI board games amd tabletop games expert, answers rule questions instantly. 
+  No more wasting time searching manuals - keep game night fun and hassle-free!`,
   generator: "Next.js",
   manifest: "/manifest.json",
   keywords: [
-    "boardgames",
+    "board games",
     "board game rules",
     "board game meeple",
     "board game assistant",
     "meeple",
-    "board games",
     "tapletop games",
-    "modren boardgames",
+    "moedern board games",
   ],
-  themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
   authors: [
     {
       name: "Laith Alwani",
       url: "https://www.linkedin.com/in/laithalwani/",
     },
   ],
-  viewport:
-    "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
+
   icons: [
     { rel: "apple-touch-icon", url: "icons/icon-128x128.png" },
     { rel: "icon", url: "icons/icon-128x128.png" },
@@ -95,22 +98,22 @@ export default function RootLayout({ children }) {
             <main className="w-screen mx-auto  min-h-[90svh]">{children}</main>
             <footer className="py-3">
               <div className="container max-w-xl mx-auto px-4 text-center">
-                <ul className="flex justify-center space-x-4 p-2">
+                <div className="flex justify-center space-x-4 p-2">
                   <a
                     href="https://www.facebook.com/profile.php?id=61572349896501"
                     target="_blank"
                     rel="noreferrer noopener"
                     referrerPolicy="no-referrer">
-                    <FaFacebookF size={24} />
+                    <FaFacebookF size={24} aria-label="facebook" />
                   </a>
                   <a
                     href="https://www.instagram.com/meeple_tron/"
                     target="_blank"
                     rel="noreferrer noopener"
                     referrerPolicy="no-referrer">
-                    <FaInstagram size={24} />
+                    <FaInstagram size={24} aria-label="instagram" />
                   </a>
-                </ul>
+                </div>
                 <nav className="text-center">
                   <ul className="flex justify-center space-x-4">
                     <li>

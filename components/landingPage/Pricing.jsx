@@ -16,27 +16,8 @@ export default function Pricing() {
 
         <div className="border border-gray-300 flex flex-col justify-start gap-8 mx-auto w-64 bg-white dark:bg-indigo-600 shadow-md h-[22rem]">
           <div className="flex justify-between items-center  ">
-            {console.log(isMonthly)}
             <PeriodTab isMonthly={isMonthly} label="monthly" onClick={handleClick} value="month"/>
             <PeriodTab isMonthly={!isMonthly} label="annually" onClick={handleClick} value="year"/>
-            {/* <span
-              className={`${
-                isMonthly
-                  ? "font-semibold text-lg "
-                  : "text-sm drop-shadow-2xl border-b border-r border-gray-300"
-              } text-center flex-1 p-5 underline`}
-              onClick={() => handleClick("month")}>
-              Monthly
-            </span>
-            <span
-              className={`${
-                !isMonthly
-                  ? "font-semibold text-lg"
-                  : "text-sm drop-shadow-2xl border-b border-l border-gray-300"
-              } text-center flex-1 p-5 underline`}
-              onClick={() => handleClick("year")}>
-              Annually
-            </span> */}
           </div>
           {isMonthly ? <Card type="Monthly" price="3" /> : <Card type="Annually" price="30" />}
         </div>
