@@ -4,7 +4,8 @@ import Navbar from "@/components/Navbar";
 import Providers from "./providers";
 import { ClerkProvider } from "@clerk/nextjs";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +26,16 @@ export const metadata = {
   No more wasting time searching manuals—keep game night fun and hassle-free!`,
   generator: "Next.js",
   manifest: "/manifest.json",
-  keywords: ["boardgames", "board game rules", "board game meeple", "board game assistant", "meeple", "board games", "tapletop games", "modren boardgames"],
+  keywords: [
+    "boardgames",
+    "board game rules",
+    "board game meeple",
+    "board game assistant",
+    "meeple",
+    "board games",
+    "tapletop games",
+    "modren boardgames",
+  ],
   themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
   authors: [
     {
@@ -47,30 +57,30 @@ export const metadata = {
       index: true,
       follow: false,
       noimageindex: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   openGraph: {
-    title: 'Meepletron: The AI board game expert',
-    description: 'Answers rule questions instantly.',
-    url: 'https://www.meepeletron.com',
-    siteName: 'meepeletron',
+    title: "Meepletron: The AI board game expert",
+    description: "Answers rule questions instantly.",
+    url: "https://www.meepeletron.com",
+    siteName: "meepeletron",
     images: [
-    {
-      url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png",
-      width: 1200,
-      height: 630,
-    },
-    {
-      url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png",
-      width: 400,
-      height: 400,
-    },
-  ],
-    locale: 'en_US',
-    type: 'website',
+      {
+        url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png",
+        width: 1200,
+        height: 630,
+      },
+      {
+        url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png",
+        width: 400,
+        height: 400,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
   },
 };
 
@@ -84,10 +94,23 @@ export default function RootLayout({ children }) {
             <Navbar />
             <main className="w-screen mx-auto  min-h-[90svh]">{children}</main>
             <footer className="py-3">
-              <div className="container mx-auto px-4 text-center">
-                <p>
-                  &copy; 2025 Meepletron • All rights reserved.
-                </p>
+              <div className="container max-w-xl mx-auto px-4 text-center">
+                <ul className="flex justify-center space-x-4 p-2">
+                  <a
+                    href="https://www.facebook.com/profile.php?id=61572349896501"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    referrerPolicy="no-referrer">
+                    <FaFacebookF size={24} />
+                  </a>
+                  <a
+                    href="https://www.instagram.com/meeple_tron/"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    referrerPolicy="no-referrer">
+                    <FaInstagram size={24} />
+                  </a>
+                </ul>
                 <nav className="text-center">
                   <ul className="flex justify-center space-x-4">
                     <li>
@@ -102,6 +125,7 @@ export default function RootLayout({ children }) {
                     </li>
                   </ul>
                 </nav>
+                <p>&copy; 2025 Meepletron • All rights reserved.</p>
               </div>
             </footer>
           </Providers>
