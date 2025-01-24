@@ -1,35 +1,17 @@
-"use client";
 import Features from "@/components/landingPage/Features";
 import Pricing from "@/components/landingPage/Pricing";
+import WelcomeMessage from "@/components/landingPage/WelcomeMessage";
 import RoadMap from "@/components/RoadMap";
-import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
-  const { user } = useUser();
   return (
     <>
       <section className="text-center relative max-w-lg mx-auto px-3">
         <div className="relative max-w-[18rem] sm:w-[20rem] h-[18rem] sm:h-[20rem] mx-auto left-5 my-4">
           <Image src="/chatbot-ed.png" fill priority alt="robot logo" />
-          <span
-            className={`absolute text-left font-bold ${
-              user
-                ? "text-[18px] right-[1.5rem] top-[2.4rem] sm:top-[2.8rem]"
-                : "text-[10px] right-[1rem] top-[2.2rem] sm:top-[2.5rem]"
-            }  
-            bg-gradient-to-tr from-purple-500 to-red-500 text-transparent bg-clip-text`}>
-            {user ? (
-              <span>Hi {user.firstName}!</span>
-            ) : (
-              <span>
-                Hi, I'm Meepletron!
-                <br />
-                How can I help?!
-              </span>
-            )}
-          </span>
+          <WelcomeMessage />
         </div>
 
         <h2 className="text-4xl inline-block font-extrabold bg-gradient-to-r from-indigo-500  to-indigo-600 text-transparent bg-clip-text">
