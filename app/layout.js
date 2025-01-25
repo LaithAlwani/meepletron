@@ -53,16 +53,16 @@ export const metadata = {
     { rel: "icon", url: "icons/icon-128x128.png" },
   ],
   robots: {
-    index: false,
+    index: true,
     follow: true,
-    nocache: true,
+    nocache: false,
     googleBot: {
       index: true,
-      follow: false,
-      noimageindex: true,
-      "max-video-preview": -1,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": "large",
       "max-image-preview": "large",
-      "max-snippet": -1,
+      "max-snippet": 320,
     },
   },
   openGraph: {
