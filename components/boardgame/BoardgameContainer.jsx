@@ -1,9 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { BsChatDots } from "react-icons/bs";
+import FavoriteButton from "./FavoriteButton";
 
-export default function Boardgame({ boardgame }) {
-  const {_id, image, title} = boardgame
+export default function BoardgameContainer({ boardgame }) {
+  const { _id, image, title } = boardgame;
   return (
     <div className="relative">
       <Link href={`/boardgames/${_id}`} className="block w-[11rem] h-[11rem]">
@@ -16,6 +17,9 @@ export default function Boardgame({ boardgame }) {
           quality={10}
         />
       </Link>
+      <span className="absolute bottom-1 left-1">
+        <FavoriteButton />
+      </span>
       <Link
         href={`/chat/${_id}`}
         className="absolute bottom-1 right-1 text-white bg-indigo-600 dark:bg-yellow-500 dark:text-slate-900 rounded-full p-2">

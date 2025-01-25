@@ -1,5 +1,6 @@
+"use client";
 import { useEffect, useState } from "react";
-import Boardgame from "./Boardgame";
+import Boardgame from "./boardgame/BoardgameContainer";
 
 const SearchBoardGame = () => {
   const [query, setQuery] = useState("");
@@ -61,11 +62,13 @@ const SearchBoardGame = () => {
         // add a components that allows users to send which games they like to see
       )}
       <>
-        {results.length > 0 && <div className="relative flex py-5 items-center">
-          <div className="w-[3rem] border-t border-gray-400 dark:border-yellow-300"></div>
-          <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500">Search Results</h2>
-          <div className="flex-grow border-t border-gray-400 dark:border-yellow-300"></div>
-        </div>}
+        {results.length > 0 && (
+          <div className="relative flex py-5 items-center">
+            <div className="w-[3rem] border-t border-gray-400 dark:border-yellow-300"></div>
+            <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500">Search Results</h2>
+            <div className="flex-grow border-t border-gray-400 dark:border-yellow-300"></div>
+          </div>
+        )}
         <div className="flex my-4 gap-4 overflow-x-scroll">
           {results.map((boardgame) => (
             <Boardgame key={boardgame._id} boardgame={boardgame} />
