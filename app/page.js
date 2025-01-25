@@ -14,10 +14,10 @@ export default function Home() {
           <WelcomeMessage />
         </div>
 
-        <h2 className="text-4xl inline-block font-extrabold bg-gradient-to-r from-indigo-500  to-indigo-600 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
+        <h2 className="text-4xl mb-2 inline-block font-extrabold bg-gradient-to-r from-indigo-500  to-indigo-600 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
           Meepletron
         </h2>
-        <p className="italic text-sm font-semibold ">Your Ultimate Board Game Companion</p>
+        <p className="italic text-md font-semibold ">Your Ultimate Board Game Companion</p>
         <p className="text-lg mt-4">
           Meepletron is your AI-powered board game expert, answering questions directly from
           manuals. Say goodbye to wasting time on game night searching for rule details—get instant
