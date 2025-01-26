@@ -17,9 +17,9 @@ export default function BoardgameContainer({ boardgame }) {
           quality={10}
         />
       </Link>
-      <span className="absolute bottom-1 left-1">
+      {/* <span className="absolute bottom-1 left-1">
         <FavoriteButton />
-      </span>
+      </span> */}
       <Link
         href={`/chat/${_id}`}
         className="absolute bottom-1 right-1 text-white bg-indigo-600 dark:bg-yellow-500 dark:text-slate-900 rounded-full p-2">
