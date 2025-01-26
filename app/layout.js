@@ -28,8 +28,9 @@ export const metadata = {
     template: "%s | Meepletron | Board games",
     default: "Meepletron: AI Expert for Board Game Manuals – Instant Rule Answers",
   },
-  description: `Meepletron, the AI board games amd tabletop games expert, answers rule questions instantly. 
-  No more wasting time searching manuals - keep game night fun and hassle-free!`,
+  metadataBase: new URL('https://meepletron.com'),
+  description: `The AI board games and tabletop games expert, answers rule questions instantly. 
+  No more wasting time searching manuals`,
   generator: "Next.js",
   manifest: "/manifest.json",
   keywords: [

@@ -3,6 +3,13 @@ import SearchBoardGame from "@/components/SearchBoardGame";
 import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
 
+export const metadata = {
+  title:"Board Games",
+  alternates: {
+    canonical: "/privacy-policy",
+  },
+}
+
 const getBoardgames = async () => {
   await connectToDB();
   try {

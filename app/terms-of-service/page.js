@@ -1,6 +1,9 @@
 // terms-of-service.js
 export const metadata = {
   title: "Terms of Service",
+  alternates: {
+    canonical: "/terms-of-service",
+  },
 };
 
 export default function TermsOfService() {

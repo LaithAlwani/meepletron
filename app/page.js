@@ -5,6 +5,12 @@ import RoadMap from "@/components/landingPage/RoadMap";
 import Image from "next/image";
 import Link from "next/link";
 
+export const metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
+
 export default function Home() {
   return (
     <>
