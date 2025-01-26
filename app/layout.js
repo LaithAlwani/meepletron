@@ -26,7 +26,7 @@ export const viewport = {
 export const metadata = {
   title: {
     template: "%s | Meepletron | Board games",
-    default: "Meepletron: AI Expert for Board Game Manuals – Instant Rule Answers",
+    default: "Meepletron: AI Expert for Board Game Rules and Manuals",
   },
   metadataBase: new URL('https://meepletron.com'),
   description: `The AI board games and tabletop games expert, answers rule questions instantly. 
