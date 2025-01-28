@@ -16,10 +16,10 @@ export default function Pricing() {
 
         <div className=" flex flex-col justify-start gap-8 mx-auto w-72 bg-gray-200 dark:bg-slate-800 shadow-md shadow-gray-400 dark:shadow-slate-700 h-[22rem]">
           <div className="flex justify-between items-center  ">
-            <PeriodTab isMonthly={isMonthly} label="monthly" onClick={handleClick} value="month" />
-            <PeriodTab isMonthly={!isMonthly} label="annually" onClick={handleClick} value="year" />
+            {/* <PeriodTab isMonthly={isMonthly} label="monthly" onClick={handleClick} value="month" /> */}
+            {/* <PeriodTab isMonthly={!isMonthly} label="annually" onClick={handleClick} value="year" /> */}
           </div>
-          {isMonthly ? <Card type="Monthly" price="3" /> : <Card type="Annually" price="30" />}
+          {isMonthly ? <Card type="Monthly" price="Free" /> : <Card type="Annually" price="Free" />}
         </div>
       </div>
     </section>
@@ -28,7 +28,8 @@ export default function Pricing() {
 
 const PeriodTab = ({ label, onClick, value, isMonthly }) => (
   <span
-    className={`${
+    className={`
+      ${
       isMonthly
         ? "font-semibold text-lg shadow-sm shadow-gray-300 dark:shadow-slate-600"
         : "text-sm"
@@ -46,9 +47,10 @@ const Card = ({ type, price }) => {
     <div className="p-4 flex flex-col justify-between h-full ">
       <div>
         <h4 className="text-3xl font-bold border-b border-gray-400 pb-2">
-          ${price}
-          <span className="text-sm font-light text-slate-600 dark:text-slate-400">
-            {type === "Monthly" ? " /mo." : type === "Annually" ? " /yr." : " "}
+          {price}
+          <span className="text-xs font-light text-slate-500 dark:text-slate-400">
+            {/* {type === "Monthly" ? " /mo." : type === "Annually" ? " /yr." : " "} */}
+            / Until Beta Ends
           </span>
         </h4>
 
@@ -56,23 +58,37 @@ const Card = ({ type, price }) => {
           <li className="flex items-center gap-2">
             <FaCheck size={size} className={color} /> Access Game Library
           </li>
-          <li className="flex items-center gap-2">
+          {/* <li className="flex items-center gap-2">
             <FaCheck size={size} className={color} /> Chat history
-          </li>
+          </li> */}
 
-          {type === "Annually" && (
+          {/* {type === "Annually" && (
             <li className="flex items-center gap-2">
               <FaCheck size={size} className={color} />
               Best value
             </li>
-          )}
+          )} */}
         </ul>
       </div>
       <Link
-        href="#get-started"
+        href="boardgames"
         className="block text-center font-semibold bg-indigo-600 hover:bg-indigo-500 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-800  shadow-lg text-white py-2 px-4 rounded-lg ">
         Choose Plan
       </Link>
     </div>
   );
 };
+
+
+// const PeriodTab = ({ label, onClick, value, isMonthly }) => (
+//   <span
+//     className={`
+//       ${
+//       isMonthly
+//         ? "font-semibold text-lg shadow-sm shadow-gray-300 dark:shadow-slate-600"
+//         : "text-sm"
+//     } text-center flex-1 p-4 underline`}
+//     onClick={() => onClick(value)}>
+//     {label}
+//   </span>
+// );
