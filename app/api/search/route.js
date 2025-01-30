@@ -18,7 +18,7 @@ export async function GET(req) {
       { title: { $regex: query, $options: "i" } }, // Case-insensitive regex search
       { title: 1, image:1 } // Return only title and description
     )
-      .limit(10) // Limit to 10 results
+      .limit(5) // Limit to 10 results
       .exec();
   
     return NextResponse.json({ data: results }, { status: 200 });
