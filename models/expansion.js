@@ -1,6 +1,6 @@
 import { model, models, Schema } from "mongoose";
 
-const boardgameSchema = new Schema(
+const expansionSchema = new Schema(
   {
     title: {
       type: String,
@@ -29,10 +29,11 @@ const boardgameSchema = new Schema(
     },
     description: String,
     bggId: String,
+    parent_id: { type: mongoose.Schema.Types.ObjectId, ref: "Expansion", required: true },
   },
   { timestamps: true }
 );
 
-const Boardgame = models.Boardgame || model("Boardgame", boardgameSchema);
+const Expansion = models.Boardgame || model("Expansion", expansionSchema);
 
-export default Boardgame;
+export default Expansion;
