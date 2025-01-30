@@ -17,6 +17,7 @@ export async function POST(req) {
       to: process.env.MAIL_USER,
       subject: "New Contact Form Submission",
       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+      html:`Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
     });
 
     await transporter.sendMail({
@@ -24,6 +25,7 @@ export async function POST(req) {
       to: email,
       subject: "Thank You for Contacting Us",
       text: `Hi ${name},\n\nThank you for reaching out to us. We will get back to you as soon as possible.\n\nBest regards,\nMeepletron Team`,
+      html:`Hi ${name},\n\nThank you for reaching out to us. We will get back to you as soon as possible.\n\nBest regards,\nMeepletron Team`,
     });
     return NextResponse.json({ message: `Request sent successfully!` }, { status: 200 });
   } catch (err) {
