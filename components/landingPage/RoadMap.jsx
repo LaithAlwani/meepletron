@@ -8,7 +8,7 @@ const RoadMap = () => {
     },
     {
       title: "Refining Text Extraction",
-      status: "complete", // or "complete" or "ongoing"
+      status: "ongoing", // or "complete" or "ongoing"
       date: "Jan 2025 • Feb 2025",
       description:
         "Improve the accuracy and relevancy of text extraction from PDF board game manuals for better search results.",
@@ -22,8 +22,8 @@ const RoadMap = () => {
     {
       title: "Building Game Library",
       description: "Extracting information from official board game manuals.",
-      date: "Mar 2025 • Jun 2025",
-      status: "ongoing",
+      date: "Feb 2025",
+      status: "coming",
     },
     {
       title: "Beta Testing",
