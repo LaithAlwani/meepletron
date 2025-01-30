@@ -30,6 +30,10 @@ const expansionSchema = new Schema(
     description: String,
     bggId: String,
     parent_id: { type: Schema.Types.ObjectId, ref: "Boardgame", required: true },
+    designers: [],
+    artists: [],
+    publishers: [],
+    categories: [],
   },
   { timestamps: true }
 );

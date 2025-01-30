@@ -2,9 +2,8 @@ import Boardgame from "@/models/boardgame";
 import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
 
-export async function GET(req, context) {
-  const { params } = context;
-  const id = params.id;
+export async function GET(req,{params}) {
+  const {id} =  await params;
   try {
     await connectToDB();
     const boardgame = await Boardgame.findOne({ _id: id });

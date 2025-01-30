@@ -1,5 +1,4 @@
 import { queryPineconeVectorStore } from "@/lib/vector-store";
-import Boardgame from "@/models/boardgame";
 import connectToDB from "@/utils/database";
 import { openai } from "@ai-sdk/openai";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
@@ -34,12 +33,13 @@ export async function POST(req, { params }) {
 - Base all answers strictly on the context provided by the backend. If you cannot answer the question using the context, respond with: "I cannot help you with that question."  
 - Avoid giving opinions about the rules, such as whether they are good, harsh, or horrible.  
 
+
 **Handling Insufficient Context:**  
 - If there isn’t enough information about the game in the context provided, let the user know and ask for more details.  
 
 **Style:**  
 - Use informal language that feels natural and conversational.  
-- Be concise while ensuring clarity.  
+- Be concise while ensuring clarity.
 
 Example Interaction:  
 

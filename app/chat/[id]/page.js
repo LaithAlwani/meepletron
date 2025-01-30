@@ -60,8 +60,8 @@ export default function ChatPage() {
               bg-indigo-400 dark:bg-[#246199] shadow-md dark:shadow-cyan-900
             `}>
               <p>
-                Hi welcome to <strong>{boardgame.title}</strong>!<br />
-                How can I assisst?!
+                Ask a question about <strong>{boardgame.title}</strong> or the{" "}
+                <strong>expansions</strong>!
               </p>
             </div>
           )}

@@ -6,7 +6,7 @@ import Boardgame from "@/models/boardgame";
 export const metadata = {
   title:"Board Games",
   alternates: {
-    canonical: "/privacy-policy",
+    canonical: "/boardgames",
   },
 }
 

@@ -29,6 +29,10 @@ const boardgameSchema = new Schema(
     },
     description: String,
     bggId: String,
+    designers: [],
+    artists: [],
+    publishers: [],
+    categories: [],
   },
   { timestamps: true }
 );

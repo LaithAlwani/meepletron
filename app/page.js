@@ -4,6 +4,7 @@ import WelcomeMessage from "@/components/landingPage/WelcomeMessage";
 import RoadMap from "@/components/landingPage/RoadMap";
 import Image from "next/image";
 import CustomLink from "@/components/CustomeLink";
+import ContactForm from "@/components/ContactForm";
 
 export const metadata = {
   alternates: {
@@ -36,6 +37,7 @@ export default function Home() {
       <Features />
       <Pricing />
       <RoadMap />
+      <ContactForm />
     </>
   );
 }
