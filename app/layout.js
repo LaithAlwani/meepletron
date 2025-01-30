@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,7 @@ export const metadata = {
     template: "%s | Meepletron | Board games",
     default: "Meepletron: AI Expert for Board Game Rules and Manuals",
   },
-  metadataBase: new URL('https://meepletron.com'),
+  metadataBase: new URL("https://meepletron.com"),
   description: `The AI board games and tabletop games expert, answers rule questions instantly. 
   No more wasting time searching manuals`,
   generator: "Next.js",
@@ -95,6 +96,7 @@ export default function RootLayout({ children }) {
         <body
           className={`min-h-[100svh] mx-auto bg-[#f7f7f7] dark:bg-slate-900 text-gray-800 dark:text-gray-200 ${geistSans.variable} ${geistMono.variable} antialiased `}>
           <Providers>
+            <Toaster position="top-right" containerClassName="relative" />
             <Navbar />
             <main className="w-screen mx-auto  min-h-[84svh]">{children}</main>
             <footer className="py-3">

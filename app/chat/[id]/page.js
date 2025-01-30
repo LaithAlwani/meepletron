@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { FcReading } from "react-icons/fc";
 import { FaRegPaperPlane } from "react-icons/fa";
 import Loader from "@/components/Loader";
+import TypingIndicator from "@/components/TypingDots";
 
 export default function ChatPage() {
   const params = useParams();
@@ -76,7 +77,11 @@ export default function ChatPage() {
               </div>
             </div>
           ))}
-          {isLoading && <FcReading size={48} />}
+          {isLoading && (
+            <span className="flex items-end gap-2">
+              <FcReading size={48} /> <TypingIndicator />
+            </span>
+          )}
         </div>
       </div>
       <form onSubmit={handleSubmit} className=" w-full max-w-lg mx-auto">

@@ -5,38 +5,34 @@ import { NextResponse } from "next/server";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
+import Expansion from "@/models/expansion";
 
 export async function POST(req) {
-  const data = await req.formData();
-  const file = data.get("file");
-  const boardgame = {
-    title: data.get("title"),
-    thumbnail: data.get("thumbnail"),
-    image: data.get("image"),
-    isExpansion: data.get("isExpansion"),
-    year: data.get("year"),
-    minPlayers: data.get("minPlayers"),
-    maxPlayers: data.get("maxPlayers"),
-    playTime: data.get("playTime"),
-    bggLink: data.get("bggLink"),
-    bggId: data.get("bggId"),
-    description: data.get("description"),
-  };
-  if (!file) {
+  const data = await req.json();
+  const { fileText, boardGame, parent_id } = data;
+
+  if (!fileText || !boardGame) {
     return NextResponse.json({ success: false });
   }
   try {
     await connectToDB();
-    const chunks = await getChunkedDocsFromPDF(file);
-    
-    if (!chunks.length) {
-      return NextResponse.json({ message: "Failed to chunk file" }, { status: 500 })
+    if (!fileText.length) {
+      return NextResponse.json({ message: "Failed to chunk file" }, { status: 500 });
     }
-    const doc = await Boardgame.create(boardgame);
-    
-    for (const chunk in chunks) {
-      chunks[chunk].metadata.bg_id = doc._id.toString();
-      chunks[chunk].metadata.bg_title = doc.title.toLowerCase();
+    let doc;
+    if (parent_id) {
+      console.log("if parent_id: ", parent_id);
+      doc = await Expansion.create({ ...boardGame, parent_id });
+    } else {
+      console.log("else parent_id: ", parent_id);
+
+      doc = await Boardgame.create(boardGame);
+    }
+
+    for (const chunk in fileText) {
+      fileText[chunk].metadata.bg_id = doc._id.toString();
+      fileText[chunk].metadata.parent_id = !parent_id ? doc._id.toString() : parent_id;
+      fileText[chunk].metadata.bg_title = doc.title.toLowerCase();
     }
 
     const embeddings = new OpenAIEmbeddings({
@@ -49,9 +45,8 @@ export async function POST(req) {
       pineconeIndex,
       maxConcurrency: 5,
     });
-    await vectorStore.addDocuments(chunks);
-
-    return NextResponse.json({ data: chunks, message: "Data Embedded" }, { status: 200 });
+    await vectorStore.addDocuments(fileText);
+    return NextResponse.json({ data: boardGame.title, message: "Data Embedded" }, { status: 200 });
   } catch (err) {
     console.log(err);
     return NextResponse.json({ message: "Failed to upload" }, { status: 500 });

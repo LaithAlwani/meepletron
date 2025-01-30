@@ -3,7 +3,7 @@ import Pricing from "@/components/landingPage/Pricing";
 import WelcomeMessage from "@/components/landingPage/WelcomeMessage";
 import RoadMap from "@/components/landingPage/RoadMap";
 import Image from "next/image";
-import Link from "next/link";
+import CustomLink from "@/components/CustomeLink";
 
 export const metadata = {
   alternates: {
@@ -31,11 +31,7 @@ export default function Home() {
           answers and keep the fun going!
         </p>
         <p className="italic text-md font-semibold ">Your Ultimate Board Game Companion</p>
-        <Link
-          href="/boardgames"
-          className="mt-6 inline-block bg-indigo-600 text-white py-3 px-6 rounded-lg shadow hover:bg-indigo-700 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-900 font-bold">
-          Get Started Now
-        </Link>
+        <CustomLink href="/boardgames">Get Started Now</CustomLink>
       </section>
       <Features />
       <Pricing />

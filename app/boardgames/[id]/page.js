@@ -1,7 +1,7 @@
 "use client";
+import CustomLink from "@/components/CustomeLink";
 import Loader from "@/components/Loader";
 import Image from "next/image";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { MdGroups, MdAccessTime  } from "react-icons/md";
@@ -50,12 +50,9 @@ export default function BoardgamePage() {
             <p className="flex justify-start items-center gap-2 mb-2">
               <MdGroups size={24}/> {boardgame.minPlayers} - {boardgame.maxPlayers}
             </p>
-            <p className="flex justify-start items-center gap-2 mb-2"><MdAccessTime size={24}/> {boardgame.playTime} </p>
-            <Link
-              href={`/chat/${boardgame._id}`}
-              className="w-full text-center inline-block rounded  mt-3 font-bold bg-indigo-600 hover:bg-indigo-500 dark:dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-900 p-3">
-              Ask a question!
-            </Link>
+            <p className="flex justify-start items-center gap-2 mb-2"><MdAccessTime size={24} /> {boardgame.playTime} </p>
+            <CustomLink href={`/chat/${boardgame._id}`}>Ask a question!</CustomLink>
+            
           </div>
         </div>
       )}

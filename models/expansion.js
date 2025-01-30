@@ -29,11 +29,11 @@ const expansionSchema = new Schema(
     },
     description: String,
     bggId: String,
-    parent_id: { type: mongoose.Schema.Types.ObjectId, ref: "Expansion", required: true },
+    parent_id: { type: Schema.Types.ObjectId, ref: "Boardgame", required: true },
   },
   { timestamps: true }
 );
 
-const Expansion = models.Boardgame || model("Expansion", expansionSchema);
+const Expansion = models.Expansion || model("Expansion", expansionSchema);
 
 export default Expansion;
