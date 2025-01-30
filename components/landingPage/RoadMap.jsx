@@ -10,7 +10,8 @@ const RoadMap = () => {
       title: "Refining Text Extraction",
       status: "ongoing", // or "complete" or "ongoing"
       date: "Jan 2025 • Feb 2025",
-      description: "Improve the accuracy and relevancy of text extraction from PDF board game manuals for better search results."
+      description:
+        "Improve the accuracy and relevancy of text extraction from PDF board game manuals for better search results.",
     },
     {
       title: "Refining AI Answers",
@@ -19,8 +20,8 @@ const RoadMap = () => {
       status: "ongoing",
     },
     {
-      title: "Gathering Data",
-      description: "Collecting and organizing relevant information for the project.",
+      title: "Building Game Library",
+      description: "Extracting information from official board game manuals.",
       date: "Mar 2025 • Jun 2025",
       status: "coming",
     },
@@ -40,8 +41,9 @@ const RoadMap = () => {
       title: "Favorites List",
       status: "coming", // or "complete" or "ongoing"
       date: "Late Q3 • 2025",
-      description: "Allow users to add board games to a favorites list for quick access and easy reference."
-    }
+      description:
+        "Allow users to add board games to a favorites list for quick access and easy reference.",
+    },
   ];
 
   const getStatusDot = (status) => {
