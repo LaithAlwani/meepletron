@@ -63,19 +63,19 @@ export default function ChatPage() {
           <IoArrowBack />
         </button>
         {currentGame && (
-          <Link
-            href={`/boardgames/${boardgame._id}`}
-            className="flex-1 flex items-center gap-2 text-ellipsis">
+          <Link href={`/boardgames/${boardgame._id}`} className="flex items-center gap-2 ">
             <img
               src={currentGame?.thumbnail}
               alt={currentGame?.title}
-              className="w-16 h-16 rounded-md"
+              className="w-12 h-12 rounded-md"
             />
-            <h2 className="text-lg capitalize">{currentGame?.title}</h2>
+            <h2 className=" capitalize text-nowrap text-ellipsis overflow-hidden">
+              {currentGame?.title}
+            </h2>
           </Link>
         )}
-        {expansions.length > 0 && (
-          <button onClick={() => setSideNavOpen(!sideNavOpen)} className="text-xl">
+        {expansions.length === 0 && (
+          <button onClick={() => setSideNavOpen(!sideNavOpen)} className="text-xl ml-auto">
             <BsThreeDotsVertical />
           </button>
         )}
@@ -134,18 +134,30 @@ export default function ChatPage() {
         </div>
       </div>
       <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto py-4">
-        <div className="flex items-center w-full border border-gray-700 rounded p-2">
-          <input
+        <div className="flex items-center w-full border border-gray-700 rounded-lg p-2">
+          {/* <input
             className="w-full focus:outline-0 bg-inherit"
             value={input}
             placeholder="Ask a board game rules question..."
             onChange={handleInputChange}
             disabled={isLoading}
+          /> */}
+          <textarea
+            placeholder="Ask a question..."
+            className="w-full  bg-transparent focus:outline-none resize-none lib"
+            rows="1"
+            value={input}
+            onChange={handleInputChange}
+            onInput={(e) => {
+              e.target.style.height = "auto";
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
           />
+
           <button className="cursor-pointer mx-2" disabled>
             <FaMicrophone className="text-slate-500 cursor-not-allowed" />
           </button>
-          <button className="cursor-pointer">
+          <button type="submit" className="cursor-pointer">
             <FaRegPaperPlane />
           </button>
         </div>
