@@ -14,14 +14,14 @@ export async function GET(req) {
   try {
     await connectToDB();
 
-    const results = await Boardgame.find(
+    const boardgames = await Boardgame.find(
       { title: { $regex: query, $options: "i" } }, // Case-insensitive regex search
-      { title: 1, image:1 } // Return only title and description
+      { title: 1, thumbnail:1 } // Return only title and description
     )
-      .limit(5) // Limit to 10 results
+      .limit(5) // Limit to 10 boardgames
       .exec();
   
-    return NextResponse.json({ data: results }, { status: 200 });
+    return NextResponse.json({ data: boardgames }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { message: "Internal Server Error", error: error.message },

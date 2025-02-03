@@ -13,11 +13,12 @@ export async function POST(req, { params }) {
   const { messages, boardgame } = await req.json();
   await connectToDB();
   const userQuestion = messages[messages.length - 1].content;
+  console.log(boardgame)
   const retrievals = await queryPineconeVectorStore(
     pinecone,
     process.env.PINECONE_INDEX_NAME,
     userQuestion,
-    id
+    boardgame._id
   );
 
   const prompt = `You are a board game expert AI. Your primary role is to explain and clarify board game rules using informal, human-like language.  

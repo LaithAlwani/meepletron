@@ -1,29 +1,43 @@
 "use client";
 import { useChat } from "ai/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { FcReading } from "react-icons/fc";
-import { FaRegPaperPlane } from "react-icons/fa";
+import { FaRegPaperPlane, FaMicrophone } from "react-icons/fa";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { IoArrowBack } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
 import Loader from "@/components/Loader";
 import TypingIndicator from "@/components/TypingDots";
+import Link from "next/link";
 
 export default function ChatPage() {
   const params = useParams();
+  const router = useRouter();
   const [boardgame, setBoardgame] = useState(null);
+  const [expansions, setExpansions] = useState([]);
+  const [currentGame, setCurrentGame] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [sideNavOpen, setSideNavOpen] = useState(false);
   const messagesEndRef = useRef(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: `/api/chat/${params.id}`,
-    body: { boardgame },
+    body: { boardgame: currentGame },
   });
 
   const getBoardgame = async () => {
     setLoading(true);
+    setBoardgame(null);
+    setExpansions([]);
+    setCurrentGame(null);
     try {
       const res = await fetch(`/api/boardgame/${params.id}`);
       if (res.ok) {
-        const data = await res.json();
-        setBoardgame(data);
+        const { data } = await res.json();
+        setBoardgame(data.boardgame);
+        setExpansions(data.expansions);
+        setCurrentGame(data.boardgame);
       }
     } catch (err) {
       console.log(err);
@@ -41,37 +55,72 @@ export default function ChatPage() {
       messagesEndRef.current.scrollTop = messagesEndRef.current?.scrollHeight;
     }
   }, [messages]);
-  return !loading ? (
-    <section className="p-4">
+
+  return boardgame && !loading ? (
+    <section className="h-[100svh] flex flex-col justify-evenly px-4 max-w-xl mx-auto">
+      <nav className="flex items-center justify-start gap-4 py-4 ">
+        <button onClick={() => router.back()} className="text-xl">
+          <IoArrowBack />
+        </button>
+        {currentGame && (
+          <Link
+            href={`/boardgames/${boardgame._id}`}
+            className="flex-1 flex items-center gap-2 text-ellipsis">
+            <img
+              src={currentGame?.thumbnail}
+              alt={currentGame?.title}
+              className="w-16 h-16 rounded-md"
+            />
+            <h2 className="text-lg capitalize">{currentGame?.title}</h2>
+          </Link>
+        )}
+        {expansions.length > 0 && (
+          <button onClick={() => setSideNavOpen(!sideNavOpen)} className="text-xl">
+            <BsThreeDotsVertical />
+          </button>
+        )}
+      </nav>
+      <motion.aside
+        initial={{ x: "100%" }}
+        animate={{ x: sideNavOpen ? "0%" : "100%" }}
+        transition={{ duration: 0.3 }}
+        className="fixed top-0 right-0 w-72 h-full bg-gray-100 dark:bg-slate-950  ">
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-bold p-2">Select a Game</h3>
+          <button onClick={() => setSideNavOpen(false)} className="text-xl">
+            <IoClose />
+          </button>
+        </div>
+        <ul className="mt-4">
+          <ListItem
+            game={boardgame}
+            currentGame={currentGame}
+            setCurrentGame={setCurrentGame}
+            setSideNavOpen={setSideNavOpen}
+          />
+
+          {expansions.map((exp) => (
+            <ListItem
+              key={exp._id}
+              game={exp}
+              currentGame={currentGame}
+              setCurrentGame={setCurrentGame}
+              setSideNavOpen={setSideNavOpen}
+            />
+          ))}
+        </ul>
+      </motion.aside>
       <div
         ref={messagesEndRef}
-        className=" max-w-lg mx-auto justify-between w-full overflow-y-scroll no-scrollbar h-[76svh]  ">
-        <img
-          src={boardgame?.image}
-          alt=""
-          className="block mx-auto max-w-[200px] max-auto rounded-md shadow-lg mb-5"
-        />
-        <h2 className="text-xl font-bold capitalize text-center mb-5">{boardgame?.title}</h2>
-
+        className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll no-scrollbar ">
         <div className="overflow-y-auto">
-          {boardgame && (
-            <div
-              className={`p-3 mb-4 max-w-80 rounded-lg  
-              bg-indigo-400 dark:bg-[#246199] shadow-md dark:shadow-cyan-900
-            `}>
-              <p>
-                Ask a question about <strong>{boardgame.title}</strong> or the{" "}
-                <strong>expansions</strong>!
-              </p>
-            </div>
-          )}
           {messages.map((m) => (
-            <div key={m.id} className={`mb-4 ${m.role === "user" ? " text-right" : ""}`}>
+            <div key={m.id} className={`mb-4 ${m.role === "user" ? "text-right" : ""}`}>
               <div
-                className={`inline-block p-3 mb-3 min-w-24  max-w-[375px] rounded-md shadow-md  ${
+                className={`inline-block p-3 mb-3 min-w-24 max-w-[375px] rounded-md shadow-md ${
                   m.role === "user"
-                    ? " bg-indigo-200 dark:bg-indigo-600 text-left"
-                    : " bg-indigo-400 dark:bg-[#246199] "
+                    ? "bg-indigo-200 dark:bg-indigo-600 text-left"
+                    : "bg-indigo-400 dark:bg-[#246199]"
                 }`}>
                 <pre className="text-wrap font-serif">{m.content}</pre>
               </div>
@@ -84,15 +133,18 @@ export default function ChatPage() {
           )}
         </div>
       </div>
-      <form onSubmit={handleSubmit} className=" w-full max-w-lg mx-auto">
+      <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto py-4">
         <div className="flex items-center w-full border border-gray-700 rounded p-2">
           <input
-            className="w-full focus:outline-0  bg-inherit"
+            className="w-full focus:outline-0 bg-inherit"
             value={input}
             placeholder="Ask a board game rules question..."
             onChange={handleInputChange}
             disabled={isLoading}
           />
+          <button className="cursor-pointer mx-2" disabled>
+            <FaMicrophone className="text-slate-500 cursor-not-allowed" />
+          </button>
           <button className="cursor-pointer">
             <FaRegPaperPlane />
           </button>
@@ -100,6 +152,24 @@ export default function ChatPage() {
       </form>
     </section>
   ) : (
-    <Loader />
+    <Loader height="h-screen" />
   );
 }
+
+const ListItem = ({ game, currentGame, setCurrentGame, setSideNavOpen }) => {
+  return (
+    <li
+      key={game?._id}
+      className={`capitalize p-2 border-b cursor-pointer  ${
+        currentGame?._id === game?._id
+          ? "bg-indigo-500 text-white font-semibold dark:bg-yellow-500 dark:text-slate-800"
+          : ""
+      }`}
+      onClick={() => {
+        setCurrentGame(game);
+        setSideNavOpen(false);
+      }}>
+      {game?.title}
+    </li>
+  );
+};

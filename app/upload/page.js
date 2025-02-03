@@ -43,6 +43,7 @@ export default function AddBoardGame() {
   };
 
   const handleFileUpload = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     const data = new FormData();
     data.append("file", file);
@@ -54,6 +55,8 @@ export default function AddBoardGame() {
       }
     } catch (err) {
       toast.err(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -166,7 +169,7 @@ export default function AddBoardGame() {
             className="border p-2 rounded w-full"
           />
           <button className="mt-2 bg-indigo-600 dark:bg-yellow-500 px-4 py-2 rounded text-white w-full">
-            Extract Text
+            {isLoading ? <Loader width="1rem" /> : "Extract Text"}
           </button>
         </form>
       )}

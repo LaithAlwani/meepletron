@@ -1,12 +1,13 @@
 "use client";
-import {useSearch} from "@/utils/hooks";
-import Boardgame from "./boardgame/BoardgameContainer";
+import { useSearch } from "@/utils/hooks";
+import Link from "next/link";
+import { FaComments } from "react-icons/fa";
 
 const SearchBoardGame = ({ onBoardGameClick }) => {
   const { query, setQuery, results, loading } = useSearch("/api/search");
 
   return (
-    <div className="mt-10 py-4">
+    <div className="relative mt-10 py-4 w-full max-w-md mx-auto">
       <input
         type="text"
         placeholder="Type a board game title..."
@@ -20,15 +21,32 @@ const SearchBoardGame = ({ onBoardGameClick }) => {
         <p className="text-gray-400 mt-4">No results found.</p>
       )}
 
-      <div className="flex my-4 gap-4 overflow-x-scroll">
-        {results.map((boardgame) => (
-          <Boardgame
-            key={boardgame._id}
-            boardgame={boardgame}
-            onClick={() => onBoardGameClick?.(boardgame)}
-          />
-        ))}
-      </div>
+      {results.length > 0 && (
+        <div className="absolute w-full bg-white dark:bg-slate-600 border border-gray-300 dark:border-slate-800 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto z-10">
+          {results.map((boardgame) => (
+            <div
+              key={boardgame._id}
+              className="flex items-center justify-between gap-3 p-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer"
+            >
+              <Link
+                href={`/boardgames/${boardgame._id}`}
+                className="flex items-center gap-3 w-full"
+                onClick={() => onBoardGameClick?.(boardgame)}
+              >
+                <img
+                  src={boardgame.thumbnail}
+                  alt={boardgame.title}
+                  className="w-12 h-12 rounded-md object-cover"
+                />
+                <span className="capitalize font-semibold text-sm  ">{boardgame.title}</span>
+              </Link>
+              <Link href={`/chat/${boardgame._id}`} className="text-gray-500 dark:text-slate-200  hover:text-gray-800 dark:hover:text-slate-100">
+                <FaComments size={20} />
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

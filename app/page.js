@@ -5,6 +5,8 @@ import RoadMap from "@/components/landingPage/RoadMap";
 import Image from "next/image";
 import CustomLink from "@/components/CustomeLink";
 import ContactForm from "@/components/ContactForm";
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
+
 
 export const metadata = {
   alternates: {
@@ -38,6 +40,41 @@ export default function Home() {
       <Pricing />
       <RoadMap />
       <ContactForm />
+      <footer className="py-3">
+        <div className="container max-w-xl mx-auto px-4 text-center">
+          <div className="flex justify-center space-x-4 p-2">
+            <a
+              href="https://www.facebook.com/profile.php?id=61572349896501"
+              target="_blank"
+              rel="noreferrer noopener"
+              referrerPolicy="no-referrer">
+              <FaFacebookF size={24} aria-label="facebook" className="" />
+            </a>
+            <a
+              href="https://www.instagram.com/meeple_tron/"
+              target="_blank"
+              rel="noreferrer noopener"
+              referrerPolicy="no-referrer">
+              <FaInstagram size={24} aria-label="instagram" className="" />
+            </a>
+          </div>
+          <nav className="text-center">
+            <ul className="flex justify-center space-x-4">
+              <li>
+                <a href="/privacy-policy" className="hover:underline">
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a href="/terms-of-service" className="hover:underline">
+                  Terms of Service
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <p>&copy; 2025 Meepletron • All rights reserved</p>
+        </div>
+      </footer>
     </>
   );
 }

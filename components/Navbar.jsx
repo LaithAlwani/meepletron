@@ -1,13 +1,17 @@
+'use client'
 import Link from "next/link";
 import { FaRobot, FaInfo } from "react-icons/fa";
 import { MdLogin } from "react-icons/md";
 import Image from "next/image";
 import ThemeSwitch from "./ThemeSwitch";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
+  
   return (
-    <nav className="w-full text-lg p-3">
+    <nav className={`w-full text-lg p-3 ${pathname.includes("chat") ? "hidden":""}`}>
       <div className="flex justify-between items-center max-w-xl mx-auto">
         <Link href="/" className="flex items-center justify-start gap-1" aria-label="logo">
           <div className="relative w-[2rem] h-[2rem]">

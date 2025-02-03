@@ -4,12 +4,12 @@ import Loader from "@/components/Loader";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { MdGroups, MdAccessTime  } from "react-icons/md";
-
+import { MdGroups, MdAccessTime } from "react-icons/md";
 
 export default function BoardgamePage() {
   const params = useParams();
   const [boardgame, setBoardgame] = useState(null);
+  const [expansions, setExpansions] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getBoardgame = async () => {
@@ -17,8 +17,9 @@ export default function BoardgamePage() {
     try {
       const res = await fetch(`/api/boardgame/${params.id}`);
       if (res.ok) {
-        const data = await res.json();
-        setBoardgame(data);
+        const { data } = await res.json();
+        setBoardgame(data.boardgame);
+        setExpansions(data.expansions);
       }
     } catch (err) {
       console.log(err);
@@ -48,12 +49,23 @@ export default function BoardgamePage() {
               {boardgame.title} <span className="text-xs font-light">({boardgame.year}) </span>
             </h2>
             <p className="flex justify-start items-center gap-2 mb-2">
-              <MdGroups size={24}/> {boardgame.minPlayers} - {boardgame.maxPlayers}
+              <MdGroups size={24} /> {boardgame.minPlayers} - {boardgame.maxPlayers}
             </p>
-            <p className="flex justify-start items-center gap-2 mb-2"><MdAccessTime size={24} /> {boardgame.playTime} </p>
+            <p className="flex justify-start items-center gap-2 mb-2">
+              <MdAccessTime size={24} /> {boardgame.playTime}{" "}
+            </p>
             <CustomLink href={`/chat/${boardgame._id}`}>Ask a question!</CustomLink>
-            
           </div>
+          {expansions?.length > 0 && (
+            <>
+              <h3>Expansions</h3>
+              <ul className="list-disc ">
+                {expansions.map((exp) => (
+                  <li key={exp._id}>{exp.title}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       )}
     </div>

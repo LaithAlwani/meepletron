@@ -5,7 +5,6 @@ import Providers from "./providers";
 import { ClerkProvider } from "@clerk/nextjs";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
@@ -94,46 +93,11 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`min-h-[100svh] mx-auto bg-[#f7f7f7] dark:bg-slate-900 text-gray-800 dark:text-gray-200 ${geistSans.variable} ${geistMono.variable} antialiased `}>
+          className={`min-h-svh mx-auto bg-[#f7f7f7] dark:bg-slate-900 text-gray-800 dark:text-gray-200 ${geistSans.variable} ${geistMono.variable} antialiased `}>
           <Providers>
             <Toaster position="top-right" containerClassName="relative" />
             <Navbar />
-            <main className="w-screen mx-auto  min-h-[84svh]">{children}</main>
-            <footer className="py-3">
-              <div className="container max-w-xl mx-auto px-4 text-center">
-                <div className="flex justify-center space-x-4 p-2">
-                  <a
-                    href="https://www.facebook.com/profile.php?id=61572349896501"
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    referrerPolicy="no-referrer">
-                    <FaFacebookF size={24} aria-label="facebook" className="" />
-                  </a>
-                  <a
-                    href="https://www.instagram.com/meeple_tron/"
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    referrerPolicy="no-referrer">
-                    <FaInstagram size={24} aria-label="instagram" className="" />
-                  </a>
-                </div>
-                <nav className="text-center">
-                  <ul className="flex justify-center space-x-4">
-                    <li>
-                      <a href="/privacy-policy" className="hover:underline">
-                        Privacy Policy
-                      </a>
-                    </li>
-                    <li>
-                      <a href="/terms-of-service" className="hover:underline">
-                        Terms of Service
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
-                <p>&copy; 2025 Meepletron • All rights reserved</p>
-              </div>
-            </footer>
+            <main className="w-screen mx-auto">{children}</main>
           </Providers>
           <SpeedInsights />
         </body>
