@@ -26,13 +26,12 @@ const SearchBoardGame = ({ onBoardGameClick }) => {
           {results.map((boardgame) => (
             <div
               key={boardgame._id}
-              className="flex items-center justify-between gap-3 p-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer"
-            >
+              className="flex items-center justify-between gap-3 p-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer">
+              {console.log(boardgame.parent_id)}
               <Link
                 href={`/boardgames/${boardgame._id}`}
                 className="flex items-center gap-3 w-full"
-                onClick={() => onBoardGameClick?.(boardgame)}
-              >
+                onClick={() => onBoardGameClick?.(boardgame)}>
                 <img
                   src={boardgame.thumbnail}
                   alt={boardgame.title}
@@ -40,7 +39,9 @@ const SearchBoardGame = ({ onBoardGameClick }) => {
                 />
                 <span className="capitalize font-semibold text-sm  ">{boardgame.title}</span>
               </Link>
-              <Link href={`/chat/${boardgame._id}`} className="flex items-center gap-2 border border-slate-500 dark:border-slate-300 rounded-md p-2 text-gray-500 dark:text-slate-200  hover:text-gray-800 dark:hover:text-slate-100">
+              <Link
+                href={`/chat/${boardgame.parent_id ? boardgame.parent_id : boardgame._id}`}
+                className="flex items-center gap-2 border border-slate-500 dark:border-slate-300 rounded-md p-2 text-gray-500 dark:text-slate-200  hover:text-gray-800 dark:hover:text-slate-100">
                 <FaComments size={20} />
                 Chat
               </Link>

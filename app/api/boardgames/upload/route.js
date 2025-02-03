@@ -21,11 +21,8 @@ export async function POST(req) {
     }
     let doc;
     if (parent_id) {
-      console.log("if parent_id: ", parent_id);
       doc = await Expansion.create({ ...boardGame, parent_id });
     } else {
-      console.log("else parent_id: ", parent_id);
-
       doc = await Boardgame.create(boardGame);
     }
 

@@ -32,7 +32,7 @@ export default function ChatPage() {
     setExpansions([]);
     setCurrentGame(null);
     try {
-      const res = await fetch(`/api/boardgame/${params.id}`);
+      const res = await fetch(`/api/boardgames/${params.id}`);
       if (res.ok) {
         const { data } = await res.json();
         setBoardgame(data.boardgame);
@@ -63,7 +63,7 @@ export default function ChatPage() {
           <IoArrowBack />
         </button>
         {currentGame && (
-          <Link href={`/boardgames/${boardgame._id}`} className="flex items-center gap-2 ">
+          <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2 ">
             <img
               src={currentGame?.thumbnail}
               alt={currentGame?.title}

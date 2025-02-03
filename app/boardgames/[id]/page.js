@@ -2,6 +2,7 @@
 import CustomLink from "@/components/CustomeLink";
 import Loader from "@/components/Loader";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { MdGroups, MdAccessTime } from "react-icons/md";
@@ -15,11 +16,16 @@ export default function BoardgamePage() {
   const getBoardgame = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/boardgame/${params.id}`);
+      const res = await fetch(`/api/boardgames/${params.id}`);
       if (res.ok) {
         const { data } = await res.json();
-        setBoardgame(data.boardgame);
-        setExpansions(data.expansions);
+        if (data.boardgame) {
+          setBoardgame(data.boardgame);
+          setExpansions(data.expansions);
+        } else {
+          setBoardgame(data);
+          setExpansions([]);
+        }
       }
     } catch (err) {
       console.log(err);
@@ -54,17 +60,27 @@ export default function BoardgamePage() {
             <p className="flex justify-start items-center gap-2 mb-2">
               <MdAccessTime size={24} /> {boardgame.playTime}{" "}
             </p>
-            <CustomLink href={`/chat/${boardgame._id}`}>Ask a question!</CustomLink>
+            <CustomLink href={`/chat/${!expansions.length ? boardgame.parent_id: boardgame._id}`}>Ask a question!</CustomLink>
           </div>
+          {boardgame.rule_book_url && (
+            <a href={boardgame.rule_book_url} target="_blank" className="cursor-pointer">
+              Rules Book
+            </a>
+          )}
           {expansions?.length > 0 && (
             <>
               <h3>Expansions</h3>
               <ul className="list-disc ">
                 {expansions.map((exp) => (
-                  <li key={exp._id}>{exp.title}</li>
+                  <li key={exp._id}>
+                    <Link href={`/boardgames/${exp._id}`}>{exp.title}</Link>
+                  </li>
                 ))}
               </ul>
             </>
+          )}
+          {boardgame?.parent_id && (
+            <Link href={`/boardgames/${boardgame?.parent_id}`}>Parent Game</Link>
           )}
         </div>
       )}

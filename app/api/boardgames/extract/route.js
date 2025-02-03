@@ -1,18 +1,20 @@
 import { getChunkedDocsFromPDF } from "@/lib/pdf-loader";
-
+import path from "path";
 
 import { NextResponse } from "next/server";
 
 
 export async function POST(req) {
-  const data = await req.formData();
-  const file = data.get("file");
   
-  if (!file) {
-    return NextResponse.json({ success: false });
-  }
+  const data = await req.json();
+  const PDF_URL = data.url;
+  const FILE_PATH = path.join(process.cwd(), "public", "temp.pdf");
+  
+  
+  
   try {
-    const chunks = await getChunkedDocsFromPDF(file)
+    const chunks = await getChunkedDocsFromPDF(PDF_URL, FILE_PATH)
+    
     return NextResponse.json({ data: chunks, message: "Data Embedded" }, { status: 200 });
   } catch (err) {
     console.log(err);
