@@ -4,16 +4,19 @@ import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
 
 export const metadata = {
-  title:"Board Games",
+  title: "Board Games",
   alternates: {
     canonical: "/boardgames",
   },
-}
+};
 
 const getBoardgames = async () => {
   await connectToDB();
   try {
-    const boardgames = await Boardgame.find({}, "title image").sort({ createdAt: -1 }).limit(10).lean();
+    const boardgames = await Boardgame.find({}, "title image")
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
     //get the user favorites list user.find({_id:user.id}).select("favorites").lean()
     // compare const isFavorited = user.favorites.includes(boardGameId); board game componenet
     return boardgames;
