@@ -8,15 +8,16 @@ import { streamText } from "ai";
 export const maxDuration = 30;
 const pinecone = new PineconeClient();
 
-export async function POST(req, { params }) {
-  const { id } = await params;
+export async function POST(req) {
   const { messages, boardgame } = await req.json();
   await connectToDB();
   const userQuestion = messages[messages.length - 1].content;
-  console.log(boardgame)
+  
   const retrievals = await queryPineconeVectorStore(
     pinecone,
-    process.env.PINECONE_INDEX_NAME,
+    process.env.NODE_ENV != "production"
+      ? process.env.PINECONE_INDEX_NAME_DEV
+      : process.env.PINECONE_INDEX_NAME_PROD,
     userQuestion,
     boardgame._id
   );
@@ -65,7 +66,7 @@ _User: "Are there any variants for this game?"_
 **Board game title:** ${boardgame.title}  
 **History:** ${messages}  
 **Question:** ${userQuestion}  
-**Context:** ${retrievals}  `;
+**Context:** ${retrievals}`;
   try {
     const result = streamText({
       model: openai("gpt-4o-mini"),
