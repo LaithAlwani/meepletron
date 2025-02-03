@@ -35,11 +35,7 @@ export async function POST(req) {
     });
 
     const pinecone = new PineconeClient();
-    const pineconeIndex = pinecone.Index(
-      process.env.NODE_ENV != "production"
-        ? process.env.PINECONE_INDEX_NAME_DEV
-        : process.env.PINECONE_INDEX_NAME_PROD
-    );
+    const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
     const vectorStore = new PineconeStore(embeddings, {
       pineconeIndex,
       maxConcurrency: 5,

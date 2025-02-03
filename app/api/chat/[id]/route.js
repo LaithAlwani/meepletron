@@ -12,12 +12,10 @@ export async function POST(req) {
   const { messages, boardgame } = await req.json();
   await connectToDB();
   const userQuestion = messages[messages.length - 1].content;
-  
+
   const retrievals = await queryPineconeVectorStore(
     pinecone,
-    process.env.NODE_ENV != "production"
-      ? process.env.PINECONE_INDEX_NAME_DEV
-      : process.env.PINECONE_INDEX_NAME_PROD,
+    process.env.PINECONE_INDEX_NAME,
     userQuestion,
     boardgame._id
   );
