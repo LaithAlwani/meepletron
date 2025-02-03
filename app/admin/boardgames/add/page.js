@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createBoardgame, fetchBggGame, fetchBoardGameBGG } from "@/lib/bgg-functions";
+import { createBoardgame, fetchBggGames, fetchBoardGameBGG } from "@/lib/bgg-functions";
 import { useSearch } from "@/utils/hooks";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -16,15 +16,13 @@ export default function AddBoardGame() {
   const [boardgame, setBoardGame] = useState(null);
   const [isExpansion, setIsExpansion] = useState(false);
   const [parentGameId, setParentGameId] = useState("");
-  const [file, setFile] = useState(null);
-  const [fileText, setFileText] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { query, setQuery, results, loading } = useSearch("/api/search");
 
-  const getBoardGames = async (e) => {
+  const getBoardGamesFromBGG = async (e) => {
     e.preventDefault();
     try {
-      const list = await fetchBggGame(input);
+      const list = await fetchBggGames(input);
       setGameList(Array.isArray(list) ? list : [list]);
     } catch (err) {
       toast.error(err.message);
@@ -73,7 +71,7 @@ export default function AddBoardGame() {
     <div className="max-w-xl mx-auto p-6">
       {/* Search Board Games */}
       {!boardgame && (
-        <form onSubmit={getBoardGames} className="mb-4">
+        <form onSubmit={getBoardGamesFromBGG} className="mb-4">
           <input
             type="text"
             placeholder="Search for a board game..."
