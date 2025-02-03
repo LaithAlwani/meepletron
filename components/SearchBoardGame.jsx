@@ -27,7 +27,7 @@ const SearchBoardGame = ({ onBoardGameClick }) => {
             <div
               key={boardgame._id}
               className="flex items-center justify-between gap-3 p-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer">
-              {console.log(boardgame.parent_id)}
+             
               <Link
                 href={`/boardgames/${boardgame._id}`}
                 className="flex items-center gap-3 w-full"

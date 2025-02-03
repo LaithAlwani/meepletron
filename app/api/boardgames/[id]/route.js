@@ -12,9 +12,7 @@ export async function GET(req, { params }) {
     if (boardgame) {
       expansions = await Expansion.find({ parent_id: id }, { thumbnail: 1, title: 1 });
     } else {
-      console.log("fetching")
       expansions = await Expansion.findOne({ _id: id });
-      console.log(expansions)
     }
     const data = boardgame ? { boardgame, expansions } : expansions;
     return NextResponse.json({ data }, { status: 200 });

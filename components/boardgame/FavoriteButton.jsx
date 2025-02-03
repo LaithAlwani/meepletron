@@ -8,7 +8,7 @@ export default function FavoriteButton({ userId, boardGameId }) {
 
   const toggleFavorite = async () => {
     try {
-      console.log("FavoriteButton")
+      
       // const res = await fetch("/api/favorites", {
       //   method: "POST",
       //   headers: {
