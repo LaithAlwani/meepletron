@@ -74,7 +74,7 @@ export default function ChatPage() {
             </h2>
           </Link>
         )}
-        {expansions.length === 0 && (
+        {expansions.length > 0 && (
           <button onClick={() => setSideNavOpen(!sideNavOpen)} className="text-xl ml-auto">
             <BsThreeDotsVertical />
           </button>
