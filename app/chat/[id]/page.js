@@ -67,9 +67,9 @@ export default function ChatPage() {
             <img
               src={currentGame?.thumbnail}
               alt={currentGame?.title}
-              className="w-12 h-12 rounded-md"
+              className="w-12 rounded-md"
             />
-            <h2 className=" capitalize text-nowrap text-ellipsis overflow-hidden">
+            <h2 className="capitalize font-semibold text-nowrap text-ellipsis overflow-hidden">
               {currentGame?.title}
             </h2>
           </Link>
