@@ -54,6 +54,8 @@ export default function ExtractTextPage() {
       if (res.ok) {
         const { data } = await res.json();
         setFileText(data);
+      } else {
+        toast.error("url or path missing");
       }
     } catch (err) {
       toast.err(err.message);
