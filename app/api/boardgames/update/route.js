@@ -16,7 +16,7 @@ export async function POST(req) {
     let doc;
     doc = await Boardgame.findOneAndUpdate({ _id: boardgame_id }, { $push: { urls: url } });
     if (!doc) doc = await Expansion.findOneAndUpdate({ _id: boardgame_id }, { $push: { urls: url } });
-    console.log(boardgame_id)
+    
     return NextResponse.json({ data: `${doc.title} update successfully` });
   } catch (err) {
     console.log(err);

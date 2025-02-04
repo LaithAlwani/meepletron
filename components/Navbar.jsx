@@ -10,7 +10,6 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const pathname = usePathname();
   const { user } = useUser();
-  console.log(user);
 
   return (
     <nav className={`w-full text-lg p-3 ${pathname.includes("chat") ? "hidden" : ""}`}>

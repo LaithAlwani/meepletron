@@ -9,7 +9,6 @@ import Expansion from "@/models/expansion";
 export async function POST(req) {
   const data = await req.json();
   const { fileText, boardgame, parent_id, blob } = data;
-  console.log(blob)
   if (!fileText || !boardgame) {
     return NextResponse.json({ data: "no text or boardgame found!" });
   }

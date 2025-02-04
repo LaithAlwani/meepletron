@@ -141,9 +141,7 @@ export default function ExtractTextPage() {
             ?.filter((url) => !url?.isTextExtracted)
             .map((url) => (
               <li key={url?.blob?.url} onClick={() => setBlob(url)}>
-                {console.log(url)}
                 {url.blob.contentDisposition.match(/filename="(.+?)\.pdf"/)[1]}
-                {/* {url.blob?.url} {url.blob?.isTextExtracted} */}
               </li>
             ))}
         </ul>
