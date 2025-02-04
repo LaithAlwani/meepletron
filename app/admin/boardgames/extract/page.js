@@ -135,15 +135,15 @@ export default function ExtractTextPage() {
           )}
         </div>
       )}
-
       {boardgame && boardgame.urls.length > 0 && (
         <ul>
           {boardgame.urls
-            ?.filter((url) => url?.blob?.isTextExtracted)
+            ?.filter((url) => !url?.isTextExtracted)
             .map((url) => (
               <li key={url?.blob?.url} onClick={() => setBlob(url)}>
                 {console.log(url)}
-                {url.blob?.url} {url.blob?.isTextExtracted}
+                {url.blob.contentDisposition.match(/filename="(.+?)\.pdf"/)[1]}
+                {/* {url.blob?.url} {url.blob?.isTextExtracted} */}
               </li>
             ))}
         </ul>
