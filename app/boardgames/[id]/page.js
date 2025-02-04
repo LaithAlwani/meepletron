@@ -60,7 +60,7 @@ export default function BoardgamePage() {
             <p className="flex justify-start items-center gap-2 mb-2">
               <MdAccessTime size={24} /> {boardgame.playTime}{" "}
             </p>
-            <CustomLink href={`/chat/${(!expansions?.length ? boardgame.parent_id: boardgame._id) || boardgame._id}`}>Ask a question!</CustomLink>
+            <CustomLink href={`/boardgames/${(!expansions?.length ? boardgame.parent_id: boardgame._id) || boardgame._id}/chat`}>Ask a question!</CustomLink>
           </div>
           {boardgame.urls.length > 0 && (
             <a href={boardgame.urls[0].blob.url} target="_blank" className="cursor-pointer">
