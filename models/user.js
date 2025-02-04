@@ -1,12 +1,13 @@
 import { model, models, Schema } from "mongoose";
 
 const UserSchema = new Schema({
-  firstname: String,
-  lastname: Strting,
-  email: String,
+  first_name: { type: String, required: true },
+  last_name: { type: String },
+  username: { type: String, required: true },
+  email_address: { type: String,  required: true },
   avatar: String,
-  visitedLast: [{ type: mongoose.Schema.Types.ObjectId, ref: "Boardgame" }],
-  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Boardgame" }],
+  last_visited: [{ type: Schema.Types.ObjectId, ref: "Boardgame" }],
+  favorites: [{ type: Schema.Types.ObjectId, ref: "Boardgame" }],
 });
 
 const User = models.User || model("User", UserSchema);
