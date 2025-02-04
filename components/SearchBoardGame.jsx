@@ -40,7 +40,7 @@ const SearchBoardGame = ({ onBoardGameClick }) => {
                 <span className="capitalize font-semibold text-sm  ">{boardgame.title}</span>
               </Link>
               <Link
-                href={`/chat/${boardgame.parent_id ? boardgame.parent_id : boardgame._id}`}
+                href={`/boardgames/${boardgame.parent_id ? boardgame.parent_id : boardgame._id}/chat`}
                 className="flex items-center gap-2 border border-slate-500 dark:border-slate-300 rounded-md p-2 text-gray-500 dark:text-slate-200  hover:text-gray-800 dark:hover:text-slate-100">
                 <FaComments size={20} />
                 Chat
