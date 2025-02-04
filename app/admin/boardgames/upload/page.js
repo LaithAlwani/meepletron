@@ -39,7 +39,7 @@ export default function UploadPage() {
       const {data} = await res.json()
       if (res.ok) {
         toast.custom(t => <CustomToast message={data} id={t.id} />)
-        router.push("/admin/boardgames")
+        router.push("/admin/boardgames/extract")
       } else {
         toast.err(data)
       }
@@ -52,6 +52,7 @@ export default function UploadPage() {
 
   return (
     <div className="max-w-xl mx-auto p-6">
+      <h1 className="text-xl">Upload Files</h1>
       <div className="mt-6">
         <input
           type="text"

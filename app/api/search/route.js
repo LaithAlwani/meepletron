@@ -17,14 +17,14 @@ export async function GET(req) {
 
     const boards = await Boardgame.find(
       { title: { $regex: query, $options: "i" } }, // Case-insensitive regex search
-      { title: 1, thumbnail:1 } // Return only title and description
+      { title: 1, thumbnail:1, urls:1 } // Return only title and description
     )
       .limit(5) // Limit to 10 boardgames
       .exec();
   
     const exps = await Expansion.find(
       { title: { $regex: query, $options: "i" } }, // Case-insensitive regex search
-      { title: 1, thumbnail:1 } // Return only title and description
+      { title: 1, thumbnail:1,urls:1 } // Return only title and description
     )
       .limit(5) // Limit to 10 boardgames
       .exec();

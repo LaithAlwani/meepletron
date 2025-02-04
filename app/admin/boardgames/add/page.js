@@ -52,7 +52,7 @@ export default function AddBoardgame() {
       const { data } = await res.json();
       if (res.ok) {
         toast.custom((t) => <CustomToast message={`${data}`} id={t.id} />);
-        router.push("/admin/boardgames")
+        router.push("/admin/boardgames/upload")
       } else {
         toast.error(data);
         setBoardGame(null)
@@ -65,6 +65,7 @@ export default function AddBoardgame() {
   };
   return (
     <div className="max-w-xl mx-auto">
+      <h1 className="text-xl">Add Boardgame</h1>
       {!boardgame && (
         <form onSubmit={getBoardGamesFromBGG} className="mb-4">
           <input
