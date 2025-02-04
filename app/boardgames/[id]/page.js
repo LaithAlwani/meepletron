@@ -62,9 +62,9 @@ export default function BoardgamePage() {
             </p>
             <CustomLink href={`/chat/${(!expansions?.length ? boardgame.parent_id: boardgame._id) || boardgame._id}`}>Ask a question!</CustomLink>
           </div>
-          {boardgame.rule_book_url && (
-            <a href={boardgame.rule_book_url} target="_blank" className="cursor-pointer">
-              Rules Book
+          {boardgame.urls.length > 0 && (
+            <a href={boardgame.urls[0].blob.url} target="_blank" className="cursor-pointer">
+              {boardgame.urls[0].blob.contentDisposition.match(/filename="(.+?)\.pdf"/)[1]}
             </a>
           )}
           {expansions?.length > 0 && (

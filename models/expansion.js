@@ -35,7 +35,7 @@ const expansionSchema = new Schema(
     publishers: [],
     categories: [],
     game_mechanics:[],
-    rule_book_url:String,
+    urls:[]
   },
   { timestamps: true }
 );

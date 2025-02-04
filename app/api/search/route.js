@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
+import Expansion from "@/models/expansion";
 
 export async function GET(req) {
   const url = new URL(req.url);
@@ -14,12 +15,20 @@ export async function GET(req) {
   try {
     await connectToDB();
 
-    const boardgames = await Boardgame.find(
+    const boards = await Boardgame.find(
       { title: { $regex: query, $options: "i" } }, // Case-insensitive regex search
       { title: 1, thumbnail:1 } // Return only title and description
     )
       .limit(5) // Limit to 10 boardgames
       .exec();
+  
+    const exps = await Expansion.find(
+      { title: { $regex: query, $options: "i" } }, // Case-insensitive regex search
+      { title: 1, thumbnail:1 } // Return only title and description
+    )
+      .limit(5) // Limit to 10 boardgames
+      .exec();
+    const boardgames = [...boards, ...exps]
   
     return NextResponse.json({ data: boardgames }, { status: 200 });
   } catch (error) {

@@ -33,8 +33,8 @@ const boardgameSchema = new Schema(
     artists: [],
     publishers: [],
     categories: [],
-    game_mechanics:[],
-    rule_book_url:String,
+    game_mechanics: [],
+    urls:[]
   },
   { timestamps: true }
 );
