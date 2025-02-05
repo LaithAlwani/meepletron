@@ -45,6 +45,7 @@ export default function ExtractTextPage() {
   };
 
   const extractText = async () => {
+    setIsLoading(true)
     const data = blob.blob.url;
     try {
       const res = await fetch("/api/boardgames/extract", {
@@ -153,6 +154,7 @@ export default function ExtractTextPage() {
       {boardgame && blob && (
         <button
           onClick={extractText}
+          disabled={isLoading}
           className="mt-2 bg-indigo-600 dark:bg-yellow-500 px-4 py-2 rounded text-white w-full">
           {isLoading ? <Loader width="1rem" /> : "Extract Text"}
         </button>
