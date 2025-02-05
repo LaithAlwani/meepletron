@@ -11,7 +11,7 @@ export async function POST(req) {
     return NextResponse.json({ data: "File path or url missing" }, { status: 500 });
   try {
     const chunks = await getChunkedDocsFromPDF(PDF_URL, FILE_PATH);
-    console.log("chunks", chunks)
+    
     return NextResponse.json({ data: chunks, message: "Data Embedded" }, { status: 200 });
   } catch (err) {
     console.log(err);

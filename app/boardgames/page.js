@@ -15,7 +15,7 @@ const getBoardgames = async () => {
   try {
     const boardgames = await Boardgame.find({}, "title image")
       .sort({ createdAt: -1 })
-      .limit(10)
+      .limit(12)
       .lean();
     //get the user favorites list user.find({_id:user.id}).select("favorites").lean()
     // compare const isFavorited = user.favorites.includes(boardGameId); board game componenet

@@ -34,6 +34,8 @@ export async function POST(req) {
       fileText[chunk].metadata.bg_id = boardgame._id.toString();
       fileText[chunk].metadata.parent_id = !parent_id ? boardgame._id.toString() : parent_id;
       fileText[chunk].metadata.bg_title = boardgame.title.toLowerCase();
+      fileText[chunk].metadata.bg_refrence = blob.blob.contentDisposition.match(/filename="(.+?)\.pdf"/)[1];
+      fileText[chunk].metadata.bg_refrence_url = blob.blob.url;
     }
 
     const embeddings = new OpenAIEmbeddings({
