@@ -5,12 +5,13 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   const data = await req.json();
   const PDF_URL = data;
-  const FILE_PATH = path.join(process.cwd(), "public", "temp.pdf");
+  const FILE_PATH = path.join(process.cwd(), "temp.pdf");
   if (!PDF_URL || !FILE_PATH)
+    
     return NextResponse.json({ data: "File path or url missing" }, { status: 500 });
   try {
     const chunks = await getChunkedDocsFromPDF(PDF_URL, FILE_PATH);
-
+    console.log("chunks", chunks)
     return NextResponse.json({ data: chunks, message: "Data Embedded" }, { status: 200 });
   } catch (err) {
     console.log(err);
