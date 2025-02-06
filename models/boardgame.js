@@ -27,6 +27,7 @@ const boardgameSchema = new Schema(
       type: Number,
       required: true,
     },
+    isExpansion: Boolean,
     description: String,
     bggId: String,
     designers: [],
@@ -34,7 +35,9 @@ const boardgameSchema = new Schema(
     publishers: [],
     categories: [],
     game_mechanics: [],
-    urls:[]
+    urls: [],
+    parent_bgg_Id: String,
+    counter: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

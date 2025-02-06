@@ -4,19 +4,12 @@ import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const { boardgame_id, blob } = await req.json();
-  if (!boardgame_id || !blob)
+  const { boardgame_id, updateData } = await req.json();
+  if (!boardgame_id || !updateData)
     return NextResponse.json({ data: `Please add game and file` }, { status: 500 });
-  const url = {
-    blob, 
-    isTextExtracted:false
-  }
   try {
     await connectToDB();
-    let doc;
-    doc = await Boardgame.findOneAndUpdate({ _id: boardgame_id }, { $push: { urls: url } });
-    if (!doc) doc = await Expansion.findOneAndUpdate({ _id: boardgame_id }, { $push: { urls: url } });
-    
+    const doc = await Boardgame.findOneAndUpdate({ _id: boardgame_id }, updateData, { new: true });
     return NextResponse.json({ data: `${doc.title} update successfully` });
   } catch (err) {
     console.log(err);

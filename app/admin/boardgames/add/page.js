@@ -34,6 +34,7 @@ export default function AddBoardgame() {
     try {
       const bg = await fetchBoardGameBGG(id);
       const boardgame = createBoardgame(bg, title);
+      
       setBoardGame(boardgame);
       setGameList([]);
     } catch (err) {
@@ -47,7 +48,7 @@ export default function AddBoardgame() {
     try {
       const res = await fetch("/api/boardgames/add", {
         method: "POST",
-        body: JSON.stringify({ boardgame, parent_id: parentGameId }),
+        body: JSON.stringify({boardgame}),
       });
       const { data } = await res.json();
       if (res.ok) {

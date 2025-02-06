@@ -1,7 +1,6 @@
 "use client";
 import { upload } from "@vercel/blob/client";
 import { useState, useRef } from "react";
-import { createBoardgame, fetchBggGames, fetchBoardGameBGG } from "@/lib/bgg-functions";
 import { useSearch } from "@/utils/hooks";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -32,16 +31,21 @@ export default function UploadPage() {
         },
       });
       setBlob(newBlob);
+      const url = {
+        blob: newBlob,
+        isTextExtracted: false,
+      };
+      const updateData = { $push: { urls: url } };
       const res = await fetch("/api/boardgames/update", {
         method: "POST",
-        body:JSON.stringify({boardgame_id:boardgame._id, blob:newBlob})
-      })
-      const {data} = await res.json()
+        body: JSON.stringify({ boardgame_id: boardgame._id, updateData }),
+      });
+      const { data } = await res.json();
       if (res.ok) {
-        toast.custom(t => <CustomToast message={data} id={t.id} />)
-        router.push("/admin/boardgames/extract")
+        toast.custom((t) => <CustomToast message={data} id={t.id} />);
+        router.push("/admin/boardgames/extract");
       } else {
-        toast.err(data)
+        toast.err(data);
       }
     } catch (err) {
       toast.error(err.message);
