@@ -36,6 +36,7 @@ const boardgameSchema = new Schema(
     categories: [],
     game_mechanics: [],
     urls: [],
+    parent_id:{type: Schema.Types.ObjectId, ref:"Boardgame"},
     parent_bgg_Id: String,
     counter: { type: Number, default: 0 },
   },

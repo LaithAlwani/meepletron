@@ -1,5 +1,5 @@
 import Boardgame from "@/models/boardgame";
-import Expansion from "@/models/expansion";
+
 import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
 export async function GET(req, { params }) {
@@ -8,14 +8,13 @@ export async function GET(req, { params }) {
     await connectToDB();
 
     const boardgame = await Boardgame.findOne({ _id: id });
-    let expansions;
-    if (boardgame) {
-      expansions = await Expansion.find({ parent_id: id }, { thumbnail: 1, title: 1 });
-    } else {
-      expansions = await Expansion.findOne({ _id: id });
-    }
-    const data = boardgame ? { boardgame, expansions } : expansions;
-    return NextResponse.json({ data }, { status: 200 });
+    const isExpansion = boardgame.isExpansion;
+    if (isExpansion) return NextResponse.json({ data: boardgame }, { status: 200 });
+
+    const expansions = await Boardgame.find({ parent_id: id }, { thumbnail: 1, title: 1 });
+
+    
+    return NextResponse.json({ data: { boardgame, expansions } }, { status: 200 });
   } catch (err) {
     console.log(err);
     return NextResponse.json({ message: "Error in fetching boardgame" + err }, { status: 500 });
