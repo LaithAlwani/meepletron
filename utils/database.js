@@ -9,10 +9,12 @@ const connectToDB = async () => {
     console.log('MongoDB is already connected');
     return;
   }
+  const devDB = "meepletron-dev"
+  const prodDB = "meepletron"
 
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
-      dbName: process.env.NODE_ENV !="production" ? "rules_guru": "meepletron",
+      dbName: process.env.NODE_ENV !="production" ? prodDB: prodDB,
     })
 
     isConnected = true;
