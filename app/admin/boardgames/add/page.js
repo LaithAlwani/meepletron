@@ -14,8 +14,7 @@ export default function AddBoardgame() {
   const [input, setInput] = useState("");
   const [gameList, setGameList] = useState([]);
   const [boardgame, setBoardGame] = useState(null);
-  const [isExpansion, setIsExpansion] = useState(false);
-  const [parentGameId, setParentGameId] = useState("");
+  const [parentGame, setParentGame] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const { query, setQuery, results, loading } = useSearch("/api/search");
@@ -34,8 +33,15 @@ export default function AddBoardgame() {
     try {
       const bg = await fetchBoardGameBGG(id);
       const boardgame = createBoardgame(bg, title);
-      
+
       setBoardGame(boardgame);
+      if (boardgame.isExpansion) {
+        //get parent game to make it's correct
+        const parent_bg = await fetchBoardGameBGG(boardgame.parent_bgg_Id);
+        const parent = createBoardgame(parent_bg, title);
+        
+        setParentGame(parent);
+      }
       setGameList([]);
     } catch (err) {
       toast.error(err.message);
@@ -48,15 +54,15 @@ export default function AddBoardgame() {
     try {
       const res = await fetch("/api/boardgames/add", {
         method: "POST",
-        body: JSON.stringify({boardgame}),
+        body: JSON.stringify({ boardgame }),
       });
       const { data } = await res.json();
       if (res.ok) {
         toast.custom((t) => <CustomToast message={`${data}`} id={t.id} />);
-        router.push("/admin/boardgames/upload")
+        router.push("/admin/boardgames/upload");
       } else {
         toast.error(data);
-        setBoardGame(null)
+        setBoardGame(null);
       }
     } catch (err) {
       toast.error(err.message);
@@ -91,49 +97,16 @@ export default function AddBoardgame() {
           </p>
         ))}
       {boardgame && (
-        <div className="mt-4">
-          <img src={boardgame.thumbnail} alt={boardgame.title} className="w-32 rounded" />
-          <p className="font-bold text-lg">{boardgame.title}</p>
-
-          {/* Expansion Checkbox */}
-          <label className="flex items-center mt-4 space-x-2">
-            <input
-              type="checkbox"
-              checked={isExpansion}
-              onChange={() => setIsExpansion(!isExpansion)}
-            />
-            <span>Is this an Expansion?</span>
-          </label>
-
-          {/* Parent Game Selection for Expansions */}
-          {isExpansion && (
-            <div className="mt-6">
-              <input
-                type="text"
-                placeholder="Search for parent board game..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="border p-2 rounded w-full"
-              />
-              {loading && <p className="text-gray-500 mt-2">Loading...</p>}
-              {!loading && results.length === 0 && query.trim() && (
-                <p className="text-gray-400 mt-4">No results found.</p>
-              )}
-
-              <div className="flex my-4 gap-4 overflow-x-scroll">
-                {results.map((game) => (
-                  <div
-                    key={game._id}
-                    onClick={() => setParentGameId(game._id)}
-                    className="cursor-pointer">
-                    <img src={game.thumbnail} alt={game.title} className="w-16 rounded" />
-                    <h2>{game.title}</h2>
-                  </div>
-                ))}
-              </div>
-              <p>Parent Id: {parentGameId}</p>
-            </div>
-          )}
+        <div className="flex justify-between mt-4">
+          <div>
+            <h3 className="text-lg font-semibold">Selected Game</h3>
+            <img src={boardgame.thumbnail} alt={boardgame.title} className="w-32 rounded" />
+            <p className="font-bold text-lg">{boardgame.title}</p>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold">Parent Game</h3>
+            <img src={parentGame.thumbnail} alt="" />
+          </div>
         </div>
       )}
       {boardgame && (

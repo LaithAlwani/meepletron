@@ -1,5 +1,4 @@
 import Boardgame from "@/models/boardgame";
-import Expansion from "@/models/expansion";
 import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
 

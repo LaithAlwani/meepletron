@@ -1,19 +1,15 @@
 "use client";
-import { upload } from "@vercel/blob/client";
+
 import { useState, useRef } from "react";
-import { createBoardgame, fetchBggGames, fetchBoardGameBGG } from "@/lib/bgg-functions";
 import { useSearch } from "@/utils/hooks";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import CustomToast from "@/components/CustomeToast";
-import CustomButton from "@/components/CustomeButton";
 import Loader from "@/components/Loader";
 
 export default function ExtractTextPage() {
   const router = useRouter();
   const [boardgame, setBoardgame] = useState(null);
-  const [isExpansion, setIsExpansion] = useState(false);
-  const [parentGameId, setParentGameId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [fileText, setFileText] = useState([]);
   const { query, setQuery, results, loading } = useSearch("/api/search");
@@ -23,11 +19,11 @@ export default function ExtractTextPage() {
     setIsLoading(true);
     if (!boardgame || !fileText.length) return toast.error("Please add game and rules");
     try {
-      const parent_id = isExpansion ? parentGameId : "";
+      
 
       const res = await fetch("/api/boardgames/embeddings", {
         method: "POST",
-        body: JSON.stringify({ fileText, boardgame, parent_id, blob }),
+        body: JSON.stringify({ fileText, boardgame, blob }),
       });
       const { data } = await res.json();
       if (res.ok) {
@@ -94,48 +90,9 @@ export default function ExtractTextPage() {
       {/* Selected Board Game */}
       {boardgame && (
         <div className="mt-4">
+          <h3>Selected Game</h3>
           <img src={boardgame.thumbnail} alt={boardgame.title} className="w-32 rounded" />
           <p className="font-bold text-lg">{boardgame.title}</p>
-
-          {/* Expansion Checkbox */}
-          <label className="flex items-center mt-4 space-x-2">
-            <input
-              type="checkbox"
-              checked={isExpansion}
-              onChange={() => setIsExpansion(!isExpansion)}
-            />
-            <span>Is this an Expansion?</span>
-          </label>
-
-          {/* Parent Game Selection for Expansions */}
-          {isExpansion && (
-            <div className="mt-6">
-              <input
-                type="text"
-                placeholder="Search for parent board game..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="border p-2 rounded w-full"
-              />
-              {loading && <p className="text-gray-500 mt-2">Loading...</p>}
-              {!loading && results.length === 0 && query.trim() && (
-                <p className="text-gray-400 mt-4">No results found.</p>
-              )}
-
-              <div className="flex my-4 gap-4 overflow-x-scroll">
-                {results.map((game) => (
-                  <div
-                    key={game._id}
-                    onClick={() => setParentGameId(game._id)}
-                    className="cursor-pointer">
-                    <img src={game.thumbnail} alt={game.title} className="w-16 rounded" />
-                    <h2>{game.title}</h2>
-                  </div>
-                ))}
-              </div>
-              <p>Parent Id: {parentGameId}</p>
-            </div>
-          )}
         </div>
       )}
       {boardgame && boardgame.urls.length > 0 && (

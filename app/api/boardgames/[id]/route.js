@@ -1,5 +1,4 @@
 import Boardgame from "@/models/boardgame";
-
 import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
 export async function GET(req, { params }) {
@@ -13,7 +12,6 @@ export async function GET(req, { params }) {
 
     const expansions = await Boardgame.find({ parent_id: id }, { thumbnail: 1, title: 1 });
 
-    
     return NextResponse.json({ data: { boardgame, expansions } }, { status: 200 });
   } catch (err) {
     console.log(err);
