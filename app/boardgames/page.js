@@ -13,7 +13,7 @@ export const metadata = {
 const getBoardgames = async () => {
   await connectToDB();
   try {
-    const boardgames = await Boardgame.find({}, "title image")
+    const boardgames = await Boardgame.find({}, "title image parent_id")
       .sort({ createdAt: -1 })
       .limit(12)
       .lean();

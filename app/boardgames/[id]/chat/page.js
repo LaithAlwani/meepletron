@@ -22,7 +22,6 @@ export default function ChatPage() {
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const messagesEndRef = useRef(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: `/api/chat/${params.id}`,
     body: { boardgame: currentGame },
   });
 
