@@ -7,12 +7,13 @@ import { useRouter } from "next/navigation";
 import CustomToast from "@/components/CustomeToast";
 import CustomButton from "@/components/CustomeButton";
 import Loader from "@/components/Loader";
+import Link from "next/link";
 
 export default function UploadPage() {
   const router = useRouter();
   const [boardgame, setBoardgame] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { query, setQuery, results, loading } = useSearch("/api/search");
+  const { query, setQuery, results, loading } = useSearch({limit:5});
   const inputFileRef = useRef(null);
   const [blob, setBlob] = useState(null);
 
@@ -43,7 +44,6 @@ export default function UploadPage() {
       const { data } = await res.json();
       if (res.ok) {
         toast.custom((t) => <CustomToast message={data} id={t.id} />);
-        router.push("/admin/boardgames/extract");
       } else {
         toast.err(data);
       }
@@ -96,6 +96,7 @@ export default function UploadPage() {
                 {blob && (
                   <div>
                     Blob url: <a href={blob.url}>{blob.url}</a>
+                    <Link className="bg-green-500 p-2 rounded-sm" href={"/admin/boardgames/extract"}> Next </Link>
                   </div>
                 )}
               </>

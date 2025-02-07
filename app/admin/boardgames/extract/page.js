@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import CustomToast from "@/components/CustomeToast";
 import Loader from "@/components/Loader";
+import Link from "next/link";
 
 export default function ExtractTextPage() {
   const router = useRouter();
@@ -19,8 +20,6 @@ export default function ExtractTextPage() {
     setIsLoading(true);
     if (!boardgame || !fileText.length) return toast.error("Please add game and rules");
     try {
-      
-
       const res = await fetch("/api/boardgames/embeddings", {
         method: "POST",
         body: JSON.stringify({ fileText, boardgame, blob }),
@@ -28,7 +27,9 @@ export default function ExtractTextPage() {
       const { data } = await res.json();
       if (res.ok) {
         toast.custom((t) => <CustomToast message={`${data} updated successfully!`} id={t.id} />);
-        router.push("/boardgames");
+        // router.push("/admin/boardgames/add");
+        setFileText([]);
+        setBlob(null);
       } else {
         toast.error(data || "Something went wrong");
       }
@@ -41,7 +42,7 @@ export default function ExtractTextPage() {
   };
 
   const extractText = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     const data = blob.blob.url;
     try {
       const res = await fetch("/api/boardgames/extract", {
@@ -86,6 +87,10 @@ export default function ExtractTextPage() {
           ))}
         </div>
       </div>
+      <Link className="bg-green-500 p-2 rounded-sm" href={"/admin/boardgames/add"}>
+        {" "}
+        Next{" "}
+      </Link>
 
       {/* Selected Board Game */}
       {boardgame && (
@@ -143,7 +148,7 @@ export default function ExtractTextPage() {
             {isLoading ? <Loader width="1rem" /> : "Accept"}
           </button>
           <button
-            onClick={() => setBoardGame(null)}
+            onClick={() => setBoardgame(null)}
             disabled={isLoading}
             className="bg-red-500 text-white px-4 py-2 rounded w-full disabled:bg-red-300">
             Reject

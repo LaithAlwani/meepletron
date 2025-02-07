@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 
-export const useSearch = (apiEndpoint, debounceDelay = 500) => {
+export const useSearch = ({debounceDelay:debounceDelay = 500, limit}) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
-
+  
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
@@ -13,6 +13,7 @@ export const useSearch = (apiEndpoint, debounceDelay = 500) => {
 
     return () => clearTimeout(handler);
   }, [query, debounceDelay]);
+  
 
   useEffect(() => {
     if (!debouncedQuery.trim()) {
@@ -23,7 +24,7 @@ export const useSearch = (apiEndpoint, debounceDelay = 500) => {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${apiEndpoint}?query=${debouncedQuery}`);
+        const response = await fetch(`/api/search?query=${debouncedQuery}&limit=${limit}`);
         const { data } = await response.json();
         setResults(data);
       } catch (error) {
@@ -34,7 +35,7 @@ export const useSearch = (apiEndpoint, debounceDelay = 500) => {
     };
 
     fetchResults();
-  }, [debouncedQuery, apiEndpoint]);
+  }, [debouncedQuery, limit]);
 
   return { query, setQuery, results, loading };
 };

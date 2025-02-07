@@ -21,7 +21,7 @@ export default function BoardgameContainer({ boardgame }) {
         <FavoriteButton />
       </span> */}
       <Link
-        href={`/boardgames/${parent_id}/chat`}
+        href={`/boardgames/${parent_id || _id}/chat`}
         className="absolute bottom-1 right-1 text-white bg-indigo-600 dark:bg-yellow-500 dark:text-slate-900 rounded-full p-2">
         <BsChatDots size={22} />
       </Link>

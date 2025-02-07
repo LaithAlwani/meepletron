@@ -6,7 +6,8 @@ import Image from "next/image";
 import CustomLink from "@/components/CustomeLink";
 import ContactForm from "@/components/ContactForm";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
-
+import { getBoardgames } from "@/lib/functions";
+import BoardgameContainer from "@/components/boardgame/BoardgameContainer";
 
 export const metadata = {
   alternates: {
@@ -14,7 +15,8 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
+  const recentlyAdded = await getBoardgames({ where: {isExpansion:false},limit:10});
   return (
     <>
       <section className="text-center relative max-w-lg mx-auto px-3">
@@ -35,6 +37,18 @@ export default function Home() {
         </p>
         <p className="italic text-md font-semibold ">Your Ultimate Board Game Companion</p>
         <CustomLink href="/boardgames">Get Started Now</CustomLink>
+      </section>
+      <section className=" max-w-5xl mx-auto px-4">
+        <div className="relative flex py-5 items-center">
+          <div className="w-[3rem] border-t border-gray-400 dark:border-yellow-300"></div>
+          <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500">Recently Added</h2>
+          <div className="flex-grow border-t border-gray-400 dark:border-yellow-300"></div>
+        </div>
+        <div className="flex flex-nowrap justify-start overflow-x-scroll gap-3 ">
+          {recentlyAdded?.map((boardgame) => (
+            <BoardgameContainer key={boardgame._id} boardgame={boardgame} />
+          ))}
+        </div>
       </section>
       <Features />
       <Pricing />
