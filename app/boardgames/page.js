@@ -1,7 +1,6 @@
 import BoardgameContainer from "@/components/boardgame/BoardgameContainer";
 import SearchBoardGame from "@/components/SearchBoardGame";
-import connectToDB from "@/utils/database";
-import Boardgame from "@/models/boardgame";
+import { getBoardgames } from "@/lib/functions";
 
 export const metadata = {
   title: "Board Games",
@@ -10,23 +9,8 @@ export const metadata = {
   },
 };
 
-const getBoardgames = async () => {
-  await connectToDB();
-  try {
-    const boardgames = await Boardgame.find({}, "title image parent_id")
-      .sort({ createdAt: -1 })
-      .limit(12)
-      .lean();
-    //get the user favorites list user.find({_id:user.id}).select("favorites").lean()
-    // compare const isFavorited = user.favorites.includes(boardGameId); board game componenet
-    return boardgames;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export default async function BoargamePage() {
-  const boardgames = await getBoardgames();
+  const boardgames = await getBoardgames({where:{isExpansion:false}});
 
   return (
     <section className="px-2 max-w-xl mx-auto mb-6">
