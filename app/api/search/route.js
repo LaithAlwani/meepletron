@@ -17,7 +17,7 @@ export async function GET(req) {
     const searchRegex = searchWords.map((word) => `(?=.*${word})`).join("");
     let dbQuery = Boardgame.find(
       { title: { $regex: searchRegex, $options: "i" } }, // Case-insensitive regex search
-      { title: 1, thumbnail: 1, urls: 1, isExpansion: 1, parent_id: 1 } // Return only title and description
+      { title: 1, thumbnail: 1, urls: 1, is_expansion: 1, parent_id: 1 } // Return only title and description
     );
 
     if (limit !== "undefined" && limit !== "null") {   

@@ -35,7 +35,7 @@ export default function AddBoardgame() {
       const boardgame = createBoardgame(bg, title);
 
       setBoardGame(boardgame);
-      if (boardgame.isExpansion) {
+      if (boardgame.is_expansion) {
         //get parent game to make it's correct
         const parent_bg = await fetchBoardGameBGG(boardgame.parent_bgg_Id);
         const parent = createBoardgame(parent_bg, title);
@@ -59,7 +59,7 @@ export default function AddBoardgame() {
       const { data } = await res.json();
       if (res.ok) {
         toast.custom((t) => <CustomToast message={`${data}`} id={t.id} />);
-        router.push("/admin/boardgames/upload");
+        // router.push("/admin/boardgames/upload");
       } else {
         toast.error(data);
         setBoardGame(null);

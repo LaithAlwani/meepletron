@@ -16,7 +16,7 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const recentlyAdded = await getBoardgames({ where: { isExpansion: false }, limit: 10 });
+  const recentlyAdded = await getBoardgames({ where: { is_expansion: false }, limit: 10 });
   return (
     <>
       <section className="text-center relative max-w-lg mx-auto px-3">

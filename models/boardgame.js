@@ -15,29 +15,32 @@ const boardgameSchema = new Schema(
       required: true,
     },
     year: String,
-    minPlayers: {
+    min_players: {
       type: Number,
       required: true,
     },
-    maxPlayers: {
+    max_players: {
       type: Number,
       required: true,
     },
-    playTime: {
+    min_age: {
+      type: String,
+      required: true,
+    },
+    play_time: {
       type: Number,
       required: true,
     },
-    isExpansion: Boolean,
+    is_expansion: Boolean,
     description: String,
-    bggId: String,
+    bgg_id: String,
     designers: [],
     artists: [],
     publishers: [],
     categories: [],
     game_mechanics: [],
     urls: [],
-    parent_id:{type: Schema.Types.ObjectId, ref:"Boardgame"},
-    parent_bgg_Id: String,
+    parent_id: { type: Schema.Types.ObjectId, ref: "Boardgame" },
     counter: { type: Number, default: 0 },
   },
   { timestamps: true }

@@ -26,7 +26,7 @@ export async function POST(req) {
     if (!doc) return NextResponse.json({ data: "Boardgame not found" }, { status: 500 });
     for (const chunk in fileText) {
       fileText[chunk].metadata.bg_id = boardgame._id.toString();
-      fileText[chunk].metadata.parent_id = boardgame.isExpansion
+      fileText[chunk].metadata.parent_id = boardgame.is_expansion
         ? boardgame.parent_id?.toString()
         : boardgame._id.toString();
       fileText[chunk].metadata.bg_title = boardgame.title.toLowerCase();

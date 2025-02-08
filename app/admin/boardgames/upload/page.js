@@ -21,8 +21,10 @@ export default function UploadPage() {
     event.preventDefault();
     setIsLoading(true);
     const file = inputFileRef.current.files[0];
+    const safeTitle = boardgame.title.replace(/\s+/g, "_").toLowerCase();
+
     try {
-      const newBlob = await upload(`${game.title}/${file.name}`, file, {
+      const newBlob = await upload(`${safeTitle}/${file.name}`, file, {
         access: "public",
         handleUploadUrl: "/api/boardgames/rule-book",
         onUploadProgress: (progressEvent) => {

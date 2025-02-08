@@ -55,10 +55,10 @@ export default function BoardgamePage() {
               {boardgame.title} <span className="text-xs font-light">({boardgame.year}) </span>
             </h2>
             <p className="flex justify-start items-center gap-2 mb-2">
-              <MdGroups size={24} /> {boardgame.minPlayers} - {boardgame.maxPlayers}
+              <MdGroups size={24} /> {boardgame.min_players} - {boardgame.ma_players}
             </p>
             <p className="flex justify-start items-center gap-2 mb-2">
-              <MdAccessTime size={24} /> {boardgame.playTime}{" "}
+              <MdAccessTime size={24} /> {boardgame.play_time}{" "}
             </p>
             <CustomLink href={`/boardgames/${(!expansions?.length ? boardgame.parent_id: boardgame._id) || boardgame._id}/chat`}>Ask a question!</CustomLink>
           </div>
