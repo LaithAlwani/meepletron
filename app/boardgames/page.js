@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 export default async function BoargamePage() {
-  const boardgames = await getBoardgames({});
+  const boardgames = await getBoardgames({where:{is_expansion:false}});
 
   return (
     <section className="px-2 max-w-xl mx-auto mb-6">
