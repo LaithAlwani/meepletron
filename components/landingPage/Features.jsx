@@ -40,7 +40,7 @@ const Card = ({ icon, header, text1, text2, text3 }) => {
   return (
     <div className=" bg-gray-200 dark:bg-slate-800 shadow-md shadow-gray-400 dark:shadow-slate-700 w-72 px-8 py-14">
       <span className="block mb-6">{icon}</span>
-      <h4 className="text-3xl font-bold text-indigo-600 dark:text-yellow-500">{header}</h4>
+      <h4 className="text-3xl font-bold text-blue-600 dark:text-yellow-500">{header}</h4>
       <ul className="mt-8 list-inside space-y-2 list-disc">
         <li>{text1}</li>
         <li>{text2}</li>

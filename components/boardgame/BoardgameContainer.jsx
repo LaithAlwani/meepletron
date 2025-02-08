@@ -22,7 +22,7 @@ export default function BoardgameContainer({ boardgame }) {
       </span> */}
       <Link
         href={`/boardgames/${parent_id || _id}/chat`}
-        className="absolute bottom-1 right-1 text-white bg-indigo-600 dark:bg-yellow-500 dark:text-slate-900 rounded-full p-2">
+        className="absolute bottom-1 right-1 text-white bg-blue-600 dark:bg-yellow-500 dark:text-slate-900 rounded-full p-2">
         <BsChatDots size={22} />
       </Link>
     </div>

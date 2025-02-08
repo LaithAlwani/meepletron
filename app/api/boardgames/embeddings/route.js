@@ -16,12 +16,14 @@ export async function POST(req) {
     if (!fileText.length) {
       return NextResponse.json({ data: "File has no text" }, { status: 500 });
     }
-    
+    console.log(blob)
     const doc = await Boardgame.findOneAndUpdate(
       { _id: boardgame._id, "urls.blob.pathname": blob.blob.pathname }, // Find the board game and specific URL entry
       { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
       { new: true } // Return the updated document
     );
+
+    console.log(doc.urls[2])
     
     if (!doc) return NextResponse.json({ data: "Boardgame not found" }, { status: 500 });
     for (const chunk in fileText) {
@@ -47,9 +49,9 @@ export async function POST(req) {
       maxConcurrency: 5,
     });
     await vectorStore.addDocuments(fileText);
-    return NextResponse.json({ data: `${boardgame.title} Data Embedded` }, { status: 200 });
+    return NextResponse.json({ data:doc, message: `${boardgame.title} Data Embedded` }, { status: 200 });
   } catch (err) {
     console.log(err);
-    return NextResponse.json({ data: "Failed to Embed data" }, { status: 500 });
+    return NextResponse.json({ message: "Failed to Embed data" }, { status: 500 });
   }
 }

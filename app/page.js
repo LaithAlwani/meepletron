@@ -25,7 +25,7 @@ export default async function Home() {
           <WelcomeMessage />
         </div>
 
-        <h2 className="text-4xl mb-2 inline-block font-extrabold bg-gradient-to-r from-indigo-500  to-indigo-600 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
+        <h2 className="text-4xl mb-2 inline-block font-extrabold bg-gradient-to-r from-blue-600  to-blue-700 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
           Meepletron
         </h2>
         <h3 className="text-3xl text-red-500 mt-4 font-semibold animate-bounce uppercase">Alpha</h3>

@@ -3,7 +3,7 @@ import React from "react";
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className=" bg-gray-200 dark:bg-indigo-600 py-12">
+    <section id="how-it-works" className=" bg-gray-200 dark:bg-blue-600 py-12">
       <div className="container mx-auto max-w-xl px-4">
         <h3 className="text-3xl font-bold text-center mb-6">How It Works</h3>
         <div className="flex flex-col gap-8 md:flex-row items-center ">

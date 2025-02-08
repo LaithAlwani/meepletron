@@ -118,8 +118,8 @@ export default function ChatPage() {
               <div
                 className={`inline-block p-3 mb-3 min-w-24 max-w-[375px] rounded-md shadow-md ${
                   m.role === "user"
-                    ? "bg-indigo-200 dark:bg-indigo-600 text-left"
-                    : "bg-indigo-400 dark:bg-[#246199]"
+                    ? "bg-blue-200 dark:bg-blue-600 text-left"
+                    : "bg-blue-400 dark:bg-[#246199]"
                 }`}>
                 <pre className="text-wrap font-serif">{m.content}</pre>
               </div>
@@ -173,7 +173,7 @@ const ListItem = ({ game, currentGame, setCurrentGame, setSideNavOpen }) => {
       key={game?._id}
       className={`capitalize p-2 border-b cursor-pointer  ${
         currentGame?._id === game?._id
-          ? "bg-indigo-500 text-white font-semibold dark:bg-yellow-500 dark:text-slate-800"
+          ? "bg-blue-500 text-white font-semibold dark:bg-yellow-500 dark:text-slate-800"
           : ""
       }`}
       onClick={() => {

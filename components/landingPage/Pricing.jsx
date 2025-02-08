@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa6";
+import CustomLink from "../CustomeLink";
 
 export default function Pricing() {
   const [isMonthly, setIsMonthly] = useState(true);
@@ -30,10 +31,10 @@ const PeriodTab = ({ label, onClick, value, isMonthly }) => (
   <span
     className={`
       ${
-      isMonthly
-        ? "font-semibold text-lg shadow-sm shadow-gray-300 dark:shadow-slate-600"
-        : "text-sm"
-    } text-center flex-1 p-4 underline`}
+        isMonthly
+          ? "font-semibold text-lg shadow-sm shadow-gray-300 dark:shadow-slate-600"
+          : "text-sm"
+      } text-center flex-1 p-4 underline`}
     onClick={() => onClick(value)}>
     {label}
   </span>
@@ -49,8 +50,8 @@ const Card = ({ type, price }) => {
         <h4 className="text-3xl font-bold border-b border-gray-400 pb-2">
           {price}
           <span className="text-xs font-light text-slate-500 dark:text-slate-400">
-            {/* {type === "Monthly" ? " /mo." : type === "Annually" ? " /yr." : " "} */}
-            / Until Beta Ends
+            {/* {type === "Monthly" ? " /mo." : type === "Annually" ? " /yr." : " "} */}/ Until Beta
+            Ends
           </span>
         </h4>
 
@@ -70,15 +71,10 @@ const Card = ({ type, price }) => {
           )} */}
         </ul>
       </div>
-      <Link
-        href="boardgames"
-        className="block text-center font-semibold bg-indigo-600 hover:bg-indigo-500 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-800  shadow-lg text-white py-2 px-4 rounded-lg ">
-        Choose Plan
-      </Link>
+      <CustomLink href="boardgames">Choose Plan</CustomLink>
     </div>
   );
 };
-
 
 // const PeriodTab = ({ label, onClick, value, isMonthly }) => (
 //   <span

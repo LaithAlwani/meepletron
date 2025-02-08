@@ -9,9 +9,9 @@ export async function POST(req) {
   try {
     await connectToDB();
     const doc = await Boardgame.findOneAndUpdate({ _id: boardgame_id }, updateData, { new: true });
-    return NextResponse.json({ data: `${doc.title} update successfully` });
+    return NextResponse.json({ data: doc, message: `${doc.title} update successfully` } ,{status:201});
   } catch (err) {
     console.log(err);
-    return NextResponse.json({ data: `Failed to Upload file` }, { status: 500 });
+    return NextResponse.json({ message: `Failed to Upload file` }, { status: 500 });
   }
 }

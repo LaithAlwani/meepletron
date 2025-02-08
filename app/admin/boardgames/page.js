@@ -5,8 +5,7 @@ export default function BoardgamePage() {
   return (
     <section className="max-w-xl mx-auto">
       <CustomLink href={"/admin/boardgames/add"}>Add</CustomLink>
-      <CustomLink href={"/admin/boardgames/upload"}>Upload</CustomLink>
-      <CustomLink href={"/admin/boardgames/extract"}>Extract</CustomLink>
+      <CustomLink href={"/admin/boardgames/edit"}>Edit</CustomLink>
     </section>
   );
 }

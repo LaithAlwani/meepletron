@@ -72,7 +72,7 @@ const RoadMap = () => {
             } mb-8 `}>
             {/* Content */}
             <div className="w-1/2 text-right px-4">
-              <h3 className="text-lg font-semibold text-indigo-600 dark:text-yellow-500">
+              <h3 className="text-lg font-semibold text-blue-600 dark:text-yellow-500">
                 {stop.title}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-200">{stop.description}</p>
