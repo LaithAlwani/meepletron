@@ -14,7 +14,7 @@ const connectToDB = async () => {
 
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
-      dbName: prodDB
+      dbName: process.env.NODE_ENV !="production" ? devDB: prodDB,
     })
 
     isConnected = true;
