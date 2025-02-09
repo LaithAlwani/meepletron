@@ -86,12 +86,21 @@ export default function BoardgameEditPage() {
             {!loading && results.length === 0 && query.trim() && (
               <p className="text-gray-400 mt-4">No results found.</p>
             )}
-
-            <div className="flex my-4 gap-4 overflow-x-scroll">
-              {results.map((game) => (
-                <div key={game._id} onClick={() => setBoardgame(game)} className="cursor-pointer">
-                  <img src={game.thumbnail} alt={game.title} className="w-16 rounded" />
-                  <h2>{game.title}</h2>
+            <div className=" w-full bg-white dark:bg-slate-600 border border-gray-300 dark:border-slate-800 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto z-10">
+              {results.map((boardgame) => (
+                <div
+                  key={boardgame._id}
+                  className="flex items-center justify-between gap-3 p-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer">
+                  <div
+                    className="flex items-center gap-3 w-full"
+                    onClick={() => setBoardgame(boardgame)}>
+                    <img
+                      src={boardgame.thumbnail}
+                      alt={boardgame.title}
+                      className="w-12 h-12 rounded-md object-cover"
+                    />
+                    <span className="capitalize font-semibold text-sm  ">{boardgame.title}</span>
+                  </div>
                 </div>
               ))}
             </div>

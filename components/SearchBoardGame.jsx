@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FaComments } from "react-icons/fa";
 
 const SearchBoardGame = ({ onBoardGameClick }) => {
-  const { query, setQuery, results, loading } = useSearch({limit:2});
+  const { query, setQuery, results, loading } = useSearch({limit:5});
 
   return (
     <div className="relative mt-10 py-4 w-full max-w-md mx-auto">
