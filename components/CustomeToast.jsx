@@ -1,4 +1,4 @@
-import { XCircle } from "lucide-react";
+import { IoCloseCircleOutline } from "react-icons/io5";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
@@ -17,7 +17,7 @@ export default function CustomToast({ message, id }) {
         onClick={() => toast.dismiss(id)}
         className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
       >
-        <XCircle size={20} />
+        <IoCloseCircleOutline size={20} />
       </button>
     </motion.div>
   );
