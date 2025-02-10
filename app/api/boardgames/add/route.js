@@ -24,7 +24,7 @@ export async function POST(req) {
     boardgame.thumbnail = thumbnailBlob.url
     let parentDoc;
     let doc;
-    console.log(boardgame)
+    
     if (boardgame.is_expansion) {
       parentDoc = await Boardgame.findOne({ bggId: boardgame.parent_bgg_Id });
       console.log("parent ", parentDoc)

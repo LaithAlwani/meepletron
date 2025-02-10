@@ -204,18 +204,24 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
     e.preventDefault();
     setIsLoading(true);
     const file = inputFileRef.current.files[0];
+    const filePath_dev = `_temp_boardgames`; // for development mode.
+
     const safeTitle = boardgame.title.replace(/\s+/g, "_").toLowerCase();
 
     try {
-      const newBlob = await upload(`${safeTitle}/${file.name}`, file, {
-        access: "public",
-        handleUploadUrl: "/api/boardgames/rule-book",
-        onUploadProgress: (progressEvent) => {
-          console.log(`Loaded ${progressEvent.loaded} bytes`);
-          console.log(`Total ${progressEvent.total} bytes`);
-          console.log(`Percentage ${progressEvent.percentage}%`);
-        },
-      });
+      const newBlob = await upload(
+        `${process.env.NODE_ENV != "production" ? filePath_dev : safeTitle}/${file.name}`,
+        file,
+        {
+          access: "public",
+          handleUploadUrl: "/api/boardgames/rule-book",
+          onUploadProgress: (progressEvent) => {
+            console.log(`Loaded ${progressEvent.loaded} bytes`);
+            console.log(`Total ${progressEvent.total} bytes`);
+            console.log(`Percentage ${progressEvent.percentage}%`);
+          },
+        }
+      );
       setBlob(newBlob);
       const url = {
         blob: newBlob,

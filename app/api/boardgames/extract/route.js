@@ -12,7 +12,7 @@ export async function POST(req) {
   try {
     const chunks = await getChunkedDocsFromPDF(PDF_URL, FILE_PATH);
     
-    return NextResponse.json({ data: chunks, message: "Data Embedded" }, { status: 200 });
+    return NextResponse.json({ data: chunks, message: "Data Extracted" }, { status: 200 });
   } catch (err) {
     console.log(err);
     return NextResponse.json({ message: "Failed to upload" }, { status: 500 });
