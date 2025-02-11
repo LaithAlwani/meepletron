@@ -68,7 +68,7 @@ export default function ChatPage() {
               alt={currentGame?.title}
               className="w-12 rounded-md"
             />
-            <h2 className="capitalize font-semibold text-nowrap text-ellipsis overflow-hidden">
+            <h2 className="capitalize font-semibold truncate">
               {currentGame?.title}
             </h2>
           </Link>
