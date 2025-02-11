@@ -3,6 +3,8 @@ import CustomLink from "@/components/CustomeLink";
 import Loader from "@/components/Loader";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
+
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { MdGroups, MdAccessTime } from "react-icons/md";
@@ -40,13 +42,21 @@ export default function BoardgamePage() {
     <div className="max-w-xl mx-auto pt-[6rem]">
       {boardgame && (
         <div className="flex flex-col justify-start gap-4 items-center">
-          <div className="relative  min-w-[12rem] h-[12rem]">
-            <Image
+          <motion.img
+          key={boardgame._id}
+          src={boardgame.image}
+          alt={boardgame.title}
+          initial={{ scale: 0.2, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.2 }}
+          transition={{ duration: 0.5 }}
+          className=" fixed top-0 left-0 w-full h-screen object-cover -z-10"
+        />
+          <div className="relative min-w-32 max-w-84  h-64">
+            <img
               src={boardgame.image}
               alt={boardgame.title}
               className="w-full h-full rounded-md object-cover object-center"
-              fill
-              sizes={"25vw"}
+              
               quality={10}
             />
           </div>
