@@ -1,4 +1,4 @@
-import Carousel from "@/components/boardgame/Carousel";
+import BoardgameContainer from "@/components/boardgame/BoardgameContainer";
 import SearchBoardGame from "@/components/SearchBoardGame";
 import { getBoardgames } from "@/lib/functions";
 
@@ -13,9 +13,18 @@ export default async function BoargamePage() {
   const boardgames = await getBoardgames({ where: { is_expansion: false } });
 
   return (
-    <section className=" mx-auto pt-20 pb-6 h-screen flex flex-col justify-between px-1">
+    <section className="pt-[6rem] px-2 max-w-xl mx-auto mb-6 min-h-full">
       <SearchBoardGame />
-      <Carousel items={JSON.stringify(boardgames)} />
+      <div className="relative flex py-5 items-center ">
+        <div className="w-[3rem] border-t-2 border-gray-400 dark:border-yellow-300"></div>
+        <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500">Recently Added</h2>
+        <div className="flex-grow border-t-2 border-gray-400 dark:border-yellow-300"></div>
+      </div>
+      <div className="flex flex-wrap justify-center gap-3 ">
+        {boardgames?.map((boardgame) => (
+          <BoardgameContainer key={boardgame._id} boardgame={boardgame} />
+        ))}
+      </div>
     </section>
   );
 }
