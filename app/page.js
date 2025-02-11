@@ -19,7 +19,7 @@ export default async function Home() {
   const recentlyAdded = await getBoardgames({ where: { is_expansion: false }, limit: 10 });
   return (
     <>
-      <section className="text-center relative max-w-lg mx-auto px-3">
+      <section className="text-center relative max-w-lg mx-auto px-3 pt-[4rem]">
         <div className="relative max-w-[18rem] sm:w-[20rem] h-[18rem] sm:h-[20rem] mx-auto left-5 my-4">
           <Image src="/chatbot-ed.png" fill priority alt="robot logo" />
           <WelcomeMessage />
@@ -36,9 +36,9 @@ export default async function Home() {
           answers and keep the fun going!
         </p>
         <p className="italic text-md font-semibold ">Your Ultimate Board Game Companion</p>
-        <CustomLink href="/boardgames">Get Started Now</CustomLink>
+        <CustomLink href="/boardgames" className="my-4">Get Started Now</CustomLink>
       </section>
-      <section className=" max-w-5xl mx-auto my-12 px-4">
+      <section className=" max-w-5xl mx-auto my-8 px-4">
         <h2 className="text-center px-4 mb-6 text-2xl font-bold italic dark:text-yellow-500">Recently Added</h2>
 
         <div className="flex flex-nowrap justify-start overflow-x-scroll gap-3 ">

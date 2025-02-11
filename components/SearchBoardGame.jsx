@@ -7,7 +7,7 @@ const SearchBoardGame = ({ onBoardGameClick }) => {
   const { query, setQuery, results, loading } = useSearch({limit:5});
 
   return (
-    <div className="relative mt-10 py-4 w-full max-w-md mx-auto">
+    <div className="relative w-full max-w-md mx-auto">
       <input
         type="text"
         placeholder="Type a board game title..."

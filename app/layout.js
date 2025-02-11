@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Providers from "./providers";
@@ -15,6 +15,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-poppins",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const viewport = {
@@ -93,11 +100,11 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`min-h-svh mx-auto bg-[#f7f7f7] dark:bg-slate-900 text-gray-800 dark:text-gray-200 ${geistSans.variable} ${geistMono.variable} antialiased `}>
+          className={`min-h-svh mx-auto bg-[#f7f7f7] dark:bg-slate-900 text-black dark:text-white ${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased `}>
           <Providers>
             <Toaster position="top-right" containerClassName="relative" />
             <Navbar />
-            <main className="w-screen mx-auto">{children}</main>
+            <main className="w-screen mx-auto min-h-svh">{children}</main>
           </Providers>
           <SpeedInsights />
         </body>
