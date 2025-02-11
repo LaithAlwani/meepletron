@@ -37,7 +37,7 @@ export default function BoardgamePage() {
     getBoardgame();
   }, []);
   return !loading ? (
-    <div className=" pt-12 max-w-xl mx-auto ">
+    <div className="max-w-xl mx-auto pt-[6rem]">
       {boardgame && (
         <div className="flex flex-col justify-start gap-4 items-center">
           <div className="relative  min-w-[12rem] h-[12rem]">
@@ -60,7 +60,12 @@ export default function BoardgamePage() {
             <p className="flex justify-start items-center gap-2 mb-2">
               <MdAccessTime size={24} /> {boardgame.play_time}{" "}
             </p>
-            <CustomLink href={`/boardgames/${(!expansions?.length ? boardgame.parent_id: boardgame._id) || boardgame._id}/chat`}>Ask a question!</CustomLink>
+            <CustomLink
+              href={`/boardgames/${
+                (!expansions?.length ? boardgame.parent_id : boardgame._id) || boardgame._id
+              }/chat`}>
+              Ask a question!
+            </CustomLink>
           </div>
           {boardgame.urls.length > 0 && (
             <a href={boardgame.urls[0].blob.url} target="_blank" className="cursor-pointer">
@@ -86,6 +91,8 @@ export default function BoardgamePage() {
       )}
     </div>
   ) : (
-    <Loader />
+    <div className="pt-[6rem]">
+      <Loader />
+    </div>
   );
 }
