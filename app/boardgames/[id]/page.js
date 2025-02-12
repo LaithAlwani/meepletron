@@ -136,10 +136,10 @@ export default function BoardgamePage() {
             {expansions.map((exp) => (
               <li key={exp._id} className="flex justify-start items-end gap-2 mb-2">
                 <div className="relative w-16 h-16">
-                  <Image src={exp.thumbnail} alt={exp.title} fill className="rounded" />
+                  <Image src={exp.thumbnail} alt={exp.title} objectFit="contain" fill className="rounded" />
                 </div>
                 <Link href={`/boardgames/${exp?._id}`}>
-                  <h3 className="capitalize text-lg font-semibold">
+                  <h3 className="capitalize font-semibold">
                     {exp.title} <span className="text-xs">({exp.year})</span>
                   </h3>
                 </Link>
@@ -164,11 +164,11 @@ export default function BoardgamePage() {
                 src={boardgame?.parent_id?.thumbnail}
                 alt={boardgame?.parent_id?.title}
                 fill
-                objectFit="cover"
+                objectFit="contain"
               />
             </div>
 
-            <h3 className="capitalize text-lg font-semibold">
+            <h3 className="capitalize font-semibold">
               {boardgame.parent_id.title} <span className="text-xs">({boardgame.parent_id?.year})</span>
             </h3>
           </Link>
