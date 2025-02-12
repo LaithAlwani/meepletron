@@ -18,7 +18,7 @@ export default function Hero({ items }) {
             scale: { type: "spring", visualDuration: 0.6, bounce: 0.3 },
           }}
           className="relative max-w-[18rem] sm:w-[20rem] h-[18rem] sm:h-[20rem] mx-auto left-5 my-4">
-          <Image src="/chatbot-ed.png" fill priority alt="robot logo" />
+          <Image src="/chatbot-ed.webp" fill priority alt="robot logo" />
           <WelcomeMessage />
         </motion.div>
 

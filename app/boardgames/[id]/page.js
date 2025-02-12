@@ -7,7 +7,15 @@ import { motion } from "framer-motion";
 
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { MdGroups, MdAccessTime } from "react-icons/md";
+import {
+  MdGroups,
+  MdOutlineAccessTimeFilled,
+  MdMenuBook,
+  MdChatBubbleOutline,
+} from "react-icons/md";
+import { FaChild } from "react-icons/fa";
+import { SlBubbles } from "react-icons/sl";
+import { ImBubbles } from "react-icons/im";
 
 export default function BoardgamePage() {
   const params = useParams();
@@ -39,49 +47,80 @@ export default function BoardgamePage() {
     getBoardgame();
   }, []);
   return !loading ? (
-    <div className="max-w-xl mx-auto pt-[6rem]">
+    <div className="max-w-xl mx-auto px-2 pt-[6rem]">
       {boardgame && (
         <div className="flex flex-col justify-start gap-4 items-center">
-          <motion.img
-          key={boardgame._id}
-          src={boardgame.image}
-          alt={boardgame.title}
-          initial={{ scale: 0.2, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.2 }}
-          transition={{ duration: 0.5 }}
-          className=" fixed top-0 left-0 w-full h-screen object-cover -z-10"
-        />
-          <div className="relative min-w-32 max-w-84  h-64">
-            <img
+          <motion.div
+            initial={{ scale: 0.2, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.2 }}
+            transition={{ duration: 0.4 }}
+            className=" fixed top-0 left-0 w-full h-screen -z-10">
+            <Image
               src={boardgame.image}
               alt={boardgame.title}
-              className="w-full h-full rounded-md object-cover object-center"
-              
-              quality={10}
+              quality={1}
+              objectFit="cover"
+              fill
+              priority
             />
+          </motion.div>
+          <motion.div
+            className="relative min-w-64 max-w-84  h-64"
+            initial={{ scale: 0.2, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4 }}>
+            <Image
+              src={boardgame.thumbnail}
+              alt={boardgame.title}
+              className="w-full h-full rounded-md object-cover object-center"
+              fill
+              quality={50}
+            />
+          </motion.div>
+          <div className="">
+            <span className=" px-4 font-semibold tracking-[3px]">{boardgame.designers[0]}</span>
+
+            <h1
+              className=" text-lg sm:text-2xl px-4 font-extrabold text-blue-600 dark:text-yellow-500 uppercase drop-shadow-xl  mb-6"
+              transition={{ duration: 1 }}>
+              {boardgame.title} <span className="text-xs">({boardgame.year})</span>
+            </h1>
+            <div className="w-[256px] mx-auto flex justify-between items-start">
+              <p className="flex flex-col justify-start items-center gap-2 ">
+                <MdGroups size={24} />{" "}
+                <span className="font-medium">
+                  {boardgame.min_players} - {boardgame.max_players}
+                </span>
+              </p>
+              <p className="flex flex-col justify-start items-center gap-2 ">
+                <MdOutlineAccessTimeFilled size={24} />{" "}
+                <span className="font-medium">{boardgame.play_time}</span>
+              </p>
+              <p className="flex flex-col justify-start items-center gap-2 ">
+                <FaChild size={24} /> <span className="font-medium">{boardgame.min_age}+</span>
+              </p>
+              {boardgame.urls.length > 0 && (
+                <a
+                  target="_blank"
+                  href={`${boardgame.urls[0].blob.url}`}
+                  className="flex flex-col justify-start items-center gap-2 capitalize ">
+                  <MdMenuBook size={24} />{" "}
+                  <span className="font-medium">
+                    {boardgame.urls[0].blob.contentDisposition.match(/filename="(.+?)\.pdf"/)[1]}
+                  </span>
+                </a>
+              )}
+              <Link
+                className="flex flex-col justify-start items-center gap-2 "
+                href={`/boardgames/${
+                  (!expansions?.length ? boardgame.parent_id : boardgame._id) || boardgame._id
+                }/chat`}>
+                <ImBubbles size={24} />
+                <span className="font-medium">Chat</span>
+              </Link>
+            </div>
           </div>
-          <div>
-            <h2 className="text-2xl font-bold capitalize mb-4">
-              {boardgame.title} <span className="text-xs font-light">({boardgame.year}) </span>
-            </h2>
-            <p className="flex justify-start items-center gap-2 mb-2">
-              <MdGroups size={24} /> {boardgame.min_players} - {boardgame.max_players}
-            </p>
-            <p className="flex justify-start items-center gap-2 mb-2">
-              <MdAccessTime size={24} /> {boardgame.play_time}{" "}
-            </p>
-            <CustomLink
-              href={`/boardgames/${
-                (!expansions?.length ? boardgame.parent_id : boardgame._id) || boardgame._id
-              }/chat`}>
-              Ask a question!
-            </CustomLink>
-          </div>
-          {boardgame.urls.length > 0 && (
-            <a href={boardgame.urls[0].blob.url} target="_blank" className="cursor-pointer">
-              {boardgame.urls[0].blob.contentDisposition.match(/filename="(.+?)\.pdf"/)[1]}
-            </a>
-          )}
+
           {expansions?.length > 0 && (
             <>
               <h3>Expansions</h3>
