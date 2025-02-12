@@ -34,7 +34,7 @@ export default function Navbar() {
             </Link>
             <ThemeSwitch />
             {user?.publicMetadata.role === "admin" && (
-              <Link href={"/admin/boardgames"}>
+              <Link href={"/admin/boardgames"} aria-label="admin">
                 <FaUserLock />
               </Link>
             )}

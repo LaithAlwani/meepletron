@@ -50,7 +50,7 @@ export default function BoardgamePage() {
     <div className="max-w-xl mx-auto px-2 pt-[6rem]">
       {boardgame && (
         <div className="flex flex-col justify-start gap-4 items-center">
-          <motion.div
+          {boardgame.image && <motion.div
             initial={{ scale: 0.2, opacity: 0 }}
             animate={{ scale: 1, opacity: 0.2 }}
             transition={{ duration: 0.4 }}
@@ -63,7 +63,7 @@ export default function BoardgamePage() {
               fill
               priority
             />
-          </motion.div>
+          </motion.div>}
           <motion.div
             className="relative min-w-64 max-w-84  h-64"
             initial={{ scale: 0.2, opacity: 0 }}
@@ -74,7 +74,7 @@ export default function BoardgamePage() {
               alt={boardgame.title}
               className="w-full h-full rounded-md object-cover object-center"
               fill
-              quality={50}
+              quality={100}
             />
           </motion.div>
           <div className="">

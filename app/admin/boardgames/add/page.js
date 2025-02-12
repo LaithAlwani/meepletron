@@ -41,7 +41,7 @@ export default function AddBoardgame() {
     }
   };
   return (
-    <div className="max-w-xl mx-auto">
+    <section className="max-w-xl mx-auto pt-[6rem]">
       <h1 className="text-xl">Add Boardgame</h1>
       <form onSubmit={handleSubmit}>
         <input type="text"  placeholder="title"/>
@@ -71,6 +71,6 @@ export default function AddBoardgame() {
           </button>
         </div>
       )}
-    </div>
+    </section>
   );
 }

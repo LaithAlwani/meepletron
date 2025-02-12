@@ -70,7 +70,7 @@ export default function BoardgameEditPage() {
   };
 
   return (
-    <section className="max-w-3xl mx-auto px-2">
+    <section className="max-w-3xl mx-auto px-2 pt-[6rem]">
       {!boardgame && (
         <div className="">
           <h2>Choose boardgame</h2>
