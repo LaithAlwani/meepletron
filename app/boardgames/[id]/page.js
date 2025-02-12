@@ -112,10 +112,11 @@ export default function BoardgamePage() {
                 </span>
               </a>
             )}
+
             <Link
               className="flex flex-col justify-start items-center gap-2 "
               href={`/boardgames/${
-                (!expansions?.length ? boardgame.parent_id._id : boardgame._id) || boardgame._id
+                (boardgame.is_expansion ? boardgame?.parent_id._id : boardgame?._id)
               }/chat`}>
               <ImBubbles size={24} />
               <span className="font-medium">Chat</span>
@@ -137,7 +138,7 @@ export default function BoardgamePage() {
                 <div className="relative w-16 h-16">
                   <Image src={exp.thumbnail} alt={exp.title} fill className="rounded" />
                 </div>
-                <Link href={`/boardgames/${exp._id}`}>
+                <Link href={`/boardgames/${exp?._id}`}>
                   <h3 className="capitalize text-lg font-semibold">
                     {exp.title} <span className="text-xs">({exp.year})</span>
                   </h3>
@@ -147,7 +148,7 @@ export default function BoardgamePage() {
           </ul>
         </div>
       )}
-      {console.log(boardgame)}
+      
       {boardgame?.parent_id && (
         <>
           <div className="relative flex py-5 items-center ">
