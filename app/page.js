@@ -1,13 +1,12 @@
-import Features from "@/components/landingPage/Features";
-import Pricing from "@/components/landingPage/Pricing";
-import WelcomeMessage from "@/components/landingPage/WelcomeMessage";
-import RoadMap from "@/components/landingPage/RoadMap";
-import Image from "next/image";
-import CustomLink from "@/components/CustomeLink";
-import ContactForm from "@/components/ContactForm";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { getBoardgames } from "@/lib/functions";
+import Hero from "@/components/landingPage/Hero";
 import BoardgameContainer from "@/components/boardgame/BoardgameContainer";
+import Features from "@/components/landingPage/Features";
+import Pricing from "@/components/landingPage/Pricing";
+import RoadMap from "@/components/landingPage/RoadMap";
+import ContactForm from "@/components/ContactForm";
+
 
 export const metadata = {
   alternates: {
@@ -19,34 +18,8 @@ export default async function Home() {
   const recentlyAdded = await getBoardgames({ where: { is_expansion: false }, limit: 10 });
   return (
     <>
-      <section className="text-center relative max-w-lg mx-auto px-3 pt-[4rem]">
-        <div className="relative max-w-[18rem] sm:w-[20rem] h-[18rem] sm:h-[20rem] mx-auto left-5 my-4">
-          <Image src="/chatbot-ed.png" fill priority alt="robot logo" />
-          <WelcomeMessage />
-        </div>
-
-        <h2 className="text-4xl mb-2 inline-block font-extrabold bg-gradient-to-r from-blue-600  to-blue-700 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
-          Meepletron
-        </h2>
-        <h3 className="text-3xl text-red-500 mt-4 font-semibold animate-bounce uppercase">Alpha</h3>
-        <small className="text-sm mb-4">This project is stil in alpha testing.</small>
-        <p className="text-lg mt-4">
-          Meepletron is your AI-powered board game expert, answering questions directly from
-          manuals. Say goodbye to wasting time on game night searching for rule details—get instant
-          answers and keep the fun going!
-        </p>
-        <p className="italic text-md font-semibold ">Your Ultimate Board Game Companion</p>
-        <CustomLink href="/boardgames" className="my-4">Get Started Now</CustomLink>
-      </section>
-      <section className=" max-w-5xl mx-auto my-8 px-4">
-        <h2 className="text-center px-4 mb-6 text-2xl font-bold italic dark:text-yellow-500">Recently Added</h2>
-
-        <div className="flex flex-nowrap justify-start overflow-x-scroll gap-3 ">
-          {recentlyAdded?.map((boardgame) => (
-            <BoardgameContainer key={boardgame._id} boardgame={boardgame} />
-          ))}
-        </div>
-      </section>
+      <Hero items={JSON.stringify(recentlyAdded)} />
+      
       <Features />
       <Pricing />
       <RoadMap />
