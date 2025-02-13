@@ -66,7 +66,7 @@ export default function BoardgamePage() {
               />
             </motion.div>
           )}
-          <motion.div
+          <div
             className="relative min-w-64 max-w-84  h-64"
             initial={{ scale: 0.2, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -78,7 +78,7 @@ export default function BoardgamePage() {
               fill
               quality={100}
             />
-          </motion.div>
+          </div>
 
           <span className=" px-4 font-semibold tracking-[3px]">{boardgame.designers[0]}</span>
 
