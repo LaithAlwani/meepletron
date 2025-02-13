@@ -1,20 +1,11 @@
 "use client";
-import CustomLink from "@/components/CustomeLink";
 import Loader from "@/components/Loader";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import {
-  MdGroups,
-  MdOutlineAccessTimeFilled,
-  MdMenuBook,
-  MdChatBubbleOutline,
-} from "react-icons/md";
+import { MdGroups, MdOutlineAccessTimeFilled, MdMenuBook } from "react-icons/md";
 import { FaChild } from "react-icons/fa";
-import { SlBubbles } from "react-icons/sl";
 import { ImBubbles } from "react-icons/im";
 
 export default function BoardgamePage() {
@@ -50,22 +41,6 @@ export default function BoardgamePage() {
     <div className="max-w-xl mx-auto px-2 pt-[6rem]">
       {boardgame && (
         <div className="flex flex-col justify-start gap-4 items-center">
-          {boardgame.image && (
-            <motion.div
-              initial={{ scale: 0.2, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.2 }}
-              transition={{ duration: 0.4 }}
-              className=" fixed top-0 left-0 w-full h-screen -z-10">
-              <Image
-                src={boardgame.image}
-                alt={boardgame.title}
-                quality={1}
-                objectFit="cover"
-                fill
-                priority
-              />
-            </motion.div>
-          )}
           <div
             className="relative min-w-64 max-w-84  h-64"
             initial={{ scale: 0.2, opacity: 0 }}
@@ -116,7 +91,7 @@ export default function BoardgamePage() {
             <Link
               className="flex flex-col justify-start items-center gap-2 "
               href={`/boardgames/${
-                (boardgame.is_expansion ? boardgame?.parent_id._id : boardgame?._id)
+                boardgame.is_expansion ? boardgame?.parent_id._id : boardgame?._id
               }/chat`}>
               <ImBubbles size={24} />
               <span className="font-medium">Chat</span>
@@ -136,7 +111,13 @@ export default function BoardgamePage() {
             {expansions.map((exp) => (
               <li key={exp._id} className="flex justify-start items-end gap-2 mb-2">
                 <div className="relative w-16 h-16">
-                  <Image src={exp.thumbnail} alt={exp.title} objectFit="contain" fill className="rounded" />
+                  <Image
+                    src={exp.thumbnail}
+                    alt={exp.title}
+                    objectFit="contain"
+                    fill
+                    className="rounded"
+                  />
                 </div>
                 <Link href={`/boardgames/${exp?._id}`}>
                   <h3 className="capitalize font-semibold">
@@ -148,7 +129,7 @@ export default function BoardgamePage() {
           </ul>
         </div>
       )}
-      
+
       {boardgame?.parent_id && (
         <>
           <div className="relative flex py-5 items-center ">
@@ -169,7 +150,8 @@ export default function BoardgamePage() {
             </div>
 
             <h3 className="capitalize font-semibold">
-              {boardgame.parent_id.title} <span className="text-xs">({boardgame.parent_id?.year})</span>
+              {boardgame.parent_id.title}{" "}
+              <span className="text-xs">({boardgame.parent_id?.year})</span>
             </h3>
           </Link>
         </>

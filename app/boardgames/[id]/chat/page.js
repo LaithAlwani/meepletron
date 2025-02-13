@@ -12,6 +12,7 @@ import Loader from "@/components/Loader";
 import TypingIndicator from "@/components/TypingDots";
 import Link from "next/link";
 
+
 export default function ChatPage() {
   const params = useParams();
   const router = useRouter();
@@ -64,7 +65,7 @@ export default function ChatPage() {
         {currentGame && (
           <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2 ">
             <img
-              src={currentGame?.thumbnail}
+              src={currentGame?.image}
               alt={currentGame?.title}
               className="w-12 rounded-md"
             />
