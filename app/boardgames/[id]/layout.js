@@ -1,10 +1,11 @@
 import BackgroundImage from "@/components/boardgame/BackgroundImage";
-import connectToDB from "@/utils/database";
-import { cookies } from "next/headers";
+
+const dev = "http://localhost:3000"
+const prod = "https://meepletron.com"
 
 async function fetchBoardGame(id) {
   // Replace with actual API call or database query
-  const res = await fetch(`http://localhost:3000/api/boardgames/${id}`);
+  const res = await fetch(`${process.env.NODE_ENV != "production" ? dev:prod}/api/boardgames/${id}`);
   if (!res.ok) return null; // Handle errors
   return res.json();
 }
