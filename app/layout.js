@@ -6,6 +6,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "react-hot-toast";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -104,7 +106,9 @@ export default function RootLayout({ children }) {
           <Providers>
             <Toaster position="top-right" containerClassName="relative" />
             <Navbar />
-            <main className="w-screen mx-auto min-h-svh">{children}</main>
+            <Suspense fallback={<Loading />}>
+              <main className="w-screen mx-auto min-h-svh">{children}</main>
+            </Suspense>
           </Providers>
           <SpeedInsights />
         </body>
