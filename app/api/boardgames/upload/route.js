@@ -1,5 +1,4 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { handleUpload } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 
 const s3Client = new S3Client({

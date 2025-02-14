@@ -5,7 +5,6 @@ import Loader from "@/components/Loader";
 import { useSearch } from "@/utils/hooks";
 import { useState, useRef } from "react";
 import toast from "react-hot-toast";
-import { upload } from "@vercel/blob/client";
 import CustomToast from "@/components/CustomeToast";
 
 export default function BoardgameEditPage() {
