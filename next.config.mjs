@@ -10,14 +10,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cf.geekdo-images.com",
-        port: "",
-        pathname: "/**",
-        search: "",
-      },
-      {
-        protocol: "https",
-        hostname: "x9o6p1janw02hqph.public.blob.vercel-storage.com",
+        hostname: "meepletron-storage.s3.us-east-2.amazonaws.com",
         port: "",
         pathname: "/**",
         search: "",
