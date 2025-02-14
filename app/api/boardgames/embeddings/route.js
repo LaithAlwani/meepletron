@@ -18,12 +18,10 @@ export async function POST(req) {
     }
     console.log(blob)
     const doc = await Boardgame.findOneAndUpdate(
-      { _id: boardgame._id, "urls.blob.pathname": blob.blob.pathname }, // Find the board game and specific URL entry
+      { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
       { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
       { new: true } // Return the updated document
     );
-
-    console.log(doc.urls[2])
     
     if (!doc) return NextResponse.json({ data: "Boardgame not found" }, { status: 500 });
     for (const chunk in fileText) {
@@ -32,9 +30,7 @@ export async function POST(req) {
         ? boardgame.parent_id?.toString()
         : boardgame._id.toString();
       fileText[chunk].metadata.bg_title = boardgame.title.toLowerCase();
-      fileText[chunk].metadata.bg_refrence =
-        blob.blob.contentDisposition.match(/filename="(.+?)\.pdf"/)[1];
-      fileText[chunk].metadata.bg_refrence_url = blob.blob.url;
+      fileText[chunk].metadata.bg_refrence_url = blob.path;
     }
     
 

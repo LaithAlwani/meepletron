@@ -49,19 +49,19 @@ export default function BoardgamePage() {
             <Image
               src={boardgame.thumbnail}
               alt={boardgame.title}
-              className="w-full h-full rounded-md object-cover object-center"
+              className="w-full h-full rounded-md object-contain object-center"
               fill
               quality={100}
             />
           </div>
-
-          <span className=" px-4 font-semibold tracking-[3px]">{boardgame.designers[0]}</span>
-
-          <h1
-            className=" text-lg sm:text-2xl px-4 font-extrabold text-blue-600 dark:text-yellow-500 uppercase drop-shadow-xl  mb-6"
-            transition={{ duration: 1 }}>
-            {boardgame.title} <span className="text-xs">({boardgame.year})</span>
-          </h1>
+          <hgroup>
+            <span className=" px-4 font-semibold tracking-[1px]">{boardgame.designers[0]}</span>
+            <h1
+              className=" text-lg sm:text-2xl px-4 font-extrabold text-blue-600 dark:text-yellow-500 uppercase drop-shadow-xl  mb-6"
+              transition={{ duration: 1 }}>
+              {boardgame.title} <span className="text-xs">({boardgame.year})</span>
+            </h1>
+          </hgroup>
           <div className="w-[256px] mx-auto flex justify-between items-start">
             <p className="flex flex-col justify-start items-center gap-2 ">
               <MdGroups size={24} />{" "}
@@ -79,12 +79,9 @@ export default function BoardgamePage() {
             {boardgame.urls.length > 0 && (
               <a
                 target="_blank"
-                href={`${boardgame.urls[0].blob.url}`}
+                href={`${boardgame.urls[0].path}`}
                 className="flex flex-col justify-start items-center gap-2 capitalize ">
-                <MdMenuBook size={24} />{" "}
-                <span className="font-medium">
-                  {boardgame.urls[0].blob.contentDisposition.match(/filename="(.+?)\.pdf"/)[1]}
-                </span>
+                <MdMenuBook size={24} /> <span className="font-medium">Rules</span>
               </a>
             )}
 

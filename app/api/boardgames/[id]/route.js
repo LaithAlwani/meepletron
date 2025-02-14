@@ -9,7 +9,7 @@ export async function GET(req, { params }) {
 
     const boardgame = await Boardgame.findOne({ _id: id }).populate("parent_id").lean();
     const isExpansion = boardgame.is_expansion;
-    if (isExpansion) return NextResponse.json({ data: boardgame }, { status: 200 });
+    if (isExpansion) return NextResponse.json({ data: {boardgame} }, { status: 200 });
 
     const expansions = await Boardgame.find({ parent_id: id }, { thumbnail: 1, title: 1, year: 1 });
 

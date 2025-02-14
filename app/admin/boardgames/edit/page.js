@@ -24,7 +24,7 @@ export default function BoardgameEditPage() {
 
   const extractText = async () => {
     setIsLoading(true);
-    const data = file.blob.url;
+    const data = file.path;
     try {
       const res = await fetch("/api/boardgames/extract", {
         method: "POST",
@@ -126,7 +126,7 @@ export default function BoardgameEditPage() {
           </div>
           {/* upload files */}
           {boardgame && <UploadFiles boardgame={boardgame} setBoardgame={setBoardgame} />}
-          {boardgame.urls.length > 0 && (
+          {boardgame?.urls?.length > 0 && (
             <>
               <div className="relative flex py-5 items-center ">
                 <div className="w-[3rem] border-t border-gray-400 dark:border-yellow-300"></div>
@@ -136,9 +136,9 @@ export default function BoardgameEditPage() {
               <ul>
                 {boardgame.urls.map((url) => (
                   <li
-                    key={url?.blob?.url}
+                    key={url?.path}
                     className="flex items-center justify-between p-4 border-b border-gray-400 dark:border-yellow-500">
-                    {url.blob.contentDisposition.match(/filename="(.+?)\.pdf"/)[1]}
+                    {url.path}
                     <CustomButton disabled={url.isTextExtracted} onClick={() => setFile(url)}>
                       {!url.isTextExtracted ? "Extract" : "Extracted"}
                     </CustomButton>
@@ -204,42 +204,43 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
     e.preventDefault();
     setIsLoading(true);
     const file = inputFileRef.current.files[0];
-    const filePath_dev = `_temp_boardgames`; // for development mode.
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("title", boardgame.title);
+    formData.append("id", boardgame._id);
+    // const filePath_dev = `_temp_boardgames`; // for development mode.
 
-    const safeTitle = boardgame.title.replace(/\s+/g, "_").toLowerCase();
+    // const safeTitle = boardgame.title.replace(/\s+/g, "_").toLowerCase();
 
     try {
-      const newBlob = await upload(
-        `${process.env.NODE_ENV != "production" ? filePath_dev : safeTitle}/${file.name}`,
-        file,
-        {
-          access: "public",
-          handleUploadUrl: "/api/boardgames/rule-book",
-          onUploadProgress: (progressEvent) => {
-            console.log(`Loaded ${progressEvent.loaded} bytes`);
-            console.log(`Total ${progressEvent.total} bytes`);
-            console.log(`Percentage ${progressEvent.percentage}%`);
-          },
-        }
-      );
-      setBlob(newBlob);
-      const url = {
-        blob: newBlob,
-        isTextExtracted: false,
-      };
-      const updateData = { $push: { urls: url } };
-      const res = await fetch("/api/boardgames/update", {
+      const res = await fetch("/api/boardgames/upload", {
+        method: "POST",
+        body: formData,
+      });
+      let newUrl;
+      if (res.ok) {
+        const { data, message } = await res.json();
+        console.log(data);
+
+        toast.custom((t) => <CustomToast message={message} id={t.id} />);
+        newUrl = {
+          path: data,
+          isTextExtracted: false,
+        };
+      }
+
+      const updateData = { $push: { urls: newUrl } };
+      const resUpdate = await fetch("/api/boardgames/update", {
         method: "POST",
         body: JSON.stringify({ boardgame_id: boardgame._id, updateData }),
       });
-      const { data, message } = await res.json();
-      if (res.ok) {
+      if (resUpdate.ok) {
+        const { data, message } = await resUpdate.json();
         toast.custom((t) => <CustomToast message={message} id={t.id} />);
         setBoardgame(data);
-      } else {
-        toast.err(message);
       }
     } catch (err) {
+      console.log(err);
       toast.error(err.message);
     } finally {
       setIsLoading(false);

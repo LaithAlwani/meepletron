@@ -7,7 +7,9 @@ async function fetchBoardGame(id) {
   // Replace with actual API call or database query
   const res = await fetch(`${process.env.NODE_ENV != "production" ? dev:prod}/api/boardgames/${id}`);
   if (!res.ok) return null; // Handle errors
-  return res.json();
+  const data = await res.json();
+  
+  return data;
 }
 
 export default async function BoardGameLayout({ children, params }) {
