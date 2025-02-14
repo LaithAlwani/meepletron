@@ -1,7 +1,7 @@
 import BackgroundImage from "@/components/boardgame/BackgroundImage";
 
 const dev = "http://localhost:3000"
-const prod = "https://meepletron.com"
+const prod = "https://www.meepletron.com"
 
 async function fetchBoardGame(id) {
   // Replace with actual API call or database query
