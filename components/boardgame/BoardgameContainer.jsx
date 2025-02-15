@@ -10,7 +10,8 @@ export default function BoardgameContainer({ boardgame }) {
       <Link href={`/boardgames/${_id}`} className="block w-[11rem] h-[11rem]" aria-label={`${boardgame.title}`}>
         <Image
           src={image}
-          alt={title}
+          alt={`${title} board game`}
+          title={`${title} board game`}
           className="w-full h-full rounded-md object-cover object-top"
           fill
           sizes={"25vw"}

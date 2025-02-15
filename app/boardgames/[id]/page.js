@@ -48,7 +48,8 @@ export default function BoardgamePage() {
             transition={{ duration: 0.4 }}>
             <Image
               src={boardgame.thumbnail}
-              alt={boardgame.title}
+              alt={`${boardgame.title} board game`}
+              title={`${boardgame.title} board game`}
               className="w-full h-full rounded-md object-contain object-center"
               fill
               quality={100}

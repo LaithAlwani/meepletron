@@ -13,7 +13,8 @@ export default function BackgroundImage({ image, title }) {
         className=" fixed top-0 left-0 w-full h-screen -z-10">
         <Image
           src={image}
-          alt={title}
+          alt={`${title} board game`}
+          title={`${title} board game`}
           quality={1}
           objectFit="cover"
           fill

@@ -18,7 +18,7 @@ export default function Hero({ items }) {
         <div>
           <h1 className="text-4xl mb-2 inline-block font-extrabold bg-gradient-to-r from-blue-600  to-blue-700 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
             Meepletron 
-            <span className="block text-2xl font-semibold mt-1">AI Boardgames Expert</span>
+            <strong className="block text-2xl font-semibold mt-1">AI Board Games Expert</strong>
           </h1>
           <h2 className="text-3xl text-red-500 mt-4 font-semibold animate-bounce uppercase">
             Alpha
