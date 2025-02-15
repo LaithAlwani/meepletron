@@ -71,7 +71,7 @@ const Card = ({ type, price }) => {
           )} */}
         </ul>
       </div>
-      <CustomLink href="boardgames">Choose Plan</CustomLink>
+      <CustomLink href="boardgames" className="w-full">Choose Plan</CustomLink>
     </div>
   );
 };
