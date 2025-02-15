@@ -1,7 +1,7 @@
-import { FaFacebookF, FaInstagram } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaLinkedinIn,FaYoutube  } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { getBoardgames } from "@/lib/functions";
 import Hero from "@/components/landingPage/Hero";
-import BoardgameContainer from "@/components/boardgame/BoardgameContainer";
 import Features from "@/components/landingPage/Features";
 import Pricing from "@/components/landingPage/Pricing";
 import RoadMap from "@/components/landingPage/RoadMap";
@@ -40,6 +40,27 @@ export default async function Home() {
               rel="noreferrer noopener"
               referrerPolicy="no-referrer">
               <FaInstagram size={24} aria-label="instagram" className="" />
+            </a>
+            <a
+              href="#"
+              // target="_blank"
+              rel="noreferrer noopener"
+              referrerPolicy="no-referrer">
+              <FaYoutube  size={24} aria-label="youtube" className="" />
+            </a>
+            <a
+              href="#"
+              // target="_blank"
+              rel="noreferrer noopener"
+              referrerPolicy="no-referrer">
+              <FaLinkedinIn size={24} aria-label="linkedin" className=""  />
+            </a>
+            <a
+              href="#"
+              // target="_blank"
+              rel="noreferrer noopener"
+              referrerPolicy="no-referrer">
+              <FaXTwitter size={24} aria-label="twitter-x" className="" />
             </a>
           </div>
           <nav className="text-center">
