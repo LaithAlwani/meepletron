@@ -16,12 +16,13 @@ export default function Hero({ items }) {
         </div>
 
         <div>
-          <h2 className="text-4xl mb-2 inline-block font-extrabold bg-gradient-to-r from-blue-600  to-blue-700 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
-            Meepletron
-          </h2>
-          <h3 className="text-3xl text-red-500 mt-4 font-semibold animate-bounce uppercase">
+          <h1 className="text-4xl mb-2 inline-block font-extrabold bg-gradient-to-r from-blue-600  to-blue-700 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
+            Meepletron 
+            <span className="block text-2xl font-semibold mt-1">AI Boardgames Expert</span>
+          </h1>
+          <h2 className="text-3xl text-red-500 mt-4 font-semibold animate-bounce uppercase">
             Alpha
-          </h3>
+          </h2>
           <small className="text-sm mb-4">This project is stil in alpha testing.</small>
           <p className="text-lg mt-4">
             Meepletron is your AI-powered board game expert, answering questions directly from

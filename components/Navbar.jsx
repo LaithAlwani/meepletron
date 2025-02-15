@@ -23,7 +23,7 @@ export default function Navbar() {
             <Image src="/chatbot.webp" fill priority alt="robot logo" />
           </div>
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold">Meepletron</h1>
+            <span className="text-xl font-bold">Meepletron</span>
           </div>
         </Link>
 
