@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { BsChatDots } from "react-icons/bs";
+import { ImBubbles } from "react-icons/im";
+
 import FavoriteButton from "./FavoriteButton";
 
 export default function BoardgameContainer({ boardgame }) {
@@ -25,7 +26,7 @@ export default function BoardgameContainer({ boardgame }) {
         href={`/boardgames/${parent_id || _id}/chat`}
         aria-label={`${boardgame.title} chat`}
         className="absolute bottom-1 right-1 text-white bg-blue-600 dark:bg-yellow-500 dark:text-slate-900 rounded-full p-2">
-        <BsChatDots size={22} />
+        <ImBubbles size={22} />
       </Link>
     </div>
   );

@@ -6,6 +6,7 @@ import { useSearch } from "@/utils/hooks";
 import { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
+import { MdClose, MdCloudUpload } from "react-icons/md";
 
 export default function BoardgameEditPage() {
   const { query, setQuery, results, loading } = useSearch({ limit: 5 });
@@ -114,14 +115,14 @@ export default function BoardgameEditPage() {
             <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500">Selected Game</h2>
             <div className="flex-grow border-t border-gray-400 dark:border-yellow-300"></div>
           </div>
-          <div className="flex justify-between">
-            <div>
-              <img src={boardgame.thumbnail} alt="" />
-              <h3>{boardgame.title}</h3>
-            </div>
-            <CustomButton className="bg-red-500 hover:bg-red-600" onClick={restSelection}>
-              Remove Game
-            </CustomButton>
+          <div className="relative mx-auto">
+            <img src={boardgame.thumbnail} alt="" className="mx-auto w-48" />
+
+            <MdClose
+              size={24}
+              className="absolute -top-[5rem] right-[1rem] md:right-[6rem] bg-red-500 hover:bg-red-600 rounded-full p-1"
+              onClick={restSelection}
+            />
           </div>
           {/* upload files */}
           {boardgame && <UploadFiles boardgame={boardgame} setBoardgame={setBoardgame} />}
@@ -199,7 +200,7 @@ export default function BoardgameEditPage() {
 
 const UploadFiles = ({ boardgame, setBoardgame }) => {
   const inputFileRef = useRef(null);
-  const [blob, setBlob] = useState(null);
+  const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const uploadBlob = async (e) => {
@@ -228,7 +229,6 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
             body: file,
             headers: {
               "Content-Type": file.type,
-             
             },
           });
           if (uploadResponse.ok) {
@@ -270,11 +270,26 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
           <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500">Upload Files</h2>
           <div className="flex-grow border-t border-gray-400 dark:border-yellow-300"></div>
         </div>
-        <form onSubmit={uploadBlob} className="flex justify-between items-center">
-          <input name="file" ref={inputFileRef} type="file" required />
-          <CustomButton type="submit">
-            {isLoading ? <Loader width={"1rem"} /> : "Upload"}
-          </CustomButton>
+        <form onSubmit={uploadBlob} className="flex flex-col justify-between items-center">
+          <div
+            onClick={() => inputFileRef.current.click()}
+            className="flex flex-col justify-center items-center w-32 h-32 rounded-md opacity-75 mx-auto mb-4 bg-slate-400">
+            <p className="text-lg font-semibold">Choose File</p>
+            <input
+              name="file"
+              ref={inputFileRef}
+              onChange={(e) => setFile(e.target.files[0])}
+              type="file"
+              required
+              hidden
+            />
+          </div>
+          <p>{file?.name}</p>
+          {file && (
+            <CustomButton type="submit" className="bg-transparent">
+              {isLoading ? <Loader width={"1rem"} /> : <MdCloudUpload size={24} />}
+            </CustomButton>
+          )}
         </form>
       </>
     )

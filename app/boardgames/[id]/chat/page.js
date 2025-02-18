@@ -64,14 +64,8 @@ export default function ChatPage() {
         </button>
         {currentGame && (
           <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2 ">
-            <img
-              src={currentGame?.image}
-              alt={currentGame?.title}
-              className="w-12 rounded-md"
-            />
-            <h2 className="capitalize font-semibold truncate">
-              {currentGame?.title}
-            </h2>
+            <img src={currentGame?.image} alt={currentGame?.title} className="w-12 rounded-md" />
+            <h2 className="capitalize font-semibold truncate">{currentGame?.title}</h2>
           </Link>
         )}
         {expansions.length > 0 && (
@@ -134,19 +128,13 @@ export default function ChatPage() {
         </div>
       </div>
       <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto py-4">
-        <div className="flex items-center w-full border border-gray-700 rounded-lg p-2">
-          {/* <input
-            className="w-full focus:outline-0 bg-inherit"
-            value={input}
-            placeholder="Ask a board game rules question..."
-            onChange={handleInputChange}
-            disabled={isLoading}
-          /> */}
+        <div className="flex bg-white dark:bg-black items-center w-full border border-gray-700 rounded-lg p-2">
           <textarea
             placeholder="Ask a question..."
             className="w-full  bg-transparent focus:outline-none resize-none lib"
             rows="1"
             value={input}
+            disabled={isLoading}
             onChange={handleInputChange}
             onInput={(e) => {
               e.target.style.height = "auto";
@@ -154,9 +142,8 @@ export default function ChatPage() {
             }}
           />
 
-          <button className="cursor-pointer mx-2" disabled>
-            <FaMicrophone className="text-slate-500 cursor-not-allowed" />
-          </button>
+          <FaMicrophone className="text-slate-400 cursor-not-allowed  mx-2" />
+
           <button type="submit" className="cursor-pointer">
             <FaRegPaperPlane />
           </button>
