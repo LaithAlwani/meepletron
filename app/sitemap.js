@@ -1,14 +1,14 @@
 import { getBoardgames } from "@/lib/functions";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const baseUrl =
+  process.env.NODE_ENV != "production" ? "http://localhost:3000" : "https://www.meepletron.com";
 
 export default async function sitemap() {
   const allboardgames = await getBoardgames();
 
   const boardgamePages = allboardgames.map((bg) => {
-    const gameSlug = `${bg.slug || bg._id}`;
     return {
-      url: `${baseUrl}/boardgames/${gameSlug}`,
+      url: `${baseUrl}/boardgames/${bg._id}`,
       lastModified: bg.updatedAt,
       changeFrequency: "yearly",
       priority: 0.7,

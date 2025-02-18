@@ -17,12 +17,12 @@ export async function POST(req) {
 
   if (!file || !title || !id)
     return NextResponse.json({ message: "please attach file" }, { status: 500 });
-  const safeTitle = title.replace(/\s+/g, "_").toLowerCase();
+  const safeTitle = title.replace(/\s+/g, "-").toLowerCase();
 
   const arrayBuffer = await file.arrayBuffer();
   const fileBuffer = Buffer.from(arrayBuffer);
 
-  const pathDev = `_temp_boardgames/${safeTitle}_${Date.now()}_${file.name}`;
+  const pathDev = `_temp_boardgames/${safeTitle}_${id}/${file.name}`;
   const pathProd = `${safeTitle}_${id}/${file.name}`;
 
   const uploadCommand = new PutObjectCommand({
@@ -34,7 +34,7 @@ export async function POST(req) {
 
   try {
     await s3Client.send(uploadCommand);
-    const url = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${pathDev}`;
+    const url = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${process.env.NODE_ENV !="production" ? pathDev:pathProd}`;
     return NextResponse.json({ data: url, message: "File uploaded successfully" }, { status: 201 });
   } catch (error) {
     console.log(error);

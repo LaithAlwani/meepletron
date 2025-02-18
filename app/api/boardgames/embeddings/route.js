@@ -16,7 +16,7 @@ export async function POST(req) {
     if (!fileText.length) {
       return NextResponse.json({ data: "File has no text" }, { status: 500 });
     }
-    console.log(blob)
+
     const doc = await Boardgame.findOneAndUpdate(
       { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
       { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
