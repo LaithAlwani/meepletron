@@ -6,7 +6,7 @@ import { useSearch } from "@/utils/hooks";
 import { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
-import { MdClose, MdCloudUpload } from "react-icons/md";
+import { MdClose, MdCloudUpload, MdUnarchive, MdOutlineDoneAll  } from "react-icons/md";
 
 export default function BoardgameEditPage() {
   const { query, setQuery, results, loading } = useSearch({ limit: 5 });
@@ -54,7 +54,6 @@ export default function BoardgameEditPage() {
       const { data, message } = await res.json();
       if (res.ok) {
         toast.custom((t) => <CustomToast message={`${message} updated successfully!`} id={t.id} />);
-        // router.push("/admin/boardgames/add");
         setBoardgame(data);
         setFileText([]);
         setFile(null);
@@ -142,7 +141,7 @@ export default function BoardgameEditPage() {
                       className="flex items-center justify-between p-4 border-b border-gray-400 dark:border-yellow-500">
                       {filename}
                       <CustomButton disabled={url.isTextExtracted} onClick={() => setFile(url)}>
-                        {!url.isTextExtracted ? "Extract" : "Extracted"}
+                        {!url.isTextExtracted ? <MdUnarchive /> : <MdOutlineDoneAll />}
                       </CustomButton>
                     </li>
                   );

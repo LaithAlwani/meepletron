@@ -14,7 +14,7 @@ export default function CustomToast({ message, id }) {
       <span className="text-xl font-bold text-green-600 dark:text-green-400">✅ Success</span>
       <p className="flex-1 text-sm font-medium">{message}</p>
       <button
-        onClick={() => toast.dismiss(id)}
+        onClick={() => toast.remove(id)}
         className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
       >
         <IoCloseCircleOutline size={20} />
