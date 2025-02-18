@@ -35,7 +35,7 @@ export async function POST(req) {
     
 
     const embeddings = new OpenAIEmbeddings({
-      model: "text-embedding-3-large",
+      model: "text-embedding-3-small",
     });
 
     const pinecone = new PineconeClient();

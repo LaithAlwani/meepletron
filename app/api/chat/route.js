@@ -67,7 +67,8 @@ _User: "Are there any variants for this game?"_
 **Context:** ${retrievals}`;
   try {
     const result = streamText({
-      model: openai("gpt-4o-mini"),
+      model: openai("gpt-4o"),
+      temperature: 0,
       prompt,
     });
 

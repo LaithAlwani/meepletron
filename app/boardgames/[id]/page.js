@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { MdGroups, MdOutlineAccessTimeFilled, MdMenuBook } from "react-icons/md";
 import { FaChild } from "react-icons/fa";
 import { ImBubbles } from "react-icons/im";
+import toast from "react-hot-toast";
 
 export default function BoardgamePage() {
   const params = useParams();
@@ -29,7 +30,7 @@ export default function BoardgamePage() {
         }
       }
     } catch (err) {
-      console.log(err);
+      toast.error(err.message)
     } finally {
       setLoading(false);
     }

@@ -8,6 +8,7 @@ export async function GET(req, { params }) {
     await connectToDB();
 
     const boardgame = await Boardgame.findOne({ _id: id }).populate("parent_id").lean();
+    if(!boardgame)  return NextResponse.json({ message:"board game not found" }, { status: 404 });
     const isExpansion = boardgame.is_expansion;
     if (isExpansion) return NextResponse.json({ data: {boardgame} }, { status: 200 });
 

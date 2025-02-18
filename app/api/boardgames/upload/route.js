@@ -27,14 +27,14 @@ export async function POST(req) {
 
   const uploadCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: pathProd,
+    Key: pathDev,
     Body: fileBuffer,
     ContentType: file.type,
   });
 
   try {
     await s3Client.send(uploadCommand);
-    const url = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${safeTitle}_${id}/${file.name}`;
+    const url = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${pathDev}`;
     return NextResponse.json({ data: url, message: "File uploaded successfully" }, { status: 201 });
   } catch (error) {
     console.log(error);
