@@ -1,4 +1,6 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
 import { NextResponse } from "next/server";
 
 const s3Client = new S3Client({
@@ -11,31 +13,34 @@ const s3Client = new S3Client({
 
 export async function POST(req) {
   const data = await req.formData();
-  const file = data.get("file");
+  const filename = data.get("filename");
+  const filetype = data.get("filetype");
   const title = data.get("title");
   const id = data.get("id");
 
-  if (!file || !title || !id)
+  if (!filename || !title || !id)
     return NextResponse.json({ message: "please attach file" }, { status: 500 });
   const safeTitle = title.replace(/\s+/g, "-").toLowerCase();
 
-  const arrayBuffer = await file.arrayBuffer();
-  const fileBuffer = Buffer.from(arrayBuffer);
-
-  const pathDev = `_temp_boardgames/${safeTitle}_${id}/${file.name}`;
-  const pathProd = `${safeTitle}_${id}/${file.name}`;
+  const pathDev = `_temp_boardgames/${safeTitle}_${id}/${filename}`;
+  const pathProd = `${safeTitle}_${id}/${filename}`;
 
   const uploadCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: pathDev,
-    Body: fileBuffer,
-    ContentType: file.type,
+    Key: process.env.NODE_ENV != "production" ? pathDev : pathProd,
+    ContentType: filetype,
   });
 
   try {
-    await s3Client.send(uploadCommand);
-    const url = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${process.env.NODE_ENV !="production" ? pathDev:pathProd}`;
-    return NextResponse.json({ data: url, message: "File uploaded successfully" }, { status: 201 });
+    const signedUrl = await getSignedUrl(s3Client, uploadCommand, { expiresIn: 3600 });
+    const urlData = {
+      signedUrl,
+      objectUrl: `https://meepletron-storage.s3.us-east-2.amazonaws.com/${process.env.NODE_ENV !="production" ? pathDev:pathProd}`
+    }
+    return NextResponse.json(
+      { urlData, message: "File uploaded successfully" },
+      { status: 201 }
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json(

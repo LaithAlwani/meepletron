@@ -135,16 +135,17 @@ export default function BoardgameEditPage() {
               <ul>
                 {boardgame.urls.map((url) => {
                   const filename = url.path.substring(url.path.lastIndexOf("/") + 1);
-                  return(
-                  <li
-                    key={url?.path}
-                    className="flex items-center justify-between p-4 border-b border-gray-400 dark:border-yellow-500">
-                    {filename}
-                    <CustomButton disabled={url.isTextExtracted} onClick={() => setFile(url)}>
-                      {!url.isTextExtracted ? "Extract" : "Extracted"}
-                    </CustomButton>
-                  </li>
-                )})}
+                  return (
+                    <li
+                      key={url?.path}
+                      className="flex items-center justify-between p-4 border-b border-gray-400 dark:border-yellow-500">
+                      {filename}
+                      <CustomButton disabled={url.isTextExtracted} onClick={() => setFile(url)}>
+                        {!url.isTextExtracted ? "Extract" : "Extracted"}
+                      </CustomButton>
+                    </li>
+                  );
+                })}
               </ul>
             </>
           )}
@@ -206,12 +207,10 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
     setIsLoading(true);
     const file = inputFileRef.current.files[0];
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("filename", file.name);
+    formData.append("filetype", file.type);
     formData.append("title", boardgame.title);
     formData.append("id", boardgame._id);
-    // const filePath_dev = `_temp_boardgames`; // for development mode.
-
-    // const safeTitle = boardgame.title.replace(/\s+/g, "_").toLowerCase();
 
     try {
       const res = await fetch("/api/boardgames/upload", {
@@ -220,12 +219,28 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
       });
       let newUrl;
       if (res.ok) {
-        const { data, message } = await res.json();
-        console.log(data);
+        const { urlData, message } = await res.json();
+        console.log(urlData);
 
-        toast.custom((t) => <CustomToast message={message} id={t.id} />);
+        try {
+          const uploadResponse = await fetch(urlData.signedUrl, {
+            method: "PUT",
+            body: file,
+            headers: {
+              "Content-Type": file.type,
+             
+            },
+          });
+          if (uploadResponse.ok) {
+            toast.custom((t) => <CustomToast message={message} id={t.id} />);
+          } else {
+            toast.error("failed");
+          }
+        } catch (err) {
+          console.log(err);
+        }
         newUrl = {
-          path: data,
+          path: urlData.objectUrl,
           isTextExtracted: false,
         };
       }
