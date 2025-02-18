@@ -133,16 +133,18 @@ export default function BoardgameEditPage() {
                 <div className="flex-grow border-t border-gray-400 dark:border-yellow-300"></div>
               </div>
               <ul>
-                {boardgame.urls.map((url) => (
+                {boardgame.urls.map((url) => {
+                  const filename = url.path.substring(url.path.lastIndexOf("/") + 1);
+                  return(
                   <li
                     key={url?.path}
                     className="flex items-center justify-between p-4 border-b border-gray-400 dark:border-yellow-500">
-                    {url.path}
+                    {filename}
                     <CustomButton disabled={url.isTextExtracted} onClick={() => setFile(url)}>
                       {!url.isTextExtracted ? "Extract" : "Extracted"}
                     </CustomButton>
                   </li>
-                ))}
+                )})}
               </ul>
             </>
           )}
