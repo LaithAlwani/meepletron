@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function SignInPage() {
   return (
-    <div className=" flex justify-center">
+    <div className=" flex justify-center pt-[6rem]">
       <SignIn />
     </div>
   );
