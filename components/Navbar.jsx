@@ -20,7 +20,7 @@ export default function Navbar() {
       <div className="flex justify-between items-center max-w-xl mx-auto">
         <Link href="/" className="flex items-center justify-start gap-1" aria-label="logo">
           <div className="relative w-[2rem] h-[2rem]">
-            <Image src="/chatbot.webp" fill priority alt="robot logo" />
+            <Image src="/chatbot.webp" fill priority alt="robot logo" quality={25} />
           </div>
           <div className="flex flex-col">
             <span className="text-xl font-bold">Meepletron</span>
