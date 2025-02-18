@@ -28,7 +28,7 @@ export default function Navbar() {
         </Link>
 
         <div className=" ">
-          <div className="flex max-w-xl mx-auto items-center justify-between  gap-3">
+          <div className="flex  mx-auto items-center justify-between gap-3">
             <Link href="/boardgames" className="" aria-label="board games">
               <FaRobot size={24} aria-label="board games" />
             </Link>
