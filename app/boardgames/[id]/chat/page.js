@@ -12,7 +12,6 @@ import Loader from "@/components/Loader";
 import TypingIndicator from "@/components/TypingDots";
 import Link from "next/link";
 
-
 export default function ChatPage() {
   const params = useParams();
   const router = useRouter();
@@ -23,7 +22,7 @@ export default function ChatPage() {
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const messagesEndRef = useRef(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    body: { boardgame: currentGame },
+    body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
   });
 
   const getBoardgame = async () => {
@@ -64,7 +63,11 @@ export default function ChatPage() {
         </button>
         {currentGame && (
           <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2 ">
-            <img src={currentGame?.thumbnail} alt={currentGame?.title} className="h-12 rounded-md" />
+            <img
+              src={currentGame?.thumbnail}
+              alt={currentGame?.title}
+              className="h-12 rounded-md"
+            />
             <h2 className="capitalize font-semibold truncate">{currentGame?.title}</h2>
           </Link>
         )}
