@@ -64,7 +64,7 @@ export default function ChatPage() {
         </button>
         {currentGame && (
           <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2 ">
-            <img src={currentGame?.image} alt={currentGame?.title} className="w-12 rounded-md" />
+            <img src={currentGame?.thumbnail} alt={currentGame?.title} className="h-12 rounded-md" />
             <h2 className="capitalize font-semibold truncate">{currentGame?.title}</h2>
           </Link>
         )}
