@@ -1,4 +1,4 @@
-import { FaFacebookF, FaInstagram, FaLinkedinIn,FaYoutube  } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { getBoardgames } from "@/lib/functions";
 import Hero from "@/components/landingPage/Hero";
@@ -6,7 +6,8 @@ import Features from "@/components/landingPage/Features";
 import Pricing from "@/components/landingPage/Pricing";
 import RoadMap from "@/components/landingPage/RoadMap";
 import ContactForm from "@/components/ContactForm";
-
+import { Suspense } from "react";
+import Loader from "@/components/Loader";
 
 export const metadata = {
   alternates: {
@@ -18,8 +19,10 @@ export default async function Home() {
   const recentlyAdded = await getBoardgames({ where: { is_expansion: false }, limit: 10 });
   return (
     <>
-      <Hero items={JSON.stringify(recentlyAdded)} />
-      
+      <Suspense fallback={<Loader />}>
+        <Hero items={JSON.stringify(recentlyAdded)} />
+      </Suspense>
+
       <Features />
       <Pricing />
       <RoadMap />
@@ -46,14 +49,14 @@ export default async function Home() {
               // target="_blank"
               rel="noreferrer noopener"
               referrerPolicy="no-referrer">
-              <FaYoutube  size={24} aria-label="youtube" className="" />
+              <FaYoutube size={24} aria-label="youtube" className="" />
             </a>
             <a
               href="#"
               // target="_blank"
               rel="noreferrer noopener"
               referrerPolicy="no-referrer">
-              <FaLinkedinIn size={24} aria-label="linkedin" className=""  />
+              <FaLinkedinIn size={24} aria-label="linkedin" className="" />
             </a>
             <a
               href="https://x.com/meepletron45657"
