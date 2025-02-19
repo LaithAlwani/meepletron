@@ -285,7 +285,7 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
           </div>
           <p>{file?.name}</p>
           {file && (
-            <CustomButton type="submit" className="bg-transparent">
+            <CustomButton type="submit">
               {isLoading ? <Loader width={"1rem"} /> : <MdCloudUpload size={24} />}
             </CustomButton>
           )}
