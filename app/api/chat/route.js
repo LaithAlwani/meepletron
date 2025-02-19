@@ -9,7 +9,7 @@ export const maxDuration = 30;
 const pinecone = new PineconeClient();
 
 export async function POST(req) {
-  const { messages, boardgame } = await req.json();
+  const { messages, boardgame_id, boardgame_title } = await req.json();
   await connectToDB();
   const userQuestion = messages[messages.length - 1].content;
 
@@ -17,7 +17,7 @@ export async function POST(req) {
     pinecone,
     process.env.PINECONE_INDEX_NAME,
     userQuestion,
-    boardgame._id
+    boardgame_id
   );
 
   const prompt = `You are a board game expert AI. Your primary role is to explain and clarify board game rules using informal, human-like language.  
@@ -57,11 +57,11 @@ _User: "What are the rules for Monopoly Deal?"_
 
 _Backend: Board game title: "Catan"_  
 _User: "Are there any variants for this game?"_  
-"There are a few. One popular option is the Friendly Robber rule where you don’t steal from players with less than three points. If you want more details on that or others, just ask."  
+"There are a few. One popular option is the Friendly Robber rule where you don’t steal from players with less than three points."  
 
 ---
 
-**Board game title:** ${boardgame.title}  
+**Board game title:** ${boardgame_title}  
 **History:** ${messages}  
 **Question:** ${userQuestion}  
 **Context:** ${retrievals}`;
