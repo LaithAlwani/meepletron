@@ -22,28 +22,33 @@ const RoadMap = () => {
     {
       title: "Building Game Library",
       description: "Extracting information from official board game manuals.",
-      date: "Feb 2025",
+      date: "Feb • 2025",
       status: "ongoing",
     },
     {
       title: "Beta Testing",
       description: "Testing the product with real users to gather feedback.",
-      date: "Mar 2025 - Jun 2025",
+      date: "Mar 2025 • Jun 2025",
       status: "coming",
+    },
+    {
+      title: "Progressive Web App (PWA)",
+      status: "coming", // or "complete" or "ongoing"
+      date: "April • 2025",
+      description: "Enhance the platform with PWA support, allowing users to install and access it like a native app with offline capabilities."
+    },
+    {
+      title: "User Features",
+      status: "coming", // or "complete" or "coming"
+      date: "Late Q2 • 2025",
+      description: "Introducing new user-focused features like personalized recommendations, saved game progress, and enhanced search tools."
     },
     {
       title: "Launch",
       description: "Official release of the product to the public.",
       date: "Early Q3 • 2025",
       status: "coming",
-    },
-    {
-      title: "Favorites List",
-      status: "coming", // or "complete" or "ongoing"
-      date: "Late Q3 • 2025",
-      description:
-        "Allow users to add board games to a favorites list for quick access and easy reference.",
-    },
+    }
   ];
 
   const getStatusDot = (status) => {
