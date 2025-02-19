@@ -56,7 +56,7 @@ export default async function Home() {
               <FaLinkedinIn size={24} aria-label="linkedin" className=""  />
             </a>
             <a
-              href="#"
+              href="https://x.com/meepletron45657"
               // target="_blank"
               rel="noreferrer noopener"
               referrerPolicy="no-referrer">
