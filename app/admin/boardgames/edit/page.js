@@ -82,11 +82,11 @@ export default function BoardgameEditPage() {
               className="border p-2 rounded w-full"
             />
             {loading && <p className="text-gray-500 mt-2">Loading...</p>}
-            {!loading && results.length === 0 && query.trim() && (
+            {!loading && results?.length === 0 && query.trim() && (
               <p className="text-gray-400 mt-4">No results found.</p>
             )}
             <div className=" w-full bg-white dark:bg-slate-600 border border-gray-300 dark:border-slate-800 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto z-10">
-              {results.map((boardgame) => (
+              {results?.map((boardgame) => (
                 <div
                   key={boardgame._id}
                   className="flex items-center justify-between gap-3 p-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer">
