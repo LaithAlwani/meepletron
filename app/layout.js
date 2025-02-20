@@ -82,12 +82,12 @@ export const metadata = {
     siteName: "meepeletron",
     images: [
       {
-        url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png",
+        url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.webp",
         width: 1200,
         height: 630,
       },
       {
-        url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.png",
+        url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=The+AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fchatbot.webp",
         width: 400,
         height: 400,
       },
