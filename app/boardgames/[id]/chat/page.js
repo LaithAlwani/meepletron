@@ -4,13 +4,14 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FcReading } from "react-icons/fc";
-import { FaRegPaperPlane, FaMicrophone } from "react-icons/fa";
+import { FaPaperPlane, FaMicrophone } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoArrowBack } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
 import Loader from "@/components/Loader";
 import TypingIndicator from "@/components/TypingDots";
 import Link from "next/link";
+import CustomButton from "@/components/CustomeButton";
 
 export default function ChatPage() {
   const params = useParams();
@@ -130,27 +131,33 @@ export default function ChatPage() {
           )}
         </div>
       </div>
-      <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto py-4">
-        <div className="flex bg-white dark:bg-black items-center w-full border border-gray-700 rounded-lg p-2">
-          <textarea
-            placeholder="Ask a question..."
-            className="w-full  bg-transparent focus:outline-none resize-none lib"
-            rows="1"
-            value={input}
-            disabled={isLoading}
-            onChange={handleInputChange}
-            onInput={(e) => {
-              e.target.style.height = "auto";
-              e.target.style.height = `${e.target.scrollHeight}px`;
-            }}
-          />
+      <form onSubmit={handleSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
+        <textarea
+          placeholder="Ask a question..."
+          className="w-full max-h-[120px] bg-white dark:bg-black rounded-lg p-2 focus:outline-none resize-none lib"
+          rows="1"
+          value={input}
+          disabled={isLoading}
+          onChange={handleInputChange}
+          onInput={(e) => {
+            e.target.style.height = "auto";
+            e.target.style.height = `${e.target.scrollHeight}px`;
+          }}
+        />
 
-          <FaMicrophone className="text-slate-400 cursor-not-allowed  mx-2" />
+        <CustomButton type="submit" className="rounded-full">
+          <FaPaperPlane />
+        </CustomButton>
 
-          <button type="submit" className="cursor-pointer">
-            <FaRegPaperPlane />
-          </button>
-        </div>
+        {/* {!input.trim() ? (
+          <CustomButton className="rounded-full">
+            <FaMicrophone  className="text-slate-400 cursor-not-allowed " />
+          </CustomButton>
+        ) : (
+          <CustomButton type="submit" className="rounded-full">
+            <FaRegPaperPlane  />
+          </CustomButton>
+        )} */}
       </form>
     </section>
   ) : (
