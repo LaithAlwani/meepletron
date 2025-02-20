@@ -19,7 +19,6 @@ const SearchBoardGame = ({ onBoardGameClick }) => {
 
       <div className="absolute w-full bg-white  dark:bg-slate-600 border border-gray-300 dark:border-slate-800 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto z-10">
         {loading && <Loader width={"3rem"}/>}
-        {console.log(results?.length === 0)}
         {!loading && results?.length === 0 && query.trim() && (
           <p className="p-3">No results found.</p>
         )}

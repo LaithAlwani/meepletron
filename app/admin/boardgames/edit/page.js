@@ -6,7 +6,7 @@ import { useSearch } from "@/utils/hooks";
 import { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
-import { MdClose, MdCloudUpload, MdUnarchive, MdOutlineDoneAll  } from "react-icons/md";
+import { MdClose, MdCloudUpload, MdUnarchive, MdOutlineDoneAll } from "react-icons/md";
 
 export default function BoardgameEditPage() {
   const { query, setQuery, results, loading } = useSearch({ limit: 5 });
@@ -81,11 +81,11 @@ export default function BoardgameEditPage() {
               onChange={(e) => setQuery(e.target.value)}
               className="border p-2 rounded w-full"
             />
-            {loading && <p className="text-gray-500 mt-2">Loading...</p>}
-            {!loading && results?.length === 0 && query.trim() && (
-              <p className="text-gray-400 mt-4">No results found.</p>
-            )}
             <div className=" w-full bg-white dark:bg-slate-600 border border-gray-300 dark:border-slate-800 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto z-10">
+              {loading && <Loader width={"3rem"} />}
+              {!loading && results?.length === 0 && query.trim() && (
+                <p className="p-3">No results found.</p>
+              )}
               {results?.map((boardgame) => (
                 <div
                   key={boardgame._id}
