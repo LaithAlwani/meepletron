@@ -20,7 +20,7 @@ export default async function BoardGameLayout({ children, params }) {
   return (
     <>
       {/* Header */}
-      <BackgroundImage image={boardgame?.image} title={boardgame?.title} />
+      <BackgroundImage image={boardgame.wallpaper || boardgame?.image} title={boardgame?.title} />
       {/* Main Content */}
       {children}
     </>
