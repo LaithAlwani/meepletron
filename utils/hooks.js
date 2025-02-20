@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 
-export const useSearch = ({debounceDelay:debounceDelay = 500, limit}) => {
+export const useSearch = ({debounceDelay:debounceDelay = 300, limit}) => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   
   useEffect(() => {
     const handler = setTimeout(() => {
+      setResults([])
       setDebouncedQuery(query);
     }, debounceDelay);
 
@@ -17,7 +18,8 @@ export const useSearch = ({debounceDelay:debounceDelay = 500, limit}) => {
 
   useEffect(() => {
     if (!debouncedQuery.trim()) {
-      setResults([]);
+    
+      setResults(null);
       return;
     }
 
