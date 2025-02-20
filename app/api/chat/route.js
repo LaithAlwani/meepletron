@@ -32,6 +32,8 @@ export async function POST(req) {
 - Do not include the name of the board game in your responses.  
 - Base all answers strictly on the context provided by the backend. If you cannot answer the question using the context, respond with: "I cannot help you with that question."  
 - Avoid giving opinions about the rules, such as whether they are good, harsh, or horrible.  
+- at the end of the response provide the page number that was used to get this information.
+- use quotes from the cotext if possible
 
 
 **Handling Insufficient Context:**  
