@@ -134,7 +134,7 @@ export default function ChatPage() {
       <form onSubmit={handleSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
         <textarea
           placeholder="Ask a question..."
-          className="w-full max-h-[120px] bg-white dark:bg-black rounded-lg p-2 focus:outline-none resize-none lib"
+          className="w-full max-h-[120px] text-lg leading-8 bg-white dark:bg-black rounded-lg p-2 focus:outline-none resize-none font-poppins"
           rows="1"
           value={input}
           disabled={isLoading}

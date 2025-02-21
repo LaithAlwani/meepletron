@@ -1,5 +1,6 @@
 import { queryPineconeVectorStore } from "@/lib/vector-store";
 import connectToDB from "@/utils/database";
+import { vertex } from "@ai-sdk/google-vertex/edge";
 import { openai } from "@ai-sdk/openai";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { streamText } from "ai";
@@ -31,13 +32,13 @@ export async function POST(req) {
 - Respond conversationally, as if you are a human expert. Keep your answers direct and to the point.  
 - Do not include the name of the board game in your responses.  
 - Base all answers strictly on the context provided by the backend. If you cannot answer the question using the context, respond with: "I cannot help you with that question."  
-- Avoid giving opinions about the rules, such as whether they are good, harsh, or horrible.  
+- Avoid giving opinions about the rules, such as whether they are good, harsh, or horrible.
 - at the end of the response provide the page number that was used to get this information.
 - use quotes from the cotext if possible
 
 
 **Handling Insufficient Context:**  
-- If there isn’t enough information about the game in the context provided, let the user know and ask for more details.  
+- If there isn’t enough information about the game in the context provided, let the user know and ask for more details.
 
 **Style:**  
 - Use informal language that feels natural and conversational.  
@@ -67,15 +68,42 @@ _User: "Are there any variants for this game?"_
 **History:** ${messages}  
 **Question:** ${userQuestion}  
 **Context:** ${retrievals}`;
+
   try {
-    const result = streamText({
-      model: openai("gpt-4o"),
-      temperature: 0,
+    // const result = await streamText({
+    //   model: openai("gpt-4o-mini"),
+    //   temperature: 0,
+    //   prompt,
+    //   topK:3
+    // });
+    const result = await streamText({
+      model: vertex("gemini-2.0-flash-001"),
       prompt,
+      temperature: 0,
+      topK: 5,
     });
 
-    return result.toDataStreamResponse();
+    return result.toDataStreamResponse({
+      getErrorMessage: (error) => {
+        if (error == null) {
+          return "unknown error";
+        }
+
+        if (typeof error === "string") {
+          console.log("1", error);
+          return error;
+        }
+
+        if (error instanceof Error) {
+          console.log("2", error);
+          return error.message;
+        }
+
+        return JSON.stringify(error);
+      },
+    });
   } catch (err) {
-    return err;
+    console.log(err);
+    return NextResponse.json({ message: "failed" }, { status: 500 });
   }
 }
