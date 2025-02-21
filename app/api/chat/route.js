@@ -1,6 +1,5 @@
 import { queryPineconeVectorStore } from "@/lib/vector-store";
 import connectToDB from "@/utils/database";
-import { vertex } from "@ai-sdk/google-vertex/edge";
 import { openai } from "@ai-sdk/openai";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { streamText } from "ai";
@@ -70,18 +69,13 @@ _User: "Are there any variants for this game?"_
 **Context:** ${retrievals}`;
 
   try {
-    // const result = await streamText({
-    //   model: openai("gpt-4o-mini"),
-    //   temperature: 0,
-    //   prompt,
-    //   topK:3
-    // });
     const result = await streamText({
-      model: vertex("gemini-2.0-flash-001"),
-      prompt,
+      model: openai("gpt-4o"),
       temperature: 0,
-      topK: 5,
+      prompt,
+      topK:3
     });
+    
 
     return result.toDataStreamResponse({
       getErrorMessage: (error) => {
