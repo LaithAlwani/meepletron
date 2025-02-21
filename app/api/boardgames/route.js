@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   await connectToDB();
   try {
-    const boardgames = await Boardgame.find().sort({createdAt:-1}).limit(10).lean();
+    const boardgames = await Boardgame.find().where({is_expansion:false}).sort({createdAt:-1}).limit(10).lean();
     return NextResponse.json({ data: boardgames }, { status: 200 });
   } catch (err) {
     console.log(err);
