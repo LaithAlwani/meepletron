@@ -1,8 +1,5 @@
-import BoardgameContainer from "@/components/boardgame/BoardgameContainer";
-import Loader from "@/components/Loader";
+import BoardgameList from "@/components/boardgame/BoardgameList";
 import SearchBoardGame from "@/components/SearchBoardGame";
-import { getBoardgames } from "@/lib/functions";
-import { Suspense } from "react";
 
 export const metadata = {
   title: "Board Games",
@@ -12,7 +9,6 @@ export const metadata = {
 };
 
 export default async function BoargamePage() {
-  const boardgames = await getBoardgames({ where: { is_expansion: false } });
 
   return (
     <section className="pt-[6rem] px-2 max-w-xl mx-auto mb-6 min-h-full">
@@ -22,13 +18,10 @@ export default async function BoargamePage() {
         <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500">Recently Added</h2>
         <div className="flex-grow border-t-2 border-gray-400 dark:border-yellow-300"></div>
       </div>
-      <Suspense fallback={<Loader />}>
-        <div className="flex flex-wrap justify-center gap-3 ">
-          {boardgames?.map((boardgame) => (
-            <BoardgameContainer key={boardgame._id} boardgame={boardgame} />
-          ))}
-        </div>
-      </Suspense>
+
+      <div className="flex flex-wrap justify-center gap-3 ">
+        <BoardgameList />
+      </div>
     </section>
   );
 }

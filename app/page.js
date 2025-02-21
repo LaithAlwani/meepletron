@@ -1,13 +1,11 @@
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { getBoardgames } from "@/lib/functions";
 import Hero from "@/components/landingPage/Hero";
 import Features from "@/components/landingPage/Features";
 import Pricing from "@/components/landingPage/Pricing";
 import RoadMap from "@/components/landingPage/RoadMap";
 import ContactForm from "@/components/ContactForm";
-import { Suspense } from "react";
-import Loader from "@/components/Loader";
+import BoardgameList from "@/components/boardgame/BoardgameList";
 
 export const metadata = {
   alternates: {
@@ -16,13 +14,15 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const recentlyAdded = await getBoardgames({ where: { is_expansion: false }, limit: 10 });
   return (
     <>
-      <Suspense fallback={<Loader />}>
-        <Hero items={JSON.stringify(recentlyAdded)} />
-      </Suspense>
-
+      <Hero />
+      <section className="max-w-5xl mx-auto my-8 px-4  animate-slidein">
+        <h2 className="text-center px-4 mb-6 text-3xl font-bold">Recently Added</h2>
+        <div className="flex flex-nowrap justify-start overflow-x-scroll gap-3 ">
+          <BoardgameList />
+        </div>
+      </section>
       <Features />
       <Pricing />
       <RoadMap />
