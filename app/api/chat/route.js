@@ -72,17 +72,10 @@ _User: "Are there any variants for this game?"_
 
   try {
     const result = await streamText({
-      model: google('gemini-2.0-flash'),
+      model: google('gemini-1.5-flash-8b'),
       prompt,
     });
-    // const result = await streamText({
-    //   model: openai("gpt-4o"),
-    //   temperature: 0,
-    //   prompt,
-    //   topK:3
-    // });
     
-
     return result.toDataStreamResponse();
   } catch (err) {
     console.log(err);
