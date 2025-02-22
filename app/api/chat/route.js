@@ -1,6 +1,6 @@
 import { queryPineconeVectorStore } from "@/lib/vector-store";
 import connectToDB from "@/utils/database";
-import { openai } from "@ai-sdk/openai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { streamText } from "ai";
 
@@ -67,35 +67,23 @@ _User: "Are there any variants for this game?"_
 **History:** ${messages}  
 **Question:** ${userQuestion}  
 **Context:** ${retrievals}`;
+  
+  const google = createGoogleGenerativeAI();
 
   try {
     const result = await streamText({
-      model: openai("gpt-4o"),
-      temperature: 0,
+      model: google('gemini-2.0-flash'),
       prompt,
-      topK:3
     });
+    // const result = await streamText({
+    //   model: openai("gpt-4o"),
+    //   temperature: 0,
+    //   prompt,
+    //   topK:3
+    // });
     
 
-    return result.toDataStreamResponse({
-      getErrorMessage: (error) => {
-        if (error == null) {
-          return "unknown error";
-        }
-
-        if (typeof error === "string") {
-          console.log("1", error);
-          return error;
-        }
-
-        if (error instanceof Error) {
-          console.log("2", error);
-          return error.message;
-        }
-
-        return JSON.stringify(error);
-      },
-    });
+    return result.toDataStreamResponse();
   } catch (err) {
     console.log(err);
     return NextResponse.json({ message: "failed" }, { status: 500 });
