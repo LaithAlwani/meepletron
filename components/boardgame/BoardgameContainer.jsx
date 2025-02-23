@@ -8,7 +8,7 @@ export default function BoardgameContainer({ boardgame }) {
   const { _id, image, title, parent_id } = boardgame;
   return (
     <div className="relative">
-      <Link href={`/boardgames/${_id}`} className="block w-[11rem] h-[11rem]" aria-label={`${boardgame.title}`}>
+      <Link href={`/boardgames/${_id}`} className="block w-[11rem] h-[11rem] bg-white dark:bg-slate-800" aria-label={`${boardgame.title}`}>
         <Image
           src={image}
           alt={`${title} board game`}
