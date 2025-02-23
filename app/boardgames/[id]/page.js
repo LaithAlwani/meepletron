@@ -54,7 +54,7 @@ export default async function BoardgamePage({ params }) {
           />
         </div>
         <hgroup>
-          <span className="px-4 font-semibold tracking-[1px]">{boardgame.designers[0]}</span>
+          <span className="text-xs px-4 font-semibold tracking-[1px]">{boardgame.designers[0]}</span>
           <h1 className="text-lg sm:text-2xl px-4 font-extrabold text-blue-600 dark:text-yellow-500 uppercase drop-shadow-xl mb-6">
             {boardgame.title} <span className="text-xs">({boardgame.year})</span>
           </h1>
