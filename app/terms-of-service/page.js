@@ -43,8 +43,7 @@ export default function TermsOfService() {
           liability is limited to the fullest extent permitted by law.
         </p>
         <p className=" mt-6">
-          By using Meeple Tron, you agree to these Terms. If you have any questions, contact us at
-          [Insert Email Address].
+          By using Meeple Tron, you agree to these Terms. If you have any questions, please contact us.
         </p>
       </div>
     </div>

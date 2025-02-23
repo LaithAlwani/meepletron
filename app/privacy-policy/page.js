@@ -40,8 +40,7 @@ export default function PrivacyPolicy() {
           emailing us at [Insert Email Address].
         </p>
         <p className=" mt-6">
-          If you have questions about our privacy practices, please reach out to us at [Insert Email
-          Address].
+          If you have questions about our privacy practices, please reach out to us.
         </p>
       </div>
     </div>
