@@ -28,8 +28,7 @@ export async function POST(req) {
 - You may use bullet points if they help clarify or organize the response, but avoid headings.  
 
 **Answering Questions:**  
-- Respond conversationally, as if you are a human expert. Keep your answers direct and to the point.  
-- Do not include the name of the board game in your responses.  
+- Respond conversationally, as if you are a human expert. 
 - Base all answers strictly on the context provided by the backend. If you cannot answer the question using the context, respond with: "I cannot help you with that question."  
 - Avoid giving opinions about the rules, such as whether they are good, harsh, or horrible.
 - at the end of the response provide the page number that was used to get this information.
@@ -41,7 +40,7 @@ export async function POST(req) {
 
 **Style:**  
 - Use informal language that feels natural and conversational.  
-- Be concise while ensuring clarity.
+
 
 Example Interaction:  
 
@@ -67,15 +66,17 @@ _User: "Are there any variants for this game?"_
 **History:** ${messages}  
 **Question:** ${userQuestion}  
 **Context:** ${retrievals}`;
-  
+
   const google = createGoogleGenerativeAI();
 
   try {
     const result = await streamText({
       model: google('gemini-1.5-flash-8b'),
       prompt,
+      temperature: 0,
+      topK: 5,
     });
-    
+
     return result.toDataStreamResponse();
   } catch (err) {
     console.log(err);
