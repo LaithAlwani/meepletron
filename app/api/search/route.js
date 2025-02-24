@@ -15,38 +15,66 @@ export async function GET(req) {
 
     await connectToDB();
 
-    let dbQuery = Boardgame.aggregate([
-      {
-        $search: {
-          index: "title_designer", // Your Atlas Search index name
-          text: {
-            query: query,
-            path: ["title","designers" ,"publishers"],
-            fuzzy: {
-              maxEdits: 2, // Allows up to 2 typo corrections
-            }
-          }
-        }
-      },
-      {
-        $project: {
-          title: 1,
-          image:1,
-          thumbnail: 1,
-          urls: 1,
-          is_expansion: 1,
-          parent_id: 1,
-          description: 1,
-          designers: 1
-        }
-      }
-    ]);
+    const normalizeText = (text) =>
+      text
+        .normalize("NFD") // Decomposes accents
+        .replace(/[\u0300-\u036f]/g, "") // Removes diacritics
+        .toLowerCase();
 
-    if (!isNaN(limit) && limit > 0) {
-      dbQuery = dbQuery.limit(limit);
+    const normalizedQuery = normalizeText(query);
+    const searchWords = normalizedQuery.split(/\s+/).filter(Boolean);
+
+    if (!searchWords.length) {
+      return NextResponse.json({ message: "Invalid search query" }, { status: 400 });
     }
 
-    const boardgames = await dbQuery.exec(); // Use `.exec()` for consistency
+    // Create an array of regex conditions for each search word
+    const regexConditions = searchWords.map((word) => ({
+      title: { $regex: word, $options: "i" }, // Case-insensitive search
+    }));
+    let boardgames;
+
+    boardgames = await Boardgame.find(
+      { $and: regexConditions }, // Ensures all words appear somewhere in the title
+      { title: 1, thumbnail: 1, urls: 1, isExpansion: 1, parent_id: 1 }
+    )
+      .limit(limit)
+      .lean();
+
+    if (boardgames.length === 0) {
+      let dbQuery = Boardgame.aggregate([
+        {
+          $search: {
+            index: "title_designer", // Your Atlas Search index name
+            text: {
+              query: query,
+              path: ["title","designers" ,"publishers"],
+              fuzzy: {
+                maxEdits: 2, // Allows up to 2 typo corrections
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            title: 1,
+            image:1,
+            thumbnail: 1,
+            urls: 1,
+            is_expansion: 1,
+            parent_id: 1,
+            description: 1,
+            designers: 1,
+            score: { $meta: "searchScore" },
+          }
+        },
+        { $sort: { score: -1 } }
+      ]);
+      if (!isNaN(limit) && limit > 0) {
+        dbQuery = dbQuery.limit(limit);
+      }
+      boardgames = await dbQuery.exec(); // Use `.exec()` for consistency
+    }
 
     return NextResponse.json({ data: boardgames }, { status: 200 });
   } catch (error) {
