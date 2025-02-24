@@ -14,7 +14,7 @@ export default function Button({
   const { theme } = useTheme();
 
   const baseStyles =
-    "w-full sm:w-auto px-4 py-2 shadow cursor-pointer font-bold transition transition-all";
+    " px-4 py-2 shadow cursor-pointer font-bold transition transition-all";
   const variantStyles = {
     primary: `${
       theme === "dark"
@@ -24,7 +24,7 @@ export default function Button({
     secondary: "bg-gray-500 text-white hover:bg-gray-600",
     outline: "border border-blue-500 text-blue-500 hover:bg-blue-50",
     accept: "bg-green-500 disabled:bg-green-300 text-white ",
-    reject: "bg-red-500 disabled:bg-red-300 text-white",
+    reject: "bg-red-500 disabled:bg-red-300 text-white   ",
   };
 
   return (

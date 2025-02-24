@@ -1,4 +1,5 @@
 import { FaBoltLightning, FaBullseye, FaHeadset } from "react-icons/fa6";
+import { Heading } from "../ui";
 
 export default function Features() {
   const size = 64
@@ -6,7 +7,8 @@ export default function Features() {
   return (
     <section id="features" className="max-w-5xl mx-auto py-12">
       <div className="container mx-auto px-4">
-        <h3 className="text-3xl font-bold text-center mb-6">Features</h3>
+        <Heading level={2}>Features</Heading>
+        
         <div className="flex flex-wrap justify-center gap-8">
           <Card
             icon={<FaBoltLightning size={size} className={color}/>}

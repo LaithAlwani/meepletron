@@ -1,3 +1,5 @@
+import { Heading } from "../ui";
+
 const RoadMap = () => {
   const stops = [
     {
@@ -65,7 +67,7 @@ const RoadMap = () => {
 
   return (
     <div className="flex flex-col items-center py-12">
-      <h2 className="text-3xl font-bold mb-8">Road Map</h2>
+      <Heading level={2}>Road Map 2025</Heading>
       <div className="relative w-full max-w-xl">
         {/* Vertical Line */}
         <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-200"></div>
@@ -77,9 +79,7 @@ const RoadMap = () => {
             } mb-8 `}>
             {/* Content */}
             <div className="w-1/2 text-right px-4">
-              <h3 className="text-lg font-semibold text-blue-600 dark:text-yellow-500">
-                {stop.title}
-              </h3>
+              <Heading level={4}>{stop.title}</Heading>
               <p className="text-sm text-gray-600 dark:text-gray-200">{stop.description}</p>
               <p className="text-sm text-gray-500 dark:text-gray-300 font-light mt-1">
                 {stop.date}
@@ -93,9 +93,6 @@ const RoadMap = () => {
                   stop.status
                 )} rounded-full border-4 border-white shadow-md`}></div>
             </div>
-
-            {/* Spacer for alternating layout */}
-            {/* <div className="w-1/2 px-4"></div> */}
           </div>
         ))}
       </div>

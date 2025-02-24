@@ -1,6 +1,7 @@
 import WelcomeMessage from "@/components/landingPage/WelcomeMessage";
 import Image from "next/image";
 import CustomLink from "@/components/CustomeLink";
+import { Heading } from "../ui";
 
 export default function Hero() {
   return (
@@ -11,10 +12,8 @@ export default function Hero() {
       </div>
 
       <div>
-        <h1 className="text-4xl mb-2 inline-block font-extrabold bg-gradient-to-r from-blue-600  to-blue-700 dark:from-yellow-400 dark:to-yellow-500 text-transparent bg-clip-text">
-          Meepletron
-          <strong className="block italic text-2xl font-semibold mt-1">AI Board Games Expert</strong>
-        </h1>
+        <Heading level={1}>Meepletron</Heading>
+        <strong className="block italic text-2xl font-semibold text-blue-600 dark:text-yellow-500 mb-2">AI Board Games Expert</strong>
         <h2 className="text-3xl text-red-500 mt-4 font-semibold animate-bounce uppercase">Alpha</h2>
         <small className="text-sm mb-4">This project is stil in alpha testing.</small>
         <p className="text-lg mt-4">

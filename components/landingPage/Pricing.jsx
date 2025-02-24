@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import CustomLink from "../CustomeLink";
+import { Heading } from "../ui";
 
 export default function Pricing() {
   const [isMonthly, setIsMonthly] = useState(true);
@@ -13,8 +14,7 @@ export default function Pricing() {
   return (
     <section id="pricing" className="py-12 max-w-xl mx-auto">
       <div className="container mx-auto px-4">
-        <h3 className="text-3xl text-center font-bold mb-6">Pricing</h3>
-
+        <Heading level={2}>Pricing</Heading>
         <div className=" flex flex-col justify-start gap-8 mx-auto w-72 bg-gray-200 dark:bg-slate-800 shadow-md shadow-gray-400 dark:shadow-slate-700 h-[22rem]">
           <div className="flex justify-between items-center  ">
             {/* <PeriodTab isMonthly={isMonthly} label="monthly" onClick={handleClick} value="month" /> */}
