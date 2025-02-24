@@ -69,15 +69,23 @@ export default function BoardgameEditPage() {
   };
 
   const deleteBoardgame = async (boardgame) => {
-    const res = await fetch("/api/boardgames/delete", {
-      method: "POST",
-      body: JSON.stringify({ boardgame })
-    })
-    if (!res.ok) return toast.error("Failed to Delete board game")
-    const { message } = await res.json()
-    setBoardgame(null)
-    setQuery("")
-    toast.custom((t) => <CustomToast message={message} id={t.id} />);
+    try {
+      const res = await fetch("/api/boardgames/delete", {
+        method: "POST",
+        body: JSON.stringify({ boardgame }),
+      });
+      if (!res.ok) {
+        const { message } = await res.json(); // Parse the error response
+        return toast.error(message);
+      }
+
+      const { message } = await res.json();
+      setBoardgame(null);
+      setQuery("");
+      toast.custom((t) => <CustomToast message={message} id={t.id} />);
+    } catch (err) {
+      toast.error(err.message);
+    }
   };
 
   return (

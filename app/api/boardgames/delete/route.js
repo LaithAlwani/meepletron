@@ -3,6 +3,7 @@ import Boardgame from "@/models/boardgame";
 import connectToDB from "@/utils/database";
 import { DeleteObjectsCommand, S3Client } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -13,8 +14,20 @@ const s3Client = new S3Client({
 });
 
 export async function POST(req) {
+  //check if user is authorized to delete games.
+  const { sessionClaims } = await auth();
+
+  // Access the public metadata
+  const publicMetadata = sessionClaims?.metadata;
+
+  // Check if the user's role is 'admin'
+  if (publicMetadata.role !== "admin") {
+    return NextResponse.json({message:"Forbidden: Admin access required"}, { status: 403 });
+  }
+
   const { boardgame } = await req.json();
-  if (!boardgame) return NextResponse.json({ data: `please add board game id` }, { status: 500 });
+  //check if boardgame exits.
+  if (!boardgame) return NextResponse.json({ data: `Please provide a boardgame` }, { status: 404 });
 
   try {
     //delet docs from pincone
@@ -24,6 +37,7 @@ export async function POST(req) {
 
     await connectToDB();
     const doc = await Boardgame.findByIdAndDelete({ _id: boardgame._id });
+    if(!doc) return NextResponse.json({ data: `The Board Game does not exist` }, { status: 404 });
     return NextResponse.json({ message: `${doc.title} delete successfully` }, { status: 201 });
   } catch (err) {
     return NextResponse.json({ message: `Failed to Upload file` }, { status: 500 });
@@ -84,10 +98,10 @@ const deletePinconeDocs = async (id) => {
         { status: 404 }
       );
     }
-    
+
     const idsToDelete = results.matches.map((match) => match.id);
     await pineconeIndex.deleteMany(idsToDelete);
   } catch (err) {
-    return NextResponse.json({ message: `failed to delete docs` }, { status: 500 });
+    return NextResponse.json({ message: `failed to delete docs from Pincode DB` }, { status: 500 });
   }
 };
