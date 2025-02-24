@@ -68,6 +68,18 @@ export default function BoardgameEditPage() {
     }
   };
 
+  const deleteBoardgame = async (boardgame) => {
+    const res = await fetch("/api/boardgames/delete", {
+      method: "POST",
+      body: JSON.stringify({ boardgame })
+    })
+    if (!res.ok) return toast.error("Failed to Delete board game")
+    const { message } = await res.json()
+    setBoardgame(null)
+    setQuery("")
+    toast.custom((t) => <CustomToast message={message} id={t.id} />);
+  };
+
   return (
     <section className="max-w-3xl mx-auto px-2 pt-[6rem]">
       {!boardgame && (
@@ -116,6 +128,11 @@ export default function BoardgameEditPage() {
           </div>
           <div className="relative mx-auto">
             <img src={boardgame.thumbnail} alt="" className="mx-auto w-48" />
+            <button
+              className="p-2 font-semibold bg-red-500 hover:bg-red-400"
+              onClick={() => deleteBoardgame(boardgame)}>
+              Delete
+            </button>
 
             <MdClose
               size={24}

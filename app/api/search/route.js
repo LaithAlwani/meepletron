@@ -31,6 +31,7 @@ export async function GET(req) {
       {
         $project: {
           title: 1,
+          image:1,
           thumbnail: 1,
           urls: 1,
           is_expansion: 1,
