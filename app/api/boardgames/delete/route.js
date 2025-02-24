@@ -14,31 +14,13 @@ const s3Client = new S3Client({
 
 export async function POST(req) {
   const { boardgame } = await req.json();
-  console.log(typeof boardgame._id)
-
   if (!boardgame) return NextResponse.json({ data: `please add board game id` }, { status: 500 });
 
-  const pinecone = new PineconeClient();
-  const pineconeIndex = pinecone.index(process.env.PINECONE_INDEX_NAME);
-  const results = await pineconeIndex.query({
-    vector: Array(1536).fill(0), // Dummy vector (not used because we filter)
-    topK: 1000, // Retrieve as many matches as possible
-    includeMetadata: true,
-    filter: { bg_id:boardgame._id }, // Filter by bg_id
-  });
-  if (!results.matches.length) {
-    return NextResponse.json({ message: "No documents found for the given boardgame id" }, {status:404})
-  }
-
-  const idsToDelete = results.matches.map((match) => match.id);
-  await pineconeIndex.deleteMany(idsToDelete);
-  
-  
-  
-  const deleted = await deleteFiles(boardgame);
-  if (!deleted) return NextResponse.json({ message: "Error in deleting files" }, { status: 500 });
   try {
-    
+    //delet docs from pincone
+    await deletePinconeDocs(boardgame._id);
+    // delete fiels from s3 bucket
+    await deleteFiles(boardgame);
 
     await connectToDB();
     const doc = await Boardgame.findByIdAndDelete({ _id: boardgame._id });
@@ -83,5 +65,29 @@ const deleteFiles = async (boardgame) => {
       throw caught;
     }
     return null;
+  }
+};
+
+const deletePinconeDocs = async (id) => {
+  const pinecone = new PineconeClient();
+  const pineconeIndex = pinecone.index(process.env.PINECONE_INDEX_NAME);
+  try {
+    const results = await pineconeIndex.query({
+      vector: Array(1536).fill(0), // Dummy vector (not used because we filter)
+      topK: 1000, // Retrieve as many matches as possible
+      includeMetadata: true,
+      filter: { bg_id: id }, // Filter by bg_id
+    });
+    if (!results.matches.length) {
+      return NextResponse.json(
+        { message: "No documents found for the given boardgame id" },
+        { status: 404 }
+      );
+    }
+    
+    const idsToDelete = results.matches.map((match) => match.id);
+    await pineconeIndex.deleteMany(idsToDelete);
+  } catch (err) {
+    return NextResponse.json({ message: `failed to delete docs` }, { status: 500 });
   }
 };
