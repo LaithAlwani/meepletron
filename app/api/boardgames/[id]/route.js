@@ -1,16 +1,21 @@
 import Boardgame from "@/models/boardgame";
 import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
+
 export async function GET(req, { params }) {
   const { id } = await params;
 
   try {
     await connectToDB();
 
-    const boardgame = await Boardgame.findOne({ _id: id }).populate("parent_id").lean();
-    if(!boardgame)  return NextResponse.json({ message:"board game not found" }, { status: 404 });
+    const boardgame = await Boardgame.findOne({ _id: id }).populate("parent_id").exec();
+    if (!boardgame) return NextResponse.json({ message: "board game not found" }, { status: 404 });
+    //adds +1 to board game counter 
+    boardgame.counter = boardgame.counter + 1;
+    await boardgame.save();
+    
     const isExpansion = boardgame.is_expansion;
-    if (isExpansion) return NextResponse.json({ data: {boardgame} }, { status: 200 });
+    if (isExpansion) return NextResponse.json({ data: { boardgame } }, { status: 200 });
 
     const expansions = await Boardgame.find({ parent_id: id }, { thumbnail: 1, title: 1, year: 1 });
 

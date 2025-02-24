@@ -15,7 +15,8 @@ async function getBoardgame(id) {
     });
     
     if (!res.ok) {
-      throw new Error("Failed to fetch board game");
+      const {message} = await res.json()
+      throw new Error(message);
     }
     
     const { data } = await res.json();
