@@ -27,7 +27,7 @@ export default function FavoriteButton({ userId, boardGameId }) {
   };
 
   return (
-    <button
+    <span
       onClick={toggleFavorite}
       className={`p-2 rounded-full ${
         isFavorited ? "text-red-500" : "text-gray-600"
@@ -35,6 +35,6 @@ export default function FavoriteButton({ userId, boardGameId }) {
       aria-label="Favorite"
     >
       <FaHeart size={32} className={ `   ${isFavorited ? "currentColor" : "none"}`} />
-    </button>
+    </span>
   );
 }

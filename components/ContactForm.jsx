@@ -2,8 +2,9 @@
 "use client";
 import { useState } from "react";
 import Loader from "@/components/Loader";
-import CustomButton from "./CustomeButton";
 import toast from "react-hot-toast";
+import CustomToast from "./CustomeToast";
+import { Button, Input, Textarea } from "./ui";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
@@ -18,19 +19,21 @@ const ContactForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/contact", {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const { message } = await response.json();
-      if (response.ok) {
-        toast.success(message);
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        toast.error(message);
+      const { message } = await res.json();
+
+      if (!res.ok) {
+        return toast.error(message);
       }
+
+      toast.custom((t) => <CustomToast message={message} id={t.id} />);
+
+      setFormData({ name: "", email: "", message: "" });
     } catch (error) {
       toast.error("Error sending message. Try again later.");
     } finally {
@@ -48,35 +51,28 @@ const ContactForm = () => {
           Tell us what’s on your mind, and we’ll get back to you as soon as possible!
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
+          <Input
+            placeholder="Full Name"
             name="name"
-            placeholder="Your Name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full p-3 border rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
-            required
           />
-          <input
+          <Input
             type="email"
+            placeholder="Email Address"
             name="email"
-            placeholder="Your Email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 border rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
-            required
           />
-          <textarea
+          <Textarea
             name="message"
-            placeholder="Your Message"
+            placeholder="Type message..."
             value={formData.message}
             onChange={handleChange}
-            className="w-full p-3 border rounded bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
-            rows="4"
-            required></textarea>
-          <CustomButton className="w-full" disabled={loading}>
+          />
+          <Button className="w-full" disabled={loading}>
             {loading ? <Loader width="1.5rem" /> : "Send Message"}
-          </CustomButton>
+          </Button>
         </form>
       </div>
     </section>

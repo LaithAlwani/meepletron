@@ -11,7 +11,7 @@ import { IoClose } from "react-icons/io5";
 import Loader from "@/components/Loader";
 import TypingIndicator from "@/components/TypingDots";
 import Link from "next/link";
-import CustomButton from "@/components/CustomeButton";
+import { Button, Textarea } from "@/components/ui";
 
 export default function ChatPage() {
   const params = useParams();
@@ -59,9 +59,9 @@ export default function ChatPage() {
   return boardgame && !loading ? (
     <section className="h-[100svh] flex flex-col justify-evenly px-4 max-w-xl mx-auto">
       <nav className="flex items-center justify-start gap-4 py-4 ">
-        <button onClick={() => router.back()} className="text-xl">
+        <span onClick={() => router.back()} className="text-xl cursor-pointer">
           <IoArrowBack />
-        </button>
+        </span>
         {currentGame && (
           <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2 ">
             <img
@@ -73,9 +73,9 @@ export default function ChatPage() {
           </Link>
         )}
         {expansions.length > 0 && (
-          <button onClick={() => setSideNavOpen(!sideNavOpen)} className="text-xl ml-auto">
+          <span onClick={() => setSideNavOpen(!sideNavOpen)} className="cursor-pointer text-xl ml-auto">
             <BsThreeDotsVertical />
-          </button>
+          </span>
         )}
       </nav>
       <motion.aside
@@ -85,9 +85,9 @@ export default function ChatPage() {
         className="fixed top-0 right-0 w-72 h-full bg-gray-100 dark:bg-slate-950  ">
         <div className="flex justify-between items-center p-2">
           <h3 className="text-xl font-bold ">Select a Game</h3>
-          <button onClick={() => setSideNavOpen(false)} className="text-xl p-2">
+          <span onClick={() => setSideNavOpen(false)} className="text-xl p-2 cursor-pointer">
             <IoClose />
-          </button>
+          </span>
         </div>
         <ul className="mt-4">
           <ListItem
@@ -132,9 +132,8 @@ export default function ChatPage() {
         </div>
       </div>
       <form onSubmit={handleSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
-        <textarea
+        <Textarea
           placeholder="Ask a question..."
-          className="w-full max-h-[120px] leading-8 bg-white dark:bg-black rounded-lg p-2 focus:outline-none resize-none"
           rows="1"
           value={input}
           disabled={isLoading}
@@ -145,18 +144,18 @@ export default function ChatPage() {
           }}
         />
 
-        <CustomButton type="submit" className="rounded-full">
+        <Button type="submit" styles="w-auto rounded-full py-4">
           <FaPaperPlane />
-        </CustomButton>
+        </Button>
 
         {/* {!input.trim() ? (
-          <CustomButton className="rounded-full">
+          <Button styles="w-auto rounded-full py-4">
             <FaMicrophone  className="text-slate-400 cursor-not-allowed " />
-          </CustomButton>
+          </Button>
         ) : (
-          <CustomButton type="submit" className="rounded-full">
-            <FaRegPaperPlane  />
-          </CustomButton>
+          <Button type="submit" styles="w-auto rounded-full py-4">
+          <FaPaperPlane />
+        </Button>
         )} */}
       </form>
     </section>

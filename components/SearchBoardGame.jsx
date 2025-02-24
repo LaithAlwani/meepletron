@@ -3,22 +3,21 @@ import { useSearch } from "@/utils/hooks";
 import Link from "next/link";
 import { FaComments } from "react-icons/fa";
 import Loader from "./Loader";
+import { Input } from "./ui";
 
 const SearchBoardGame = ({ onBoardGameClick }) => {
   const { query, setQuery, results, loading } = useSearch({ limit: 5 });
 
   return (
     <div className="relative w-full max-w-md mx-auto">
-      <input
-        type="text"
+      <Input
         placeholder="Type a board game title..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
       />
 
       <div className="absolute w-full bg-white  dark:bg-slate-600 border border-gray-300 dark:border-slate-800 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto z-10">
-        {loading && <Loader width={"3rem"}/>}
+        {loading && <Loader width={"3rem"} />}
         {!loading && results?.length === 0 && query.trim() && (
           <p className="p-3">No results found.</p>
         )}

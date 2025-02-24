@@ -1,12 +1,11 @@
 "use client";
-import CustomButton from "@/components/CustomeButton";
-import CustomLink from "@/components/CustomeLink";
 import Loader from "@/components/Loader";
 import { useSearch } from "@/utils/hooks";
 import { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
 import { MdClose, MdCloudUpload, MdUnarchive, MdOutlineDoneAll } from "react-icons/md";
+import { Button, Input } from "@/components/ui";
 
 export default function BoardgameEditPage() {
   const { query, setQuery, results, loading } = useSearch({ limit: 5 });
@@ -69,6 +68,7 @@ export default function BoardgameEditPage() {
   };
 
   const deleteBoardgame = async (boardgame) => {
+    setIsLoading(true)
     try {
       const res = await fetch("/api/boardgames/delete", {
         method: "POST",
@@ -85,6 +85,8 @@ export default function BoardgameEditPage() {
       toast.custom((t) => <CustomToast message={message} id={t.id} />);
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -94,13 +96,12 @@ export default function BoardgameEditPage() {
         <div className="">
           <h2>Choose boardgame</h2>
           <div className="mt-6">
-            <input
-              type="text"
-              placeholder="Search for parent board game..."
+            <Input
+              placeholder="search boardgame..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="border p-2 rounded w-full"
             />
+
             <div className=" w-full bg-white dark:bg-slate-600 border border-gray-300 dark:border-slate-800 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto z-10">
               {loading && <Loader width={"3rem"} />}
               {!loading && results?.length === 0 && query.trim() && (
@@ -135,12 +136,13 @@ export default function BoardgameEditPage() {
             <div className="flex-grow border-t border-gray-400 dark:border-yellow-300"></div>
           </div>
           <div className="relative mx-auto">
-            <img src={boardgame.thumbnail} alt="" className="mx-auto w-48" />
-            <button
-              className="p-2 font-semibold bg-red-500 hover:bg-red-400"
+            <img src={boardgame.thumbnail} alt="" className="mx-auto w-48 mb-2" />
+            <Button
+              variant="reject"
+              isLoading={isLoading}
               onClick={() => deleteBoardgame(boardgame)}>
               Delete
-            </button>
+            </Button>
 
             <MdClose
               size={24}
@@ -151,7 +153,7 @@ export default function BoardgameEditPage() {
           {/* upload files */}
           {boardgame && <UploadFiles boardgame={boardgame} setBoardgame={setBoardgame} />}
           {boardgame?.urls?.length > 0 && (
-            <>
+            <div className="mb-2">
               <div className="relative flex py-5 items-center ">
                 <div className="w-[3rem] border-t border-gray-400 dark:border-yellow-300"></div>
                 <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500">Files</h2>
@@ -165,24 +167,24 @@ export default function BoardgameEditPage() {
                       key={url?.path}
                       className="flex items-center justify-between p-4 border-b border-gray-400 dark:border-yellow-500">
                       {filename}
-                      <CustomButton disabled={url.isTextExtracted} onClick={() => setFile(url)}>
+                      <Button styles="w-auto" disabled={url.isTextExtracted} onClick={() => setFile(url)}>
                         {!url.isTextExtracted ? <MdUnarchive /> : <MdOutlineDoneAll />}
-                      </CustomButton>
+                      </Button>
                     </li>
                   );
                 })}
               </ul>
-            </>
+            </div>
           )}
         </div>
       )}
       {boardgame && file && (
-        <CustomButton
+        <Button
           onClick={extractText}
           disabled={isLoading}
           className="mt-2 bg-blue-600 dark:bg-yellow-500 px-4 py-2 rounded text-white w-full">
           {isLoading ? <Loader width="1rem" /> : "Extract Text"}
-        </CustomButton>
+        </Button>
       )}
 
       {/* Display Extracted Manual Text */}
@@ -204,18 +206,12 @@ export default function BoardgameEditPage() {
       {/* Accept / Reject Buttons */}
       {boardgame && fileText.length > 0 && (
         <div className="flex mt-4 gap-2">
-          <button
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="bg-green-500 disabled:bg-green-300 text-white px-4 py-2 rounded w-full">
-            {isLoading ? <Loader width="1rem" /> : "Accept"}
-          </button>
-          <button
-            onClick={() => setBoardgame(null)}
-            disabled={isLoading}
-            className="bg-red-500 text-white px-4 py-2 rounded w-full disabled:bg-red-300">
+          <Button variant="accept" onClick={handleSubmit} isLoading={isLoading}>
+            Accept
+          </Button>
+          <Button variant="reject" onClick={() => setBoardgame(null)} disabled={isLoading}>
             Reject
-          </button>
+          </Button>
         </div>
       )}
     </section>
@@ -299,20 +295,20 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
             onClick={() => inputFileRef.current.click()}
             className="flex flex-col justify-center items-center w-32 h-32 rounded-md opacity-75 mx-auto mb-4 bg-slate-400">
             <p className="text-lg font-semibold">Choose File</p>
-            <input
+            <Input
               name="file"
               ref={inputFileRef}
               onChange={(e) => setFile(e.target.files[0])}
               type="file"
               required
-              hidden
+              isHidden={true}
             />
           </div>
           <p>{file?.name}</p>
           {file && (
-            <CustomButton type="submit">
+            <Button type="submit">
               {isLoading ? <Loader width={"1rem"} /> : <MdCloudUpload size={24} />}
-            </CustomButton>
+            </Button>
           )}
         </form>
       </>
