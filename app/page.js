@@ -20,7 +20,7 @@ export default async function Home() {
       <Hero />
       <section className="max-w-5xl mx-auto my-8 px-4  animate-slidein">
         <Heading level={2}>Recently Added</Heading>
-        <div className="flex flex-nowrap justify-start overflow-x-scroll gap-3 my-6">
+        <div className="relative h-[176px] flex flex-nowrap justify-start overflow-x-scroll overflow-y-hidden  gap-3 my-6">
           <BoardgameList />
         </div>
       </section>

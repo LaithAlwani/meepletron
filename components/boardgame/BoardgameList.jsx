@@ -40,9 +40,7 @@ export default function BoardgameList() {
     <>
       {isLoading ? (
         <BoardgameSkeleton />
-      ) : boardgames.length === 0 ? ( // Check for empty array AFTER loading
-        <p>No boardgames found.</p>
-      ) : (
+      )  : (
         boardgames.map((boardgame) => (
           <BoardgameContainer key={boardgame._id} boardgame={boardgame} />
         ))

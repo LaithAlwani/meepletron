@@ -110,7 +110,7 @@ export default function ChatPage() {
       </motion.aside>
       <div
         ref={messagesEndRef}
-        className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll no-scrollbar ">
+        className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll hide-scrollbar ">
         <div className="overflow-y-auto">
           {messages.map((m) => (
             <div key={m.id} className={`mb-4 ${m.role === "user" ? "text-right" : ""}`}>
