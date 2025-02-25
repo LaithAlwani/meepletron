@@ -12,10 +12,15 @@ import Loader from "@/components/Loader";
 import TypingIndicator from "@/components/TypingDots";
 import Link from "next/link";
 import { Button, Textarea } from "@/components/ui";
+import toast from "react-hot-toast";
+import CustomToast from "@/components/CustomeToast";
+import { useUser } from "@clerk/nextjs";
 
 export default function ChatPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useUser();
+  const [chat, setChat] = useState(null);
   const [boardgame, setBoardgame] = useState(null);
   const [expansions, setExpansions] = useState([]);
   const [currentGame, setCurrentGame] = useState(null);
@@ -25,6 +30,12 @@ export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
   });
+
+  const testSubmit = (e) => {
+    e.preventDefault();
+    handleSubmit();
+    
+  };
 
   const getBoardgame = async () => {
     setLoading(true);
@@ -45,10 +56,46 @@ export default function ChatPage() {
       setLoading(false);
     }
   };
+  const getChat = async () => {
+    if (!currentGame?._id || !user) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/boardgames/${currentGame?._id}/chat`);
+      const {
+        data: { chat, message },
+      } = await res.json();
+      if (!res.ok) return toast.error(message);
+      if (Object.keys(chat).length === 0) {
+        //create a new chat
+        const res = await fetch(`/api/boardgames/${currentGame?._id}/chat`, {
+          method: "POST",
+          body: JSON.stringify({ user_id: user?.id, boardgame_id: currentGame?._id }),
+        });
+        const { data, message } = await res.json();
+        if (!res.ok) return toast.error(message);
+        toast.custom((t) => <CustomToast message={message} id={t.id} />);
+        setChat(data);
+        
+      } else {
+        //set the chat.
+        setChat(chat);
+        console.log(chat)
+        //set messages to intial messages
+      }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getBoardgame();
   }, []);
+
+  useEffect(() => {
+    getChat();
+  }, [currentGame]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -73,7 +120,9 @@ export default function ChatPage() {
           </Link>
         )}
         {expansions.length > 0 && (
-          <span onClick={() => setSideNavOpen(!sideNavOpen)} className="cursor-pointer text-xl ml-auto">
+          <span
+            onClick={() => setSideNavOpen(!sideNavOpen)}
+            className="cursor-pointer text-xl ml-auto">
             <BsThreeDotsVertical />
           </span>
         )}
@@ -113,7 +162,7 @@ export default function ChatPage() {
         className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll hide-scrollbar ">
         <div className="overflow-y-auto">
           {messages.map((m) => (
-            <div key={m.id} className={`mb-4 ${m.role === "user" ? "text-right" : ""}`}>
+            <div key={m._id || m.id} className={`mb-4 ${m.role === "user" ? "text-right" : ""}`}>
               <div
                 className={`inline-block p-3 mb-3 min-w-24 max-w-[375px] rounded-md shadow-md ${
                   m.role === "user"
@@ -131,9 +180,9 @@ export default function ChatPage() {
           )}
         </div>
       </div>
-      <form onSubmit={handleSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
+      <form onSubmit={testSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
         <Textarea
-          placeholder="Ask a question..."
+          placeholder="Ask Meepletron"
           rows="1"
           value={input}
           disabled={isLoading}
@@ -143,7 +192,7 @@ export default function ChatPage() {
             e.target.style.height = `${e.target.scrollHeight}px`;
           }}
         />
-
+        
         <Button type="submit" styles="w-auto rounded-full py-4">
           <FaPaperPlane />
         </Button>

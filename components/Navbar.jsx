@@ -12,7 +12,7 @@ export default function Navbar() {
   const { user } = useUser();
   const hidden = pathname.includes("chat") ? "hidden" : "";
   const boardgame_id = pathname.split("/boardgames")[1]
-  const trasprent = boardgame_id ? "bg-trasprent" : " bg-[#f7f7f7] dark:bg-slate-900";
+  const trasprent = (boardgame_id && boardgame_id !="/edit" && boardgame_id !="/add" ) ? "bg-trasprent" : " bg-[#f7f7f7] dark:bg-slate-900";
  
   return (
     <nav

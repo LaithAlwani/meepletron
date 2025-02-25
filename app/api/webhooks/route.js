@@ -59,7 +59,8 @@ export async function POST(req) {
       email_address: evt.data.email_addresses[0].email_address,
       first_name:evt.data.first_name,
       last_name: evt.data.last_name,
-      avatar:evt.data.image_url
+      avatar: evt.data.image_url,
+      clerk_id:evt.data.id
     }
     await User.create(user);
   }
