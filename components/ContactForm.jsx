@@ -70,8 +70,8 @@ const ContactForm = () => {
             value={formData.message}
             onChange={handleChange}
           />
-          <Button className="w-full" disabled={loading}>
-            {loading ? <Loader width="1.5rem" /> : "Send Message"}
+          <Button className="w-full" isLoading={loading}>
+             Send Message
           </Button>
         </form>
       </div>
