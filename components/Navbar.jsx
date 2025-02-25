@@ -6,11 +6,12 @@ import Image from "next/image";
 import ThemeSwitch from "./ThemeSwitch";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
+import { ImBubbles } from "react-icons/im";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { user } = useUser();
-  const hidden = pathname.includes("chat") ? "hidden" : "";
+  const hidden = /chat\b/.test(pathname) ? "hidden" : ""; //checks if url has the word "chat"
   const boardgame_id = pathname.split("/boardgames")[1]
   const trasprent = (boardgame_id && boardgame_id !="/edit" && boardgame_id !="/add" ) ? "bg-trasprent" : " bg-[#f7f7f7] dark:bg-slate-900";
  
@@ -29,7 +30,10 @@ export default function Navbar() {
 
         <div className=" ">
           <div className="flex  mx-auto items-center justify-between gap-3">
-            <Link href="/boardgames" className="" aria-label="board games">
+            <Link href="/chats" aria-label="chats">
+              <ImBubbles size={24} aria-label="chats" />
+            </Link>
+            <Link href="/boardgames"  aria-label="board games">
               <FaRobot size={24} aria-label="board games" />
             </Link>
             <ThemeSwitch />

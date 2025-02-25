@@ -106,9 +106,9 @@ export default function ChatPage() {
   return boardgame && !loading ? (
     <section className="h-[100svh] flex flex-col justify-evenly px-4 max-w-xl mx-auto">
       <nav className="flex items-center justify-start gap-4 py-4 ">
-        <span onClick={() => router.back()} className="text-xl cursor-pointer">
+        <Link href="/chats" className="text-xl cursor-pointer">
           <IoArrowBack />
-        </span>
+        </Link>
         {currentGame && (
           <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2 ">
             <img

@@ -1,8 +1,12 @@
 import { queryPineconeVectorStore } from "@/lib/vector-store";
+import Chat from "@/models/chat";
+import User from "@/models/user";
+import Boardgame from "@/models/boardgame";
 import connectToDB from "@/utils/database";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { streamText } from "ai";
+import { NextResponse } from "next/server";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -71,7 +75,7 @@ _User: "Are there any variants for this game?"_
 
   try {
     const result = await streamText({
-      model: google('gemini-1.5-flash-8b'),
+      model: google("gemini-1.5-flash-8b"),
       prompt,
       temperature: 0,
       topK: 5,
@@ -82,4 +86,22 @@ _User: "Are there any variants for this game?"_
     console.log(err);
     return NextResponse.json({ message: "failed" }, { status: 500 });
   }
+}
+
+export async function GET(req) {
+  const url = new URL(req.url);
+  const searchParams = new URLSearchParams(url.searchParams);
+  const user_id = searchParams.get("user_id");
+  console.log(user_id);
+  await connectToDB();
+  const user = await User.findOne({ clerk_id: user_id });
+  console.log(user._id);
+  const chats = await Chat.find({ user_id: user._id })
+    .populate({ path: "boardgame_id", select: "title thumbnail is_expansion" })
+    .sort({updatedAt:-1})
+    .lean();
+    const filteredChats = chats.filter(chat => {
+      return chat.boardgame_id && !chat.boardgame_id.is_expansion;
+    });
+  return NextResponse.json({ data: filteredChats, message: "success" }, { status: 200 });
 }
