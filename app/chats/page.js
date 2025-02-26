@@ -64,7 +64,7 @@ export default function ChatsPage() {
   return isLoaded && !isLoading ? (
     <div className="max-w-5xl mx-auto pt-[5rem] px-4">
       <div className="max-w-lg mx-auto">
-        <Input value={searchTerm} onChange={handleInput} placeholder="search" />
+        <Input value={searchTerm} onChange={handleInput} placeholder="search chats" />
       </div>
 
       <ul className="my-6">
