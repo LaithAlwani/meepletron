@@ -1,50 +1,31 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import BoardgameContainer from "./BoardgameContainer";
 import toast from "react-hot-toast";
+import BoardgameContainer from "./BoardgameContainer";
+import { useGetBoardgames } from "@/utils/hooks";
 
 const BoardgameSkeleton = () => {
   return (
-    <div className="flex flex-wrap justify-center gap-4"> {/* Adjust gap as needed */}
-      {[...Array(8)].map((_, i) => ( // Render 8 skeletons (adjust as needed)
-        <div key={i} className="w-[11rem] h-[11rem] bg-gray-200 animate-pulse rounded"></div> // Adjust size
-      ))}
+    <div className="flex flex-wrap justify-center gap-4">
+      {[...Array(10)].map(
+        (
+          _,
+          i // Render 8 skeletons (adjust as needed)
+        ) => (
+          <div key={i} className="w-[11rem] h-[11rem] bg-gray-200 animate-pulse rounded"></div> // Adjust size
+        )
+      )}
     </div>
   );
 };
 
 export default function BoardgameList() {
-  const [boardgames, setBoardgames] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, boardgames, error } = useGetBoardgames();
 
-  const getBoardgames = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch(`/api/boardgames`);
-      const { data, message } = await res.json();
-      if (!res.ok) return toast.error(message);
+  if (error) toast.error(error);
 
-      setBoardgames(data);
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getBoardgames();
-  }, []);
-
-  return (
-    <>
-      {isLoading ? (
-        <BoardgameSkeleton />
-      )  : (
-        boardgames.map((boardgame) => (
-          <BoardgameContainer key={boardgame._id} boardgame={boardgame} />
-        ))
-      )}
-    </>
+  return isLoading ? (
+    <BoardgameSkeleton />
+  ) : (
+    boardgames?.map((boardgame) => <BoardgameContainer key={boardgame._id} boardgame={boardgame} />)
   );
 }

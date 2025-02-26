@@ -9,7 +9,7 @@ export default function Features() {
       <div className="container mx-auto px-4">
         <Heading level={2}>Features</Heading>
         
-        <div className="flex flex-wrap justify-center gap-8">
+        <div className="flex flex-wrap justify-center lg:justify-between gap-8">
           <Card
             icon={<FaBoltLightning size={size} className={color}/>}
             header="Instant"

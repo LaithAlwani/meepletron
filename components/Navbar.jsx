@@ -12,12 +12,14 @@ export default function Navbar() {
   const pathname = usePathname();
   const { user } = useUser();
   const hidden = /chat\b/.test(pathname) ? "hidden" : ""; //checks if url has the word "chat"
-  const boardgame_id = pathname.split("/boardgames")[1]
-  const trasprent = (boardgame_id && boardgame_id !="/edit" && boardgame_id !="/add" ) ? "bg-trasprent" : " bg-[#f7f7f7] dark:bg-slate-900";
- 
+  const boardgame_id = pathname.split("/boardgames")[1];
+  const trasprent =
+    boardgame_id && boardgame_id != "/edit" && boardgame_id != "/add"
+      ? "bg-trasprent"
+      : " bg-[#f7f7f7] dark:bg-slate-900";
+
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full text-lg p-3 ${trasprent} ${hidden} shadow-sm z-10`}>
+    <nav className={`fixed top-0 left-0 w-full text-lg p-3 ${trasprent} ${hidden} shadow-sm z-10`}>
       <div className="flex justify-between items-center max-w-xl mx-auto">
         <Link href="/" className="flex items-center justify-start gap-1" aria-label="logo">
           <div className="relative w-[2rem] h-[2rem]">
@@ -33,7 +35,7 @@ export default function Navbar() {
             <Link href="/chats" aria-label="chats">
               <ImBubbles size={24} aria-label="chats" />
             </Link>
-            <Link href="/boardgames"  aria-label="board games">
+            <Link href="/boardgames" aria-label="board games">
               <FaRobot size={24} aria-label="board games" />
             </Link>
             <ThemeSwitch />

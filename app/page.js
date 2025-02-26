@@ -7,6 +7,7 @@ import RoadMap from "@/components/landingPage/RoadMap";
 import ContactForm from "@/components/ContactForm";
 import BoardgameList from "@/components/boardgame/BoardgameList";
 import { Heading } from "@/components/ui";
+import BoardGameScroller from "@/components/boardgame/BoardgameScroller";
 
 export const metadata = {
   alternates: {
@@ -20,9 +21,10 @@ export default async function Home() {
       <Hero />
       <section className="max-w-5xl mx-auto my-8 px-4  animate-slidein">
         <Heading level={2}>Recently Added</Heading>
-        <div className="relative h-[176px] flex flex-nowrap justify-start overflow-x-scroll overflow-y-hidden  gap-3 my-6">
+        {/* <div className="relative max-w-5xl h-[176px] flex flex-nowrap justify-start overflow-x-scroll overflow-y-hidden  gap-3 my-6">
           <BoardgameList />
-        </div>
+        </div> */}
+        <BoardGameScroller />
       </section>
       <Features />
       <Pricing />
