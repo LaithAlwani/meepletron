@@ -14,7 +14,7 @@ export async function GET(req, { params }) {
     const user = await User.findOne({ clerk_id: userId }).lean();
     if (!user) return NextResponse.json({ message: "user not found" }, { status: 404 });
     const chat = await Chat.findOne({ boardgame_id: id, user_id: user._id }).lean();
-    
+
     if (!chat)
       return NextResponse.json(
         { data: { chat: {}, messages: [] }, message: "create a new chat" },
@@ -22,9 +22,10 @@ export async function GET(req, { params }) {
       );
     let messages = await Message.find({ chat_id: chat._id })
       .sort({ createdAt: -1 })
-      .limit(5)
+      .limit(10)
       .lean();
     if (!messages) messages = [];
+    messages.reverse();
 
     return NextResponse.json({ data: { chat, messages }, message: "success" }, { status: 200 });
   } catch (err) {
@@ -35,7 +36,7 @@ export async function GET(req, { params }) {
 
 export async function POST(req) {
   const { user_id, boardgame_id, parent_id } = await req.json();
-  console.log(parent_id)
+  console.log(parent_id);
   await connectToDB();
 
   const user = await User.findOne({ clerk_id: user_id }).lean();

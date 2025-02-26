@@ -18,8 +18,8 @@ import { useUser } from "@clerk/nextjs";
 
 export default function ChatPage() {
   const params = useParams();
-  const router = useRouter();
   const { user } = useUser();
+  const [chatHistory, setChatHistory] = useState([]);
   const [chat, setChat] = useState(null);
   const [boardgame, setBoardgame] = useState(null);
   const [expansions, setExpansions] = useState([]);
@@ -30,6 +30,8 @@ export default function ChatPage() {
   const messagesEndRef = useRef(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
+    initialMessages: chatHistory,
+    onFinish: (message) => saveMessage(message.role, message.content),
   });
 
   const getBoardgame = async () => {
@@ -57,7 +59,7 @@ export default function ChatPage() {
     try {
       const res = await fetch(`/api/boardgames/${currentGame?._id}/chat`);
       const {
-        data: { chat, message },
+        data: { chat, messages, message },
       } = await res.json();
       if (!res.ok) return toast.error(message);
       if (Object.keys(chat).length === 0) {
@@ -73,11 +75,10 @@ export default function ChatPage() {
         const { data, message } = await res.json();
         if (!res.ok) return toast.error(message);
         toast.custom((t) => <CustomToast message={message} id={t.id} />);
-        setChat(data);
+        setChat(data.chat);
       } else {
-        //set the chat.
         setChat(chat);
-        //set messages to intial messages
+        setChatHistory(messages);
       }
     } catch (err) {
       toast.error(err.message);
@@ -86,8 +87,28 @@ export default function ChatPage() {
     }
   };
 
-  const onSubmit = (e) => {
+  const saveMessage = async (role, input) => {
+    const newMessage = {
+      chat_id: chat._id,
+      role: role,
+      content: input,
+    };
+    console.log(newMessage);
+    try {
+      const res = await fetch("/api/chat/save-message", {
+        method: "POST",
+        body: JSON.stringify(newMessage),
+      });
+      const { message } = await res.json();
+      if (!res.ok) return toast.error(message);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const onSubmit = async (e) => {
     e.preventDefault();
+    saveMessage("user", input);
     inputRef.current.style.height = "auto";
     handleSubmit();
   };
