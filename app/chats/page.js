@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { MdDeleteForever } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 
 export default function ChatsPage() {
   const { user, isLoaded } = useUser();
@@ -84,7 +84,7 @@ export default function ChatsPage() {
         {filteredData.map(({ _id, boardgame_id }) => (
           <li
             key={_id}
-            className="w-full flex justify-between items-center gap-4 mb-2 py-2 border-b">
+            className="w-full flex justify-between items-end gap-4 mb-2 py-2 border-b">
             <Link
               href={`/boardgames/${boardgame_id._id}/chat`}
               className="w-[80%] flex items-end gap-4">
@@ -101,7 +101,7 @@ export default function ChatsPage() {
               </h3>
             </Link>
             <span className="flex-shrink-0" onClick={() => deleteChat(_id, boardgame_id._id)}>
-              <MdDeleteForever size={32} color="red" />
+              <MdDelete  size={32} color="red" />
             </span>
           </li>
         ))}
