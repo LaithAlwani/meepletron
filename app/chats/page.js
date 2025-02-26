@@ -5,7 +5,7 @@ import { Input } from "@/components/ui";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function ChatsPage() {
@@ -17,6 +17,21 @@ export default function ChatsPage() {
   const handleInput = (e) => {
     setSearchTerm(e.target.value);
   };
+
+  const filteredData = useMemo(() => {
+    if (!searchTerm) {
+      return chats;
+    }
+
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    return chats.filter((item) => {
+      if (item.boardgame_id && item.boardgame_id.title) {
+        return item.boardgame_id.title.toLowerCase().includes(lowerCaseSearchTerm);
+      }
+      return false; // No match if boardgame_id or title is missing
+    });
+  }, [chats, searchTerm]);
 
   const getChats = async () => {
     if (!user) return;
@@ -48,12 +63,12 @@ export default function ChatsPage() {
 
   return isLoaded && !isLoading ? (
     <div className="max-w-5xl mx-auto pt-[5rem] px-4">
-      {/* <div className="max-w-lg mx-auto">
+      <div className="max-w-lg mx-auto">
         <Input value={searchTerm} onChange={handleInput} placeholder="search" />
-      </div> */}
+      </div>
 
       <ul className="my-6">
-        {chats.map(({ boardgame_id }) => (
+        {filteredData.map(({ boardgame_id }) => (
           <li key={boardgame_id._id}>
             <Link
               href={`/boardgames/${boardgame_id._id}/chat`}
