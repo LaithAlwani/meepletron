@@ -92,10 +92,10 @@ export async function GET(req) {
   const url = new URL(req.url);
   const searchParams = new URLSearchParams(url.searchParams);
   const user_id = searchParams.get("user_id");
-  console.log(user_id);
+  
   await connectToDB();
   const user = await User.findOne({ clerk_id: user_id });
-  console.log(user._id);
+  
   const chats = await Chat.find({ user_id: user._id })
     .populate({ path: "boardgame_id", select: "title thumbnail is_expansion" })
     .sort({updatedAt:-1})

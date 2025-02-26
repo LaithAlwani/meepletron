@@ -241,7 +241,6 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
       let newUrl;
       if (res.ok) {
         const { urlData, message } = await res.json();
-        console.log(urlData);
 
         try {
           const uploadResponse = await fetch(urlData.signedUrl, {

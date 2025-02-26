@@ -79,7 +79,6 @@ export default function ChatPage() {
       } else {
         //set the chat.
         setChat(chat);
-        console.log(chat)
         //set messages to intial messages
       }
     } catch (err) {
