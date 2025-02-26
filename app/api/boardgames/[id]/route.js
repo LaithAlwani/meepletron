@@ -17,7 +17,7 @@ export async function GET(req, { params }) {
     const isExpansion = boardgame.is_expansion;
     if (isExpansion) return NextResponse.json({ data: { boardgame } }, { status: 200 });
 
-    const expansions = await Boardgame.find({ parent_id: id }, { thumbnail: 1, title: 1, year: 1 });
+    const expansions = await Boardgame.find({ parent_id: id }, { thumbnail: 1, title: 1, year: 1, parent_id:1 });
 
     return NextResponse.json({ data: { boardgame, expansions } }, { status: 200 });
   } catch (err) {

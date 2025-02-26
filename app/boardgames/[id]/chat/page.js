@@ -31,11 +31,6 @@ export default function ChatPage() {
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
   });
 
-  const testSubmit = (e) => {
-    e.preventDefault();
-    handleSubmit();
-    
-  };
 
   const getBoardgame = async () => {
     setLoading(true);
@@ -69,13 +64,12 @@ export default function ChatPage() {
         //create a new chat
         const res = await fetch(`/api/boardgames/${currentGame?._id}/chat`, {
           method: "POST",
-          body: JSON.stringify({ user_id: user?.id, boardgame_id: currentGame?._id }),
+          body: JSON.stringify({ user_id: user?.id, boardgame_id: currentGame?._id, parent_id:currentGame?.parent_id }),
         });
         const { data, message } = await res.json();
         if (!res.ok) return toast.error(message);
         toast.custom((t) => <CustomToast message={message} id={t.id} />);
         setChat(data);
-        
       } else {
         //set the chat.
         setChat(chat);
@@ -104,20 +98,21 @@ export default function ChatPage() {
 
   return boardgame && !loading ? (
     <section className="h-[100svh] flex flex-col justify-evenly px-4 max-w-xl mx-auto">
-      <nav className="flex items-center justify-start gap-4 py-4 ">
-        <Link href="/chats" className="text-xl cursor-pointer">
+      <nav className="flex items-center gap-2 py-4">
+        <Link href="/chats" className="text-lg cursor-pointer">
           <IoArrowBack />
         </Link>
         {currentGame && (
-          <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2 ">
+          <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2">
             <img
               src={currentGame?.thumbnail}
               alt={currentGame?.title}
-              className="h-12 rounded-md"
+              className="h-10 rounded-md"
             />
-            <h2 className="capitalize font-semibold truncate">{currentGame?.title}</h2>
+            <h2 className="font-semibold">{currentGame?.title}</h2>
           </Link>
         )}
+
         {expansions.length > 0 && (
           <span
             onClick={() => setSideNavOpen(!sideNavOpen)}
@@ -179,7 +174,7 @@ export default function ChatPage() {
           )}
         </div>
       </div>
-      <form onSubmit={testSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
+      <form onSubmit={handleSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
         <Textarea
           placeholder="Ask Meepletron"
           rows="1"
@@ -191,7 +186,7 @@ export default function ChatPage() {
             e.target.style.height = `${e.target.scrollHeight}px`;
           }}
         />
-        
+
         <Button type="submit" styles="w-auto rounded-full py-4">
           <FaPaperPlane />
         </Button>

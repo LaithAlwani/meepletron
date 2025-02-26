@@ -1,5 +1,6 @@
 "use client";
 import CustomLink from "@/components/CustomeLink";
+import CustomToast from "@/components/CustomeToast";
 import Loader from "@/components/Loader";
 import { Input } from "@/components/ui";
 import { useUser } from "@clerk/nextjs";
@@ -7,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { MdDeleteForever } from "react-icons/md";
 
 export default function ChatsPage() {
   const { user, isLoaded } = useUser();
@@ -48,6 +50,17 @@ export default function ChatsPage() {
     }
   };
 
+  const deleteChat = async (chat_id, boardgame_id) => {
+    const res = await fetch("/api/chat/delete", {
+      method: "POST",
+      body: JSON.stringify({chat_id, boardgame_id}),
+    });
+    const { message } = await res.json();
+    if (!res.ok) return toast.error(message);
+    toast.custom((t) => <CustomToast message={message} id={t.id} />);
+    setChats(chats.filter((chat) => chat._id != chat_id));
+  };
+
   useEffect(() => {
     getChats();
   }, [user]);
@@ -68,21 +81,28 @@ export default function ChatsPage() {
       </div>
 
       <ul className="my-6">
-        {filteredData.map(({ boardgame_id }) => (
-          <li key={boardgame_id._id}>
+        {filteredData.map(({ _id, boardgame_id }) => (
+          <li
+            key={_id}
+            className="w-full flex justify-between items-center gap-4 mb-2 py-2 border-b">
             <Link
               href={`/boardgames/${boardgame_id._id}/chat`}
-              className="w-full flex justify-start items-center gap-4 mb-2 py-2 border-b">
-              <div className="relative w-12 h-12 rounded">
+              className="w-[80%] flex items-end gap-4">
+              <div className="relative flex-shrink-0 w-12 h-12 rounded">
                 <Image
                   src={boardgame_id.thumbnail}
-                  alt="game image"
+                  alt={boardgame_id.title}
                   fill
                   className=" object-contain"
                 />
               </div>
-              <h3 className="text-lg font-semibold">{boardgame_id.title}</h3>
+              <h3 className="capitalize font-semibold overflow-x-hidden text-ellipsis text-nowrap">
+                {boardgame_id.title}
+              </h3>
             </Link>
+            <span className="flex-shrink-0" onClick={() => deleteChat(_id, boardgame_id._id)}>
+              <MdDeleteForever size={32} color="red" />
+            </span>
           </li>
         ))}
       </ul>

@@ -1,4 +1,3 @@
-import Boardgame from "@/models/boardgame";
 import Chat from "@/models/chat";
 import Message from "@/models/message";
 import User from "@/models/user";
@@ -35,13 +34,14 @@ export async function GET(req, { params }) {
 }
 
 export async function POST(req) {
-  const { user_id, boardgame_id } = await req.json();
+  const { user_id, boardgame_id, parent_id } = await req.json();
+  console.log(parent_id)
   await connectToDB();
 
   const user = await User.findOne({ clerk_id: user_id }).lean();
   if (!user) return "user not found";
 
-  const chat = await Chat.create({ user_id: user._id, boardgame_id });
+  const chat = await Chat.create({ user_id: user._id, boardgame_id, parent_id });
 
   try {
     return NextResponse.json({ data: chat, message: "Chat Created" }, { status: 201 });

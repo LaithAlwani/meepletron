@@ -4,6 +4,7 @@ const ChatSchema = new Schema(
   {
     user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
     boardgame_id: { type: Schema.Types.ObjectId, ref: "Boardgame", required: true },
+    parent_id: { type: Schema.Types.ObjectId, ref: "Boardgame"},
   },
   { timestamps: true }
 );
