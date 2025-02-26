@@ -19,27 +19,25 @@ const BoardGameScroller = () => {
   };
 
   return (
-    boardgames.length > 0 && (
-      <div className="relative w-full px-4">
-        <ScrollButton dir="left" scroll={scroll}>
-          <LuChevronLeft size={24} />
-        </ScrollButton>
-
-        <div ref={scrollRef} className="relative h-[176px] flex justify-start gap-4 overflow-x-scroll hide-scrollbar">
-          {isLoading ? (
-            <BoardgameSkeleton />
-          ) : (
-            boardgames.map((boardgame) => (
-              <BoardgameContainer boardgame={boardgame} key={boardgame._id} />
-            ))
-          )}
-        </div>
-
-        <ScrollButton dir="right" scroll={scroll}>
-          <LuChevronRight size={24} />
-        </ScrollButton>
+    <div className="relative w-full px-4">
+      <ScrollButton dir="left" scroll={scroll}>
+        <LuChevronLeft size={24} />
+      </ScrollButton>
+      <div
+        ref={scrollRef}
+        className="relative h-[176px] flex justify-start gap-4 overflow-x-scroll hide-scrollbar">
+        {isLoading ? (
+          <BoardgameSkeleton />
+        ) : (
+          boardgames.map((boardgame) => (
+            <BoardgameContainer boardgame={boardgame} key={boardgame._id} />
+          ))
+        )}
       </div>
-    )
+      <ScrollButton dir="right" scroll={scroll}>
+        <LuChevronRight size={24} />
+      </ScrollButton>
+    </div>
   );
 };
 
@@ -60,7 +58,7 @@ const ScrollButton = ({ children, dir, scroll }) => {
 
 const BoardgameSkeleton = () => {
   return (
-    <div className="">
+    <div className="flex gap-4">
       {[...Array(10)].map(
         (
           _,

@@ -26,11 +26,11 @@ export default function ChatPage() {
   const [currentGame, setCurrentGame] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sideNavOpen, setSideNavOpen] = useState(false);
+  const inputRef = useRef();
   const messagesEndRef = useRef(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
   });
-
 
   const getBoardgame = async () => {
     setLoading(true);
@@ -64,7 +64,11 @@ export default function ChatPage() {
         //create a new chat
         const res = await fetch(`/api/boardgames/${currentGame?._id}/chat`, {
           method: "POST",
-          body: JSON.stringify({ user_id: user?.id, boardgame_id: currentGame?._id, parent_id:currentGame?.parent_id }),
+          body: JSON.stringify({
+            user_id: user?.id,
+            boardgame_id: currentGame?._id,
+            parent_id: currentGame?.parent_id,
+          }),
         });
         const { data, message } = await res.json();
         if (!res.ok) return toast.error(message);
@@ -80,6 +84,12 @@ export default function ChatPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    inputRef.current.style.height = "auto";
+    handleSubmit();
   };
 
   useEffect(() => {
@@ -174,10 +184,11 @@ export default function ChatPage() {
           )}
         </div>
       </div>
-      <form onSubmit={handleSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
+      <form onSubmit={onSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
         <Textarea
           placeholder="Ask Meepletron"
           rows="1"
+          ref={inputRef}
           value={input}
           disabled={isLoading}
           onChange={handleInputChange}
