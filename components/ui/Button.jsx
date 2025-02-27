@@ -22,9 +22,8 @@ export default function Button({
   };
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
+    <button
+      
       onClick={onClick}
       disabled={isLoading}
       type="submit"
@@ -32,6 +31,6 @@ export default function Button({
         isLoading ? "opacity-50 cursor-not-allowed" : ""
       }`}>
       {isLoading ? <Loader width="1rem" /> : children}
-    </motion.button>
+    </button>
   );
 }

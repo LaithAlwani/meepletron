@@ -7,6 +7,7 @@ import { FcReading } from "react-icons/fc";
 import { FaPaperPlane, FaMicrophone } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoArrowBack } from "react-icons/io5";
+import { FaArrowDown } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import Loader from "@/components/Loader";
 import TypingIndicator from "@/components/TypingDots";
@@ -26,6 +27,7 @@ export default function ChatPage() {
   const [currentGame, setCurrentGame] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sideNavOpen, setSideNavOpen] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
   const inputRef = useRef();
   const messagesEndRef = useRef(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
@@ -35,7 +37,6 @@ export default function ChatPage() {
   });
 
   const getBoardgame = async () => {
-    setLoading(true);
     setBoardgame(null);
     setExpansions([]);
     setCurrentGame(null);
@@ -50,12 +51,9 @@ export default function ChatPage() {
     } catch (err) {
       console.log(err);
     } finally {
-      setLoading(false);
     }
   };
-  const getChat = async () => {
-    if (!currentGame?._id || !user) return;
-    setLoading(true);
+  const getChat = async (currentGame) => {
     try {
       const res = await fetch(`/api/boardgames/${currentGame?._id}/chat`);
       const {
@@ -83,7 +81,6 @@ export default function ChatPage() {
     } catch (err) {
       toast.error(err.message);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -93,7 +90,6 @@ export default function ChatPage() {
       role: role,
       content: input,
     };
-    console.log(newMessage);
     try {
       const res = await fetch("/api/chat/save-message", {
         method: "POST",
@@ -103,6 +99,17 @@ export default function ChatPage() {
       if (!res.ok) return toast.error(message);
     } catch (err) {
       toast.error(err.message);
+    }
+  };
+
+  const handleScroll = (e) => {
+    const bottom = e.target.scrollHeight - e.target.scrollTop -5 <= e.target.clientHeight;
+    if (bottom) setIsAtBottom(true);
+    else setIsAtBottom(false);
+  };
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current?.scrollHeight;
     }
   };
 
@@ -118,13 +125,12 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    getChat();
-  }, [currentGame]);
+    if (user && currentGame) getChat(currentGame);
+  }, [currentGame, user]);
 
+  //scroll to bottom of chat
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollTop = messagesEndRef.current?.scrollHeight;
-    }
+    scrollToBottom();
   }, [messages]);
 
   return boardgame && !loading ? (
@@ -184,6 +190,7 @@ export default function ChatPage() {
       </motion.aside>
       <div
         ref={messagesEndRef}
+        onScroll={handleScroll}
         className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll hide-scrollbar ">
         <div className="overflow-y-auto">
           {messages.map((m) => (
@@ -205,6 +212,13 @@ export default function ChatPage() {
           )}
         </div>
       </div>
+      {!isAtBottom && (
+        <Button
+          onClick={scrollToBottom}
+          styles="fixed bottom-16 py-4 left-1/2 -translate-x-1/2 opacity-75 w-auto rounded-full">
+          <FaArrowDown />
+        </Button>
+      )}
       <form onSubmit={onSubmit} className="flex items-end gap-2 w-full max-w-xl mx-auto py-4">
         <Textarea
           placeholder="Ask Meepletron"
