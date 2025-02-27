@@ -1,6 +1,6 @@
 "use client";
 import { useChat } from "ai/react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams} from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FcReading } from "react-icons/fc";
@@ -27,7 +27,7 @@ export default function ChatPage() {
   const [currentGame, setCurrentGame] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sideNavOpen, setSideNavOpen] = useState(false);
-  const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(true);
   const inputRef = useRef();
   const messagesEndRef = useRef(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
@@ -107,6 +107,7 @@ export default function ChatPage() {
     if (bottom) setIsAtBottom(true);
     else setIsAtBottom(false);
   };
+  
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current?.scrollHeight;
@@ -128,8 +129,9 @@ export default function ChatPage() {
     if (user && currentGame) getChat(currentGame);
   }, [currentGame, user]);
 
-  //scroll to bottom of chat
+  // scroll to bottom of chat
   useEffect(() => {
+    
     scrollToBottom();
   }, [messages]);
 
