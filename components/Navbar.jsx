@@ -1,12 +1,16 @@
 "use client";
 import Link from "next/link";
-import { FaRobot, FaUserLock } from "react-icons/fa";
-import { MdLogin } from "react-icons/md";
+import { FaUserLock } from "react-icons/fa";
+import { MdLogin, MdMenuBook } from "react-icons/md";
 import Image from "next/image";
 import ThemeSwitch from "./ThemeSwitch";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { ImBubbles } from "react-icons/im";
+import { GiOpenBook  } from "react-icons/gi";
+
+
+
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -36,7 +40,7 @@ export default function Navbar() {
               <ImBubbles size={24} aria-label="chats" />
             </Link>
             <Link href="/boardgames" aria-label="board games">
-              <FaRobot size={24} aria-label="board games" />
+              <GiOpenBook  size={24} aria-label="board games" />
             </Link>
             <ThemeSwitch />
             {user?.publicMetadata.role === "admin" && (
