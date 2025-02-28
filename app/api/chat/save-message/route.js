@@ -19,6 +19,7 @@ export async function POST(req) {
     }
     return NextResponse.json({ message: "success" }, { status: 201 });
   } catch (err) {
+    console.log(err)
     return NextResponse.json({ message: "failed to save message" }, { status: 500 });
   }
 }

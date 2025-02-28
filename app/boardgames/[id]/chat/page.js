@@ -1,9 +1,8 @@
 "use client";
 import { useChat } from "ai/react";
-import { useParams} from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { FcReading } from "react-icons/fc";
 import { FaPaperPlane, FaMicrophone } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoArrowBack } from "react-icons/io5";
@@ -16,23 +15,26 @@ import { Button, Textarea } from "@/components/ui";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
 import { useUser } from "@clerk/nextjs";
+import Image from "next/image";
+import { LuCheck, LuCheckCheck } from "react-icons/lu";
+import { MdOutlineClose } from "react-icons/md";
+import { Six_Caps } from "next/font/google";
+import { generateId } from "ai";
 
 export default function ChatPage() {
   const params = useParams();
   const { user } = useUser();
-  const [chatHistory, setChatHistory] = useState([]);
   const [chat, setChat] = useState(null);
   const [boardgame, setBoardgame] = useState(null);
   const [expansions, setExpansions] = useState([]);
   const [currentGame, setCurrentGame] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const inputRef = useRef();
   const messagesEndRef = useRef(null);
   const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
-    onFinish: (message) => saveMessage(message.role, message.content)
+    onFinish: (message) => saveMessage(message.id, message.role, message.content),
   });
 
   const getBoardgame = async () => {
@@ -49,11 +51,10 @@ export default function ChatPage() {
       }
     } catch (err) {
       console.log(err);
-    } finally {
     }
   };
   const getChat = async (currentGame) => {
-    setMessages([])
+    setMessages([]);
     try {
       const res = await fetch(`/api/boardgames/${currentGame?._id}/chat`);
       const {
@@ -80,16 +81,16 @@ export default function ChatPage() {
       }
     } catch (err) {
       toast.error(err.message);
-    } finally {
     }
   };
 
-  const saveMessage = async (role, input) => {
+  const saveMessage = async (id, role, content) => {
     const newMessage = {
+      _id: id,
       chat_id: chat._id,
-      role: role,
-      content: input,
-      parent_id: currentGame.parent_id
+      role,
+      content,
+      parent_id: currentGame.parent_id,
     };
     try {
       const res = await fetch("/api/chat/save-message", {
@@ -104,11 +105,11 @@ export default function ChatPage() {
   };
 
   const handleScroll = (e) => {
-    const bottom = e.target.scrollHeight - e.target.scrollTop -5 <= e.target.clientHeight;
+    const bottom = e.target.scrollHeight - e.target.scrollTop - 5 <= e.target.clientHeight;
     if (bottom) setIsAtBottom(true);
     else setIsAtBottom(false);
   };
-  
+
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollTop = messagesEndRef.current?.scrollHeight;
@@ -117,7 +118,8 @@ export default function ChatPage() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    currentGame && chat &&  saveMessage("user", input);
+    const id = generateId();
+    currentGame && chat && saveMessage(id, "user", input);
     inputRef.current.style.height = "auto";
     handleSubmit();
   };
@@ -132,11 +134,10 @@ export default function ChatPage() {
 
   // scroll to bottom of chat
   useEffect(() => {
-    
     scrollToBottom();
   }, [messages]);
 
-  return boardgame && !loading ? (
+  return boardgame ? (
     <section className="h-[100svh] flex flex-col justify-evenly px-4 max-w-xl mx-auto">
       <nav className="flex items-center gap-2 py-4">
         <Link href="/chats" className="text-lg cursor-pointer">
@@ -191,8 +192,32 @@ export default function ChatPage() {
           ))}
         </ul>
       </motion.aside>
-      <Messages isLoading={isLoading} messages={messages} messagesEndRef={messagesEndRef} handleScroll={handleScroll}/>
-      
+      <div
+        ref={messagesEndRef}
+        onScroll={handleScroll}
+        className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll hide-scrollbar ">
+        <div className="overflow-y-auto">
+          {messages.map((message) => (
+            <Message key={message._id || message.id} message={message} />
+          ))}
+          {isLoading && (
+            <span className="flex items-end gap-2">
+              <span className="relative w-12 h-12">
+                <Image
+                  src="/logo.webp"
+                  alt="logo"
+                  fill
+                  priority
+                  quality={50}
+                  style={{ objectFit: "contain" }}
+                />
+              </span>
+              <TypingIndicator />
+            </span>
+          )}
+        </div>
+      </div>
+
       {!isAtBottom && (
         <Button
           onClick={scrollToBottom}
@@ -252,32 +277,61 @@ const ListItem = ({ game, currentGame, setCurrentGame, setSideNavOpen }) => {
   );
 };
 
-
-const Messages = ({messagesEndRef, handleScroll, isLoading, messages}) => {
+const Message = ({ message }) => {
+  
+  const { _id, id, role, content, rating } = message;
   return (
-    <div
-        ref={messagesEndRef}
-        onScroll={handleScroll}
-        className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll hide-scrollbar ">
-        <div className="overflow-y-auto">
-          {messages.map((m) => (
-            <div key={m._id || m.id} className={`mb-4 ${m.role === "user" ? "text-right" : ""}`}>
-              <div
-                className={`inline-block p-3 mb-3 min-w-24 max-w-[375px] rounded-md shadow-md ${
-                  m.role === "user"
-                    ? "bg-blue-200 dark:bg-blue-600 text-left"
-                    : "bg-blue-400 dark:bg-[#246199]"
-                }`}>
-                <pre className="text-wrap font-serif">{m.content}</pre>
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <span className="flex items-end gap-2">
-              <FcReading size={48} /> <TypingIndicator />
-            </span>
-          )}
-        </div>
+    <div className={`mb-4 ${role === "user" ? "text-right" : ""}`}>
+      <div
+        className={`relative inline-block p-3 min-w-24 max-w-[375px] rounded-md shadow-md ${
+          role === "user"
+            ? "bg-blue-200 dark:bg-blue-600 text-left"
+            : "bg-blue-400 dark:bg-[#246199]"
+        }`}>
+        <pre className="text-wrap font-serif">{content}</pre>
+        {role === "assistant" && <RateMessage id={_id || id} exisitingRating={rating} />}
       </div>
-  )
-}
+    </div>
+  );
+};
+
+const RateMessage = ({ id, exisitingRating }) => {
+  
+  const size = 22;
+  const [rating, setRating] = useState(exisitingRating || "");
+
+  const rateMessage = async (rating) => {
+    setRating(rating);
+    const res = await fetch("/api/chat/rate-message", {
+      method: "POST",
+      body: JSON.stringify({ id, rating }),
+    });
+    const { message } = await res.json();
+    if (!res.ok) {
+      setRating("");
+      return toast.error("failed to save rating");
+    }
+    toast.custom((t) => <CustomToast message={message} id={t.id} />);
+  };
+  return (
+    <div className="flex justify-end gap-1 pt-6 ">
+      <MdOutlineClose
+        size={size}
+        className={`${rating === "wrong" ? "text-red-500" : ""}`}
+        onClick={() => rateMessage("wrong")}
+      />
+      |
+      <LuCheck
+        size={size}
+        className={`${rating === "partial" ? "text-green-500" : ""}`}
+        onClick={() => rateMessage("partial")}
+      />
+      |
+      <LuCheckCheck
+        size={size}
+        className={`${rating === "correct" ? "text-green-500" : ""}`}
+        onClick={() => rateMessage("correct")}
+      />
+    </div>
+  );
+};
