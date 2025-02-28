@@ -36,7 +36,6 @@ export async function GET(req, { params }) {
 
 export async function POST(req) {
   const { user_id, boardgame_id, parent_id } = await req.json();
-  console.log(parent_id);
   await connectToDB();
 
   const user = await User.findOne({ clerk_id: user_id }).lean();

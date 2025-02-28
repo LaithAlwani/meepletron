@@ -117,7 +117,7 @@ export default function ChatPage() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    saveMessage("user", input);
+    currentGame && chat &&  saveMessage("user", input);
     inputRef.current.style.height = "auto";
     handleSubmit();
   };
