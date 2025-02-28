@@ -30,10 +30,9 @@ export default function ChatPage() {
   const [isAtBottom, setIsAtBottom] = useState(true);
   const inputRef = useRef();
   const messagesEndRef = useRef(null);
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
-    initialMessages: chatHistory,
-    onFinish: (message) => saveMessage(message.role, message.content),
+    onFinish: (message) => saveMessage(message.role, message.content)
   });
 
   const getBoardgame = async () => {
@@ -54,6 +53,7 @@ export default function ChatPage() {
     }
   };
   const getChat = async (currentGame) => {
+    setMessages([])
     try {
       const res = await fetch(`/api/boardgames/${currentGame?._id}/chat`);
       const {
@@ -76,7 +76,7 @@ export default function ChatPage() {
         setChat(data.chat);
       } else {
         setChat(chat);
-        setChatHistory(messages);
+        setMessages(messages);
       }
     } catch (err) {
       toast.error(err.message);
@@ -190,30 +190,8 @@ export default function ChatPage() {
           ))}
         </ul>
       </motion.aside>
-      <div
-        ref={messagesEndRef}
-        onScroll={handleScroll}
-        className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll hide-scrollbar ">
-        <div className="overflow-y-auto">
-          {messages.map((m) => (
-            <div key={m._id || m.id} className={`mb-4 ${m.role === "user" ? "text-right" : ""}`}>
-              <div
-                className={`inline-block p-3 mb-3 min-w-24 max-w-[375px] rounded-md shadow-md ${
-                  m.role === "user"
-                    ? "bg-blue-200 dark:bg-blue-600 text-left"
-                    : "bg-blue-400 dark:bg-[#246199]"
-                }`}>
-                <pre className="text-wrap font-serif">{m.content}</pre>
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <span className="flex items-end gap-2">
-              <FcReading size={48} /> <TypingIndicator />
-            </span>
-          )}
-        </div>
-      </div>
+      <Messages isLoading={isLoading} messages={messages} messagesEndRef={messagesEndRef} handleScroll={handleScroll}/>
+      
       {!isAtBottom && (
         <Button
           onClick={scrollToBottom}
@@ -272,3 +250,33 @@ const ListItem = ({ game, currentGame, setCurrentGame, setSideNavOpen }) => {
     </li>
   );
 };
+
+
+const Messages = ({messagesEndRef, handleScroll, isLoading, messages}) => {
+  return (
+    <div
+        ref={messagesEndRef}
+        onScroll={handleScroll}
+        className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll hide-scrollbar ">
+        <div className="overflow-y-auto">
+          {messages.map((m) => (
+            <div key={m._id || m.id} className={`mb-4 ${m.role === "user" ? "text-right" : ""}`}>
+              <div
+                className={`inline-block p-3 mb-3 min-w-24 max-w-[375px] rounded-md shadow-md ${
+                  m.role === "user"
+                    ? "bg-blue-200 dark:bg-blue-600 text-left"
+                    : "bg-blue-400 dark:bg-[#246199]"
+                }`}>
+                <pre className="text-wrap font-serif">{m.content}</pre>
+              </div>
+            </div>
+          ))}
+          {isLoading && (
+            <span className="flex items-end gap-2">
+              <FcReading size={48} /> <TypingIndicator />
+            </span>
+          )}
+        </div>
+      </div>
+  )
+}
