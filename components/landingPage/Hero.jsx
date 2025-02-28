@@ -5,10 +5,10 @@ import { Heading } from "../ui";
 
 export default function Hero() {
   return (
-    <section className="text-center relative max-w-lg mx-auto px-3 pt-[4rem]">
-      <div className="relative max-w-[18rem] sm:w-[20rem] h-[18rem] sm:h-[20rem] mx-auto left-5 my-4">
-        <Image src="/chatbot-ed.webp" fill priority alt="robot logo" quality={75} sizes={"25vw"} />
-        <WelcomeMessage />
+    <section className="text-center relative max-w-lg mx-auto px-3 pt-[6rem]">
+      <div className="relative  max-w-[18rem]  h-[20rem] mx-auto left-5 my-12">
+        <Image src="/Meepletron Logo/Meepletron Logo Icon/Meepletron Logo Icon.webp" style={{objectFit: "contain"}} fill priority alt="robot logo" quality={75} sizes={"25vw"} />
+        {/* <WelcomeMessage /> */}
       </div>
 
       <div>

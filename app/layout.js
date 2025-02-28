@@ -27,6 +27,8 @@ const poppins = Poppins({
 });
 
 export const viewport = {
+  maximumScale: 1,
+  userScalable:false,
   viewport:
     "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
   themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
@@ -59,8 +61,8 @@ export const metadata = {
   ],
 
   icons: [
-    { rel: "apple-touch-icon", url: "icons/icon-128x128.png" },
-    { rel: "icon", url: "icons/icon-128x128.png" },
+    { rel: "apple-touch-icon", url: "icons/icon-128x128.webp" },
+    { rel: "icon", url: "icons/icon-128x128.webp" },
   ],
   robots: {
     index: true,
@@ -82,12 +84,12 @@ export const metadata = {
     siteName: "meepeletron",
     images: [
       {
-        url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fbot.png",
+        url: "https://www.meepletron.com/logo_landscape.png",
         width: 1200,
         height: 630,
       },
       {
-        url: "https://og-image-wheat.vercel.app/api/og?title=Meepletron&description=AI+board+game+expert&logoUrl=https%3A%2F%2Fwww.meepletron.com%2Fbot.png",
+        url: "https://www.meepletron.com/logo_landscape.png",
         width: 400,
         height: 400,
       },
