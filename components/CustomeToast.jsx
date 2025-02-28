@@ -11,8 +11,8 @@ export default function CustomToast({ message, id }) {
       transition={{ type: "spring", stiffness: 100, damping: 15 }}
       className="flex items-center gap-4 bg-white dark:bg-gray-900 text-gray-800 dark:text-white px-6 py-4 rounded-xl shadow-lg border border-gray-300 dark:border-gray-700 transform"
     >
-      <span className="text-xl font-bold text-green-600 dark:text-green-400">✅ Success</span>
-      <p className="capitalize flex-1 text-sm font-medium">{message}</p>
+      <span className="text-lg font-bold text-green-600 dark:text-green-400">✅ Success</span>
+      <p className="capitalize flex-1 text-sm">{message}</p>
       <span
         onClick={() => toast.remove(id)}
         className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"

@@ -278,7 +278,6 @@ const ListItem = ({ game, currentGame, setCurrentGame, setSideNavOpen }) => {
 };
 
 const Message = ({ message }) => {
-  
   const { _id, id, role, content, rating } = message;
   return (
     <div className={`mb-4 ${role === "user" ? "text-right" : ""}`}>
@@ -296,7 +295,6 @@ const Message = ({ message }) => {
 };
 
 const RateMessage = ({ id, exisitingRating }) => {
-  
   const size = 22;
   const [rating, setRating] = useState(exisitingRating || "");
 
@@ -311,7 +309,7 @@ const RateMessage = ({ id, exisitingRating }) => {
       setRating("");
       return toast.error("failed to save rating");
     }
-    toast.custom((t) => <CustomToast message={message} id={t.id} />);
+    toast.custom((t) => <CustomToast message={message} id={t.id} />, { duration: 250 });
   };
   return (
     <div className="flex justify-end gap-1 pt-6 ">
