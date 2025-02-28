@@ -89,6 +89,7 @@ export default function ChatPage() {
       chat_id: chat._id,
       role: role,
       content: input,
+      parent_id: currentGame.parent_id
     };
     try {
       const res = await fetch("/api/chat/save-message", {
