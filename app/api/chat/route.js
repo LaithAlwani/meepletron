@@ -96,7 +96,7 @@ export async function GET(req) {
   await connectToDB();
   const user = await User.findOne({ clerk_id: user_id });
   
-  const chats = await Chat.find({ user_id: user._id })
+  const chats = await Chat.find({ user_id: user?._id })
     .populate({ path: "boardgame_id", select: "title thumbnail is_expansion" })
     .sort({updatedAt:-1})
     .lean();
