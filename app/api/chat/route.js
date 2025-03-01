@@ -95,13 +95,13 @@ export async function GET(req) {
   
   await connectToDB();
   const user = await User.findOne({ clerk_id: user_id });
-  
+  if(!user) return NextResponse.json({message:"user not found"},{status:404})
   const chats = await Chat.find({ user_id: user?._id })
     .populate({ path: "boardgame_id", select: "title thumbnail is_expansion" })
-    .sort({updatedAt:-1})
+    .sort({ updatedAt: -1 })
     .lean();
-    const filteredChats = chats.filter(chat => {
-      return chat.boardgame_id && !chat.boardgame_id.is_expansion;
-    });
+  const filteredChats = chats.filter((chat) => {
+    return chat.boardgame_id && !chat.boardgame_id.is_expansion;
+  });
   return NextResponse.json({ data: filteredChats, message: "success" }, { status: 200 });
 }

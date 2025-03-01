@@ -74,7 +74,7 @@ export default function ChatPage() {
         const { data, message } = await res.json();
         if (!res.ok) return toast.error(message);
         toast.custom((t) => <CustomToast message={message} id={t.id} />);
-        setChat(data.chat);
+        setChat(data);
       } else {
         setChat(chat);
         setMessages(messages);
@@ -85,6 +85,7 @@ export default function ChatPage() {
   };
 
   const saveMessage = async (id, role, content) => {
+    if (!id || !role || content ||!chat._id) return toast.error("message missing parameter");
     const newMessage = {
       _id: id,
       chat_id: chat._id,
