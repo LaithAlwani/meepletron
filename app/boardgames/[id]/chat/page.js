@@ -85,7 +85,7 @@ export default function ChatPage() {
   };
 
   const saveMessage = async (id, role, content) => {
-    if (!id || !role || content ||!chat._id) return toast.error("message missing parameter");
+    if (!id || !role || !content ||!chat._id) return toast.error("message missing parameter");
     const newMessage = {
       _id: id,
       chat_id: chat._id,
