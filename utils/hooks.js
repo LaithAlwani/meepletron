@@ -47,7 +47,6 @@ export const useGetBoardgames = () => {
   const [error, setError] = useState(false);
 
   const getBoardgames = async () => {
-    console.log("getting games")
     setIsLoading(true);
     try {
       const res = await fetch(`/api/boardgames`);

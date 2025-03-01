@@ -2,15 +2,13 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
-const isPublicRoute = createRouteMatcher([]);
+const isProtectedRoute = createRouteMatcher(["/boardgames/(.*)/chat", "/chats"]);
 
 export default clerkMiddleware(async (auth, req) => {
   // Check if the route is protected
-  const { userId, sessionClaims, redirectToSignIn } = await auth();
-  if (isPublicRoute(req)) {
-    //if user not autheticated send to signin page
-    if (!userId && !isPublicRoute(req)) return redirectToSignIn({ returnBackUrl: req.url });
-  }
+  const { userId, sessionClaims } = await auth();
+  
+  if (isProtectedRoute(req)) await auth.protect()
 
   if (isAdminRoute(req)) {
     // Check if the user is authenticated
