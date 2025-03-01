@@ -10,6 +10,6 @@ export const metadata = {
 };
 export default function SignUpPage() {
   return (
-    <div className='flex justify-center'><SignUp /></div>
+    <div className='flex justify-center pt-[6rem]'><SignUp /></div>
   )
 }
