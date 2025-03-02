@@ -42,7 +42,7 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="px-6">
+    <section id="contact" className="px-6">
       <div className="max-w-xl mx-auto p-6 bg-gray-200 dark:bg-slate-800 rounded-lg shadow-md shadow-gray-400 dark:shadow-slate-700">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
           Need Help or Have a Suggestion?

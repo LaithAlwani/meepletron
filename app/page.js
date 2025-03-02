@@ -8,6 +8,7 @@ import ContactForm from "@/components/ContactForm";
 import BoardgameList from "@/components/boardgame/BoardgameList";
 import { Heading } from "@/components/ui";
 import BoardGameScroller from "@/components/boardgame/BoardgameScroller";
+import BetaAnnouncement from "@/components/landingPage/BetaAnnouncement";
 
 export const metadata = {
   alternates: {
@@ -18,7 +19,8 @@ export const metadata = {
 export default async function Home() {
   return (
     <>
-      <Hero />
+      {/* <Hero /> */}
+      <BetaAnnouncement />
       <section className="max-w-5xl mx-auto my-8 px-4  animate-slidein">
         <Heading level={2}>Recently Added</Heading>
         {/* <div className="relative max-w-5xl h-[176px] flex flex-nowrap justify-start overflow-x-scroll overflow-y-hidden  gap-3 my-6">
