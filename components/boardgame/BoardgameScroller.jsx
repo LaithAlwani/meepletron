@@ -3,9 +3,10 @@ import { useRef } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 import BoardgameContainer from "./BoardgameContainer";
 import { useGetBoardgames } from "@/utils/hooks";
+import Link from "next/link";
 
 const BoardGameScroller = () => {
-  const { boardgames, isLoading, error } = useGetBoardgames();
+  const { boardgames, isLoading, error } = useGetBoardgames({limit:9});
   const scrollRef = useRef(null);
 
   const scroll = (direction) => {
@@ -29,9 +30,19 @@ const BoardGameScroller = () => {
         {isLoading ? (
           <BoardgameSkeleton />
         ) : (
-          boardgames.map((boardgame) => (
+          <>
+            {boardgames.map((boardgame) => (
             <BoardgameContainer boardgame={boardgame} key={boardgame._id} />
-          ))
+            ))}
+            {boardgames.length >0 && <div className="relative">
+              <Link
+                href={"/boardgames"}
+                className="flex justify-center items-center w-[11rem] h-[11rem] underline rounded text-white text-center font-semibold bg-slate-400">
+                More
+                <br /> Board Games
+              </Link>
+            </div>}
+          </>
         )}
       </div>
       <ScrollButton dir="right" scroll={scroll}>

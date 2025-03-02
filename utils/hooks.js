@@ -41,7 +41,7 @@ export const useSearch = ({ debounceDelay: debounceDelay = 300, limit }) => {
   return { query, setQuery, results, loading };
 };
 
-export const useGetBoardgames = () => {
+export const useGetBoardgames = ({limit}) => {
   const [boardgames, setBoardgames] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -49,7 +49,7 @@ export const useGetBoardgames = () => {
   const getBoardgames = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/boardgames`);
+      const res = await fetch(`/api/boardgames?limit=${limit}`);
       const { data, message } = await res.json();
       if (!res.ok) return setError(message);
       setBoardgames(data);
