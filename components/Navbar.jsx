@@ -94,13 +94,13 @@ export default function Navbar() {
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white dark:bg-gray-900 shadow-lg transform transition-transform duration-300 ease-in-out 
+        className={`fixed top-0 right-0 h-full w-64 pt-[3rem] bg-white dark:bg-gray-900 shadow-lg transform transition-transform duration-300 ease-in-out 
           ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
         <div className="p-5 flex flex-col gap-4">
           <Link
             href="/chats"
             aria-label="chats"
-            className="flex items-center gap-1"
+            className="flex items-center gap-2"
             onClick={() => setIsOpen(false)}>
             <ImBubbles size={24} /> <span className="text-sm">Chats</span>
           </Link>
