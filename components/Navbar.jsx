@@ -57,8 +57,8 @@ export default function Navbar() {
             className="flex flex-col items-center gap-1">
             <GiOpenBook size={24} /> <span className="text-sm">Board Games</span>
           </Link>
-          <span className="flex flex-col items-center gap-1 ">
-            <ThemeSwitch />
+          <span className="flex flex-col items-center gap-1" >
+            <ThemeSwitch  />
           </span>
           {user?.publicMetadata.role === "admin" && (
             <Link
@@ -111,7 +111,7 @@ export default function Navbar() {
             onClick={() => setIsOpen(false)}>
             <GiOpenBook size={24} /> <span className="text-sm">Board Games</span>
           </Link>
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2" onClick={()=>setIsOpen(false)}>
             <ThemeSwitch />
           </span>
           {user?.publicMetadata.role === "admin" && (
