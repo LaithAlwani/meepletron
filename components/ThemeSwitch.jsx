@@ -15,9 +15,20 @@ export default function ThemeSwitch() {
   if (!mounted) return <Loader width={"1rem"}/>
 
   if (resolvedTheme === "dark") {
-    return <FiSun size={24} onClick={() => setTheme("light")} />;
+    return (
+      <>
+        <FiSun size={24} onClick={() => setTheme("light")} />
+        <span className="text-sm" onClick={() => setTheme("light")}>Light</span>
+        
+      </>
+    );
   }
   if (resolvedTheme === "light") {
-    return <FiMoon size={24} onClick={() => setTheme("dark")} />;
+    return (
+      <>
+        <FiSun size={24} onClick={() => setTheme("dark")} />
+        <span className="text-sm" onClick={() => setTheme("dark")}>Dark</span>
+      </>
+    );
   }
 }

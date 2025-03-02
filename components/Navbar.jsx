@@ -30,7 +30,7 @@ export default function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 w-full text-lg p-3 ${trasprent} ${hidden} shadow-sm z-10`}>
-      <div className="flex justify-between items-center max-w-xl mx-auto">
+      <div className="flex justify-between items-center max-w-2xl mx-auto">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1" aria-label="logo">
           <div className="relative w-[2rem] h-[2rem]">
@@ -49,33 +49,35 @@ export default function Navbar() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex justify-center items-center gap-3">
           <Link href="/chats" aria-label="chats" className="flex flex-col  items-center gap-1">
-            <ImBubbles size={24} /> <span>Chats</span>
+            <ImBubbles size={24} /> <span className="text-sm">Chats</span>
           </Link>
           <Link
             href="/boardgames"
             aria-label="board games"
             className="flex flex-col items-center gap-1">
-            <GiOpenBook size={24} /> <span>Board Games</span>
+            <GiOpenBook size={24} /> <span className="text-sm">Board Games</span>
           </Link>
-          <ThemeSwitch />
+          <span className="flex flex-col items-center gap-1 ">
+            <ThemeSwitch />
+          </span>
           {user?.publicMetadata.role === "admin" && (
             <Link
               href="/admin/boardgames"
               aria-label="admin"
               className="flex flex-col  items-center gap-1">
-              <FaUserLock /> <span>Admin</span>
+              <FaUserLock size={24} /> <span className="text-sm">Admin</span>
             </Link>
           )}
           <span className="flex flex-col items-center ">
             <SignedIn>
-              <UserButton aria-label="user settings" /> <span>Settings</span>
+              <UserButton aria-label="user settings" /> <span className="text-sm">Settings</span>
             </SignedIn>
             <SignedOut>
               <Link
                 href="/sign-in"
                 aria-label="sign-in"
                 className="flex flex-col  items-center gap-1">
-                <MdLogin size={24} /> <span>Sign In</span>
+                <MdLogin size={24} /> <span className="text-sm">Sign In</span>
               </Link>
             </SignedOut>
           </span>
@@ -100,34 +102,40 @@ export default function Navbar() {
             aria-label="chats"
             className="flex items-center gap-1"
             onClick={() => setIsOpen(false)}>
-            <ImBubbles size={28} /> <span>Chats</span>
+            <ImBubbles size={24} /> <span className="text-sm">Chats</span>
           </Link>
           <Link
             href="/boardgames"
             aria-label="board games"
-            className="flex items-center gap-1"
+            className="flex items-center gap-2"
             onClick={() => setIsOpen(false)}>
-            <GiOpenBook size={28} /> <span>Board Games</span>
+            <GiOpenBook size={24} /> <span className="text-sm">Board Games</span>
           </Link>
-          <ThemeSwitch />
+          <span className="flex items-center gap-2">
+            <ThemeSwitch />
+          </span>
           {user?.publicMetadata.role === "admin" && (
             <Link
               href="/admin/boardgames"
               aria-label="admin"
-              className="flex items-center gap-1"
+              className="flex items-center gap-2"
               onClick={() => setIsOpen(false)}>
-              <FaUserLock size={28} /> <span>Admin</span>
+              <FaUserLock size={28} /> <span className="text-sm">Admin</span>
             </Link>
           )}
           <SignedIn>
-            <span className="flex items-center gap-1">
-              <UserButton aria-label="user settings" /> <span>Settings</span>
+            <span className="flex items-center gap-2">
+              <UserButton aria-label="user settings" /> <span className="text-sm">Settings</span>
             </span>
           </SignedIn>
           <SignedOut>
-            <NavLink>
-              <MdLogin size={24} href="sign-in" label="sign-in" /> <span>Sign In</span>
-            </NavLink>
+            <Link
+              href="/sign-in"
+              aria-label="sign in"
+              className="flex items-center gap-2"
+              onClick={() => setIsOpen(false)}>
+              <MdLogin size={24} /> <span className="text-sm">Sign In</span>
+            </Link>
           </SignedOut>
         </div>
       </div>
