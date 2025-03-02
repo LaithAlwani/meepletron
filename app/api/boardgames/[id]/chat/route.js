@@ -12,9 +12,9 @@ export async function GET(req, { params }) {
   try {
     await connectToDB();
     const user = await User.findOne({ clerk_id: userId }).lean();
-    if (!user) return NextResponse.json({ message: "user not found" }, { status: 404 });
-    const chat = await Chat.findOne({ boardgame_id: id, user_id: user._id }).lean();
-
+    // if (!user) return NextResponse.json({ message: "user not found" }, { status: 200 });
+    const chat = await Chat.findOne({ boardgame_id: id, user_id: user?._id }).lean();
+    
     if (!chat)
       return NextResponse.json(
         { data: { chat: {}, messages: [] }, message: "create a new chat" },
@@ -39,9 +39,9 @@ export async function POST(req) {
   await connectToDB();
 
   const user = await User.findOne({ clerk_id: user_id }).lean();
-  if (!user) return "user not found";
+  // if (!user) return "user not found";
 
-  const chat = await Chat.create({ user_id: user._id, boardgame_id, parent_id });
+  const chat = await Chat.create({ user_id: user?._id, boardgame_id, parent_id });
 
   try {
     return NextResponse.json({ data: chat, message: "Chat Created" }, { status: 201 });

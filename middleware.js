@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
-const isProtectedRoute = createRouteMatcher(["/boardgames/(.*)/chat", "/chats"]);
+const isProtectedRoute = createRouteMatcher([]);
 
 export default clerkMiddleware(async (auth, req) => {
   // Check if the route is protected

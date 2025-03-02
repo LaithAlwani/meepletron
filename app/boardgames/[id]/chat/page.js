@@ -130,7 +130,7 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    if (user && currentGame) getChat(currentGame);
+    if (currentGame) getChat(currentGame); //TODO:chek for user after beta
   }, [currentGame, user]);
 
   // scroll to bottom of chat
