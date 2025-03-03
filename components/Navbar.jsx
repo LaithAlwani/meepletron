@@ -29,7 +29,7 @@ export default function Navbar() {
       : "hover:bg-gray-200 dark:hover:bg-gray-700";
 
   return (
-    <nav className={`fixed top-0 left-0 w-full text-lg p-3 ${trasprent} ${hidden} shadow-sm z-10`}>
+    <nav className={`fixed top-0 left-0 w-full text-lg p-3 ${trasprent} ${hidden} shadow-sm z-50`}>
       <div className="flex justify-between items-center max-w-2xl mx-auto">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1" aria-label="logo">
@@ -94,7 +94,7 @@ export default function Navbar() {
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 pt-[3rem] bg-white dark:bg-gray-900 shadow-lg transform transition-transform duration-300 ease-in-out 
+        className={`fixed top-0 right-0 h-full w-64 pt-[3rem] z-10 bg-white dark:bg-gray-900 shadow-lg transform transition-transform duration-300 ease-in-out 
           ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
         <div className="p-5 flex flex-col gap-4">
           <Link

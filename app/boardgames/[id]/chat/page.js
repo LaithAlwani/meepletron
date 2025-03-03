@@ -167,7 +167,7 @@ export default function ChatPage() {
         initial={{ x: "100%" }}
         animate={{ x: sideNavOpen ? "0%" : "100%" }}
         transition={{ duration: 0.3 }}
-        className="fixed top-0 right-0 w-72 h-full bg-gray-100 dark:bg-slate-950  ">
+        className="fixed top-0 right-0 w-72 h-full bg-gray-100 dark:bg-slate-950">
         <div className="flex justify-between items-center p-2">
           <h3 className="text-xl font-bold ">Select a Game</h3>
           <span onClick={() => setSideNavOpen(false)} className="text-xl p-2 cursor-pointer">
