@@ -12,7 +12,7 @@ export async function GET(req, { params }) {
   try {
     await connectToDB();
     const user = await User.findOne({ clerk_id: userId }).lean();
-    // if (!user) return NextResponse.json({ message: "user not found" }, { status: 200 });
+    if (!user) return NextResponse.json({ message: "user not found" }, { status: 404 });
     const chat = await Chat.findOne({ boardgame_id: id, user_id: user?._id }).lean();
     
     if (!chat)
