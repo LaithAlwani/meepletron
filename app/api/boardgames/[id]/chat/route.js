@@ -39,7 +39,7 @@ export async function POST(req) {
   await connectToDB();
 
   const user = await User.findOne({ clerk_id: user_id }).lean();
-  // if (!user) return "user not found";
+  if (!user) return "user not found";
 
   const chat = await Chat.create({ user_id: user?._id, boardgame_id, parent_id });
 

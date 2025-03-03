@@ -3,7 +3,7 @@ import CustomLink from "@/components/CustomeLink";
 import CustomToast from "@/components/CustomeToast";
 import Loader from "@/components/Loader";
 import { Input } from "@/components/ui";
-import { useUser } from "@clerk/nextjs";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -69,7 +69,7 @@ export default function ChatsPage() {
     return (
       <div className="h-screen w-screen flex flex-col justify-center items-center">
         <p className="mb-2 text-lg">Please sign in to start a chat history</p>
-        <CustomLink href={"/sign-in"}>Sign in</CustomLink>
+        <SignInButton className="min-w-32 text-center inline-block  bg-blue-600 text-white py-3 px-6 shadow-sm hover:bg-blue-700 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-900 font-bold transition duration-300"/>
       </div>
     );
   }

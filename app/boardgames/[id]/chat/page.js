@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 
 export default function ChatPage() {
   const params = useParams();
-  const router = useRouter()
+  const router = useRouter();
   const { user } = useUser();
   const [chat, setChat] = useState(null);
   const [boardgame, setBoardgame] = useState(null);
@@ -87,7 +87,7 @@ export default function ChatPage() {
   };
 
   const saveMessage = async (id, role, content) => {
-    if (!id || !role || !content ||!chat._id) return toast.error("message missing parameter");
+    if (!id || !role || !content || !chat?._id) return;
     const newMessage = {
       _id: id,
       chat_id: chat._id,
@@ -132,7 +132,7 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    if (currentGame) getChat(currentGame); //TODO:chek for user after beta
+    if (user && currentGame) getChat(currentGame);
   }, [currentGame, user]);
 
   // scroll to bottom of chat
@@ -201,7 +201,7 @@ export default function ChatPage() {
         className="flex-1 max-w-xl mx-auto justify-between w-full overflow-y-scroll hide-scrollbar ">
         <div className="overflow-y-auto">
           {messages.map((message) => (
-            <Message key={message._id || message.id} message={message} />
+            <Message key={message._id || message.id} message={message} user={user} />
           ))}
           {isLoading && (
             <span className="flex items-end gap-2">
@@ -280,7 +280,7 @@ const ListItem = ({ game, currentGame, setCurrentGame, setSideNavOpen }) => {
   );
 };
 
-const Message = ({ message }) => {
+const Message = ({ message, user }) => {
   const { _id, id, role, content, rating } = message;
   return (
     <div className={`mb-4 ${role === "user" ? "text-right" : ""}`}>
@@ -291,17 +291,20 @@ const Message = ({ message }) => {
             : "bg-blue-400 dark:bg-[#246199]"
         }`}>
         <pre className="text-wrap font-serif">{content}</pre>
-        {role === "assistant" && <RateMessage id={_id || id} exisitingRating={rating} />}
+        {role === "assistant" && (
+          <RateMessage id={_id || id} exisitingRating={rating} user={user} />
+        )}
       </div>
     </div>
   );
 };
 
-const RateMessage = ({ id, exisitingRating }) => {
+const RateMessage = ({ id, exisitingRating, user }) => {
   const size = 22;
   const [rating, setRating] = useState(exisitingRating || "");
 
   const rateMessage = async (rating) => {
+    if (!user) return toast.error("please sign in to rate messages");
     setRating(rating);
     const res = await fetch("/api/chat/rate-message", {
       method: "POST",
@@ -315,24 +318,26 @@ const RateMessage = ({ id, exisitingRating }) => {
     toast.custom((t) => <CustomToast message={message} id={t.id} />, { duration: 250 });
   };
   return (
-    <div className="flex justify-end gap-1 pt-6 ">
-      <MdOutlineClose
-        size={size}
-        className={`${rating === "wrong" ? "text-red-500" : ""}`}
-        onClick={() => rateMessage("wrong")}
-      />
-      |
-      <LuCheck
-        size={size}
-        className={`${rating === "partial" ? "text-green-500" : ""}`}
-        onClick={() => rateMessage("partial")}
-      />
-      |
-      <LuCheckCheck
-        size={size}
-        className={`${rating === "correct" ? "text-green-500" : ""}`}
-        onClick={() => rateMessage("correct")}
-      />
-    </div>
+    <>
+      <div className="flex justify-end gap-1 pt-6 ">
+        <MdOutlineClose
+          size={size}
+          className={`${rating === "wrong" ? "text-red-500" : ""}`}
+          onClick={() => rateMessage("wrong")}
+        />
+        |
+        <LuCheck
+          size={size}
+          className={`${rating === "partial" ? "text-green-500" : ""}`}
+          onClick={() => rateMessage("partial")}
+        />
+        |
+        <LuCheckCheck
+          size={size}
+          className={`${rating === "correct" ? "text-green-500" : ""}`}
+          onClick={() => rateMessage("correct")}
+        />
+      </div>
+    </>
   );
 };
