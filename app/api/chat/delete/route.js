@@ -5,8 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const { chat_id, boardgame_id } = await req.json();
-  console.log(chat_id);
-
+  
   try {
     await connectToDB();
 

@@ -36,9 +36,9 @@ export async function POST(req) {
     await deleteFiles(boardgame);
 
     await connectToDB();
-    const doc = await Boardgame.findByIdAndDelete({ _id: boardgame._id });
+    const doc = await Boardgame.findByIdAndUpdate({ _id: boardgame._id }, { urls: [] },{new:true});
     if(!doc) return NextResponse.json({ data: `The Board Game does not exist` }, { status: 404 });
-    return NextResponse.json({ message: `${doc.title} delete successfully` }, { status: 201 });
+    return NextResponse.json({ data:doc,message: `${doc.title} delete successfully` }, { status: 201 });
   } catch (err) {
     return NextResponse.json({ message: `Failed to Upload file` }, { status: 500 });
   }

@@ -79,8 +79,8 @@ export default function BoardgameEditPage() {
         return toast.error(message);
       }
 
-      const { message } = await res.json();
-      setBoardgame(null);
+      const { data, message } = await res.json();
+      setBoardgame(data);
       setQuery("");
       toast.custom((t) => <CustomToast message={message} id={t.id} />);
     } catch (err) {
