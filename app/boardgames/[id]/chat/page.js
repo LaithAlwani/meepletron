@@ -20,9 +20,11 @@ import { LuCheck, LuCheckCheck } from "react-icons/lu";
 import { MdOutlineClose } from "react-icons/md";
 import { Six_Caps } from "next/font/google";
 import { generateId } from "ai";
+import { useRouter } from "next/navigation";
 
 export default function ChatPage() {
   const params = useParams();
+  const router = useRouter()
   const { user } = useUser();
   const [chat, setChat] = useState(null);
   const [boardgame, setBoardgame] = useState(null);
@@ -141,9 +143,9 @@ export default function ChatPage() {
   return boardgame ? (
     <section className="h-[100svh] flex flex-col justify-evenly px-4 max-w-xl mx-auto">
       <nav className="flex items-center gap-2 py-4">
-        <Link href="/chats" className="text-lg cursor-pointer">
+        <span onClick={router.back} className="text-lg cursor-pointer">
           <IoArrowBack />
-        </Link>
+        </span>
         {currentGame && (
           <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2">
             <img
@@ -167,7 +169,7 @@ export default function ChatPage() {
         initial={{ x: "100%" }}
         animate={{ x: sideNavOpen ? "0%" : "100%" }}
         transition={{ duration: 0.3 }}
-        className="fixed top-0 right-0 w-72 h-full bg-gray-100 dark:bg-slate-950">
+        className="fixed top-0 right-0 w-72 h-full bg-gray-100 dark:bg-slate-950 z-10">
         <div className="flex justify-between items-center p-2">
           <h3 className="text-xl font-bold ">Select a Game</h3>
           <span onClick={() => setSideNavOpen(false)} className="text-xl p-2 cursor-pointer">
