@@ -74,12 +74,12 @@ export default async function Home() {
           <nav className="text-center">
             <ul className="flex justify-center space-x-4">
               <li>
-                <a href="/privacy-policy" className="hover:underline">
+                <a href="/privacy-policy" className="underline">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="/terms-of-service" className="hover:underline">
+                <a href="/terms-of-service" className="underline">
                   Terms of Service
                 </a>
               </li>
