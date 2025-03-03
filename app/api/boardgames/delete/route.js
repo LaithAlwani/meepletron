@@ -22,13 +22,13 @@ export async function POST(req) {
 
   // Check if the user's role is 'admin'
   if (publicMetadata.role !== "admin") {
-    return NextResponse.json({message:"Forbidden: Admin access required"}, { status: 403 });
+    return NextResponse.json({ message: "Forbidden: Admin access required" }, { status: 403 });
   }
 
   const { boardgame } = await req.json();
   //check if boardgame exits.
-  if (!boardgame) return NextResponse.json({ data: `Please provide a boardgame` }, { status: 404 });
-
+  if (!boardgame) return NextResponse.json({ message: `Please provide a boardgame` }, { status: 404 });
+  if(!boardgame.urls.length) return NextResponse.json({ message: `No files to delete` }, { status: 404 })
   try {
     //delet docs from pincone
     await deletePinconeDocs(boardgame._id);
@@ -36,9 +36,16 @@ export async function POST(req) {
     await deleteFiles(boardgame);
 
     await connectToDB();
-    const doc = await Boardgame.findByIdAndUpdate({ _id: boardgame._id }, { urls: [] },{new:true});
-    if(!doc) return NextResponse.json({ data: `The Board Game does not exist` }, { status: 404 });
-    return NextResponse.json({ data:doc,message: `${doc.title} delete successfully` }, { status: 201 });
+    const doc = await Boardgame.findByIdAndUpdate(
+      { _id: boardgame._id },
+      { urls: [] },
+      { new: true }
+    );
+    if (!doc) return NextResponse.json({ data: `The Board Game does not exist` }, { status: 404 });
+    return NextResponse.json(
+      { data: doc, message: `${doc.title} delete successfully` },
+      { status: 201 }
+    );
   } catch (err) {
     return NextResponse.json({ message: `Failed to Upload file` }, { status: 500 });
   }
@@ -46,14 +53,13 @@ export async function POST(req) {
 
 const deleteFiles = async (boardgame) => {
   const filePathinS3 = [];
-  filePathinS3.push(boardgame?.image?.split("amazonaws.com/").pop());
-  filePathinS3.push(boardgame?.thumbnail?.split("amazonaws.com/").pop());
-  if (boardgame.wallpaper) filePathinS3.push(boardgame?.wallpaper?.split("amazonaws.com/").pop());
-  if (boardgame.urls.length > 0) {
-    boardgame.urls.forEach(({ path }) => {
-      filePathinS3.push(path.split("amazonaws.com/").pop());
-    });
-  }
+  // filePathinS3.push(boardgame?.image?.split("amazonaws.com/").pop());
+  // filePathinS3.push(boardgame?.thumbnail?.split("amazonaws.com/").pop());
+  // if (boardgame.wallpaper) filePathinS3.push(boardgame?.wallpaper?.split("amazonaws.com/").pop());
+
+  boardgame.urls.forEach(({ path }) => {
+    filePathinS3.push(path.split("amazonaws.com/").pop());
+  });
 
   try {
     const { Deleted } = await s3Client.send(
