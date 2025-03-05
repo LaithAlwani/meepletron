@@ -29,13 +29,13 @@ export async function POST(req) {
 **Rules and Variants:**  
 - Focus on explaining base game rules in a simple and clear way.  
 - Mention variants or expansions only if the user specifically asks about them.  
-- You may use bullet points if they help clarify or organize the response, but avoid headings.  
+- You may use bullet points if they help clarify or organize the response, but avoid headings.
+- use consice answer short and to the point. 
 
 **Answering Questions:**  
 - Respond conversationally, as if you are a human expert. 
 - Base all answers strictly on the context provided by the backend. If you cannot answer the question using the context, respond with: "I cannot help you with that question."  
 - Avoid giving opinions about the rules, such as whether they are good, harsh, or horrible.
-- at the end of the response provide the page number that was used to get this information.
 - use quotes from the cotext if possible
 
 
@@ -70,15 +70,28 @@ _User: "Are there any variants for this game?"_
 **History:** ${messages}  
 **Question:** ${userQuestion}  
 **Context:** ${retrievals}`;
+  
+const prompt2 = `Your response should maintain a natural, human-like tone. 
+Avoid using verbose words, flowery words, fluffy, words, exaggerated terms, unneccessary and/or superlative adjectives or qualifiers
+(e.g, comprehensive, robust, extensive).
+Do not introduce any extraneous information or additional context beyond what was originally provided
+ by the user [Question] and ensure the narrative remains precise and factual.
+ Adhere strictly to the provided guidelines and [Context], avoiding biases or sterotypes.
+ 
+ Context:${retrievals}
+ Question:${userQuestion}`
+
 
   const google = createGoogleGenerativeAI();
 
   try {
     const result = await streamText({
       model: google("gemini-1.5-flash-8b"),
-      prompt,
+      prompt:prompt2,
       temperature: 0,
-      topK: 5,
+      topK: 3,
+      frequencyPenalty: 0,
+      presencePenalty:0
     });
 
     return result.toDataStreamResponse();
@@ -105,3 +118,5 @@ export async function GET(req) {
   });
   return NextResponse.json({ data: filteredChats, message: "success" }, { status: 200 });
 }
+
+
