@@ -24,23 +24,25 @@ export async function POST(req) {
     boardgame_id
   );
 
-  const prompt = `You are a board game expert AI. Your primary role is to explain and clarify board game rules using informal, human-like language.  
+  const prompt = `You are a board game expert AI. Your primary role is to explain and clarify board game rules for [Game Title], Your response should maintain a natural, human-like tone. 
+Avoid using verbose words, flowery words, fluffy, words, exaggerated terms, unneccessary and/or superlative adjectives or qualifiers
+(e.g, comprehensive, robust, extensive)..  
 
 **Rules and Variants:**  
 - Focus on explaining base game rules in a simple and clear way.  
 - Mention variants or expansions only if the user specifically asks about them.  
-- You may use bullet points if they help clarify or organize the response, but avoid headings.
-- use consice answer short and to the point. 
+ 
 
 **Answering Questions:**  
-- Respond conversationally, as if you are a human expert. 
-- Base all answers strictly on the context provided by the backend. If you cannot answer the question using the context, respond with: "I cannot help you with that question."  
-- Avoid giving opinions about the rules, such as whether they are good, harsh, or horrible.
-- use quotes from the cotext if possible
+
+- Base all answers strictly on the [Context] provided, ensure the narrative remains precise and factual.  
+- use quotes from the [context].
+- Adhere strictly to the provided guidelines and [Context], avoiding biases or sterotypes.
 
 
 **Handling Insufficient Context:**  
-- If there isn’t enough information about the game in the context provided, let the user know and ask for more details.
+- If the answer is not found in the provided context, explicitly state that rather than speculating. If a rule is unclear or missing,
+you may reference general board game principles while making it clear that this is not an official rule.
 
 **Style:**  
 - Use informal language that feels natural and conversational.  
@@ -66,32 +68,24 @@ _User: "Are there any variants for this game?"_
 
 ---
 
-**Board game title:** ${boardgame_title}  
+**Game Title:** ${boardgame_title}  
 **History:** ${messages}  
 **Question:** ${userQuestion}  
 **Context:** ${retrievals}`;
-  
-const prompt2 = `Your response should maintain a natural, human-like tone. 
-Avoid using verbose words, flowery words, fluffy, words, exaggerated terms, unneccessary and/or superlative adjectives or qualifiers
-(e.g, comprehensive, robust, extensive).
-Do not introduce any extraneous information or additional context beyond what was originally provided
- by the user [Question] and ensure the narrative remains precise and factual.
- Adhere strictly to the provided guidelines and [Context], avoiding biases or sterotypes.
- 
- Context:${retrievals}
- Question:${userQuestion}`
 
 
   const google = createGoogleGenerativeAI();
 
   try {
     const result = await streamText({
-      model: google("gemini-1.5-flash-8b"),
-      prompt:prompt2,
+      model: google("gemini-2.0-flash"),
+      prompt,
       temperature: 0,
       topK: 3,
       frequencyPenalty: 0,
-      presencePenalty:0
+      presencePenalty: 0,
+      maxRetries: 3,
+      maxTokens:256
     });
 
     return result.toDataStreamResponse();
@@ -105,10 +99,10 @@ export async function GET(req) {
   const url = new URL(req.url);
   const searchParams = new URLSearchParams(url.searchParams);
   const user_id = searchParams.get("user_id");
-  
+
   await connectToDB();
   const user = await User.findOne({ clerk_id: user_id });
-  if(!user) return NextResponse.json({message:"user not found"},{status:404})
+  if (!user) return NextResponse.json({ message: "user not found" }, { status: 404 });
   const chats = await Chat.find({ user_id: user?._id })
     .populate({ path: "boardgame_id", select: "title thumbnail is_expansion" })
     .sort({ updatedAt: -1 })
@@ -118,5 +112,3 @@ export async function GET(req) {
   });
   return NextResponse.json({ data: filteredChats, message: "success" }, { status: 200 });
 }
-
-
