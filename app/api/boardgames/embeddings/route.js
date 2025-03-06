@@ -22,7 +22,7 @@ export async function POST(req) {
       { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
       { new: true } // Return the updated document
     );
-    
+
     if (!doc) return NextResponse.json({ data: "Boardgame not found" }, { status: 500 });
     for (const chunk in fileText) {
       fileText[chunk].metadata.bg_id = boardgame._id.toString();
@@ -32,10 +32,9 @@ export async function POST(req) {
       fileText[chunk].metadata.bg_title = boardgame.title.toLowerCase();
       fileText[chunk].metadata.bg_refrence_url = blob.path;
     }
-    const embeddings = new OpenAIEmbeddings({
-      model: "text-embedding-3-small",
-    });
-   
+    const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small" });
+    // const embeddings = new OpenAIEmbeddings({model: "text-embedding-3-large"});
+
     const pinecone = new PineconeClient();
     const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
     const vectorStore = new PineconeStore(embeddings, {
@@ -43,7 +42,10 @@ export async function POST(req) {
       maxConcurrency: 5,
     });
     await vectorStore.addDocuments(fileText);
-    return NextResponse.json({ data:doc, message: `${boardgame.title} Data Embedded` }, { status: 200 });
+    return NextResponse.json(
+      { data: doc, message: `${boardgame.title} Data Embedded` },
+      { status: 200 }
+    );
   } catch (err) {
     console.log(err);
     return NextResponse.json({ message: "Failed to Embed data" }, { status: 500 });

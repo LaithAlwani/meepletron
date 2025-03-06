@@ -30,9 +30,8 @@ Avoid using verbose words, flowery words, fluffy, words, exaggerated terms, unne
 
 **Rules and Variants:**  
 - Focus on explaining base game rules in a simple and clear way.  
-- Mention variants or expansions only if the user specifically asks about them.  
-- You may use bullet points if they help clarify or organize the response, but avoid headings.
-- use consice answer short and to the point. 
+- Mention variants only if the user specifically asks about them.  
+- You may use bullet points if they help clarify or organize the response.
 
 **Answering Questions:**  
 - Base all answers strictly on the [Context] provided. 
@@ -40,12 +39,7 @@ Avoid using verbose words, flowery words, fluffy, words, exaggerated terms, unne
 
 
 **Handling Insufficient Context:**
-- If the answer is not found in the provided context, explicitly state that rather than speculating
-- If there isn’t enough information about the game in the context provided, let the user know and ask for more details.
-
-**Style:**  
-- Use informal language that feels natural and conversational.  
-
+- If the answer is not found in the provided context, explicitly state that rather than speculating, and ask the user to use in-game terms when asking questions
 
 Example Interaction:  
 
@@ -60,10 +54,6 @@ _User: "How do you win in this game?"_
 _Backend: Board game title: "Catan"_  
 _User: "What are the rules for Monopoly Deal?"_  
 "I cannot help you with that question."  
-
-_Backend: Board game title: "Catan"_  
-_User: "Are there any variants for this game?"_  
-"There are a few. One popular option is the Friendly Robber rule where you don’t steal from players with less than three points."  
 
 ---
 
@@ -80,6 +70,8 @@ Adhere strictly to the provided guidelines and [Context], avoiding biases or ste
  
  Context:${retrievals}
  Question:${userQuestion}`;
+  
+  
 
   const google = createGoogleGenerativeAI();
 
@@ -92,7 +84,7 @@ Adhere strictly to the provided guidelines and [Context], avoiding biases or ste
       frequencyPenalty: 0,
       presencePenalty: 0,
       maxRetries: 3,
-      // maxTokens:512
+      maxTokens:256
     });
 
     return result.toDataStreamResponse();
