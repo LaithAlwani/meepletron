@@ -32,8 +32,8 @@ export async function POST(req) {
       fileText[chunk].metadata.bg_title = boardgame.title.toLowerCase();
       fileText[chunk].metadata.bg_refrence_url = blob.path;
     }
-    const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small" });
-    // const embeddings = new OpenAIEmbeddings({model: "text-embedding-3-large"});
+    // const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small" });
+    const embeddings = new OpenAIEmbeddings({model: "text-embedding-3-large"});
 
     const pinecone = new PineconeClient();
     const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
