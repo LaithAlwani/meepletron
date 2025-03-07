@@ -68,7 +68,7 @@ export default function BoardgameEditPage() {
   };
 
   const deleteBoardgame = async (boardgame) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const res = await fetch("/api/boardgames/delete", {
         method: "POST",
@@ -167,7 +167,10 @@ export default function BoardgameEditPage() {
                       key={url?.path}
                       className="flex items-center justify-between p-4 border-b border-gray-400 dark:border-yellow-500">
                       {filename}
-                      <Button styles="w-auto" disabled={url.isTextExtracted} onClick={() => setFile(url)}>
+                      <Button
+                        styles="w-auto"
+                        disabled={url.isTextExtracted}
+                        onClick={() => setFile(url)}>
                         {!url.isTextExtracted ? <MdUnarchive /> : <MdOutlineDoneAll />}
                       </Button>
                     </li>
@@ -230,7 +233,6 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
     const formData = new FormData();
     formData.append("filename", file.name);
     formData.append("filetype", file.type);
-    formData.append("title", boardgame.title);
     formData.append("id", boardgame._id);
 
     try {
@@ -272,6 +274,7 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
       if (resUpdate.ok) {
         const { data, message } = await resUpdate.json();
         toast.custom((t) => <CustomToast message={message} id={t.id} />);
+        setFile(null);
         setBoardgame(data);
       }
     } catch (err) {
@@ -294,15 +297,15 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
             onClick={() => inputFileRef.current.click()}
             className="flex flex-col justify-center items-center w-32 h-32 rounded-md opacity-75 mx-auto mb-4 bg-slate-400">
             <p className="text-lg font-semibold">Choose File</p>
-            <Input
-              name="file"
-              ref={inputFileRef}
-              onChange={(e) => setFile(e.target.files[0])}
-              type="file"
-              required
-              isHidden={true}
-            />
           </div>
+          <Input
+            name="file"
+            ref={inputFileRef}
+            onChange={(e) => setFile(e.target.files[0])}
+            type="file"
+            required
+            isHidden={true}
+          />
           <p>{file?.name}</p>
           {file && (
             <Button type="submit">

@@ -15,15 +15,13 @@ export async function POST(req) {
   const data = await req.formData();
   const filename = data.get("filename");
   const filetype = data.get("filetype");
-  const title = data.get("title");
   const id = data.get("id");
 
-  if (!filename || !title || !id)
+  if (!filename || !id)
     return NextResponse.json({ message: "please attach file" }, { status: 500 });
-  const safeTitle = title.replace(/\s+/g, "-").toLowerCase();
 
-  const pathDev = `_temp_boardgames/${safeTitle}_${id}/${filename}`;
-  const pathProd = `${safeTitle}_${id}/${filename}`;
+  const pathDev = `_temp_boardgames/resources/${filename}`;
+  const pathProd = `resources/${filename}`;
 
   const uploadCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
