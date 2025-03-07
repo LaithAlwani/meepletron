@@ -4,6 +4,7 @@ const MessageSchema = new Schema(
   {
     _id: String,
     chat_id: { type: Schema.Types.ObjectId, ref: "Chat", required: true },
+    parent_id: { type: Schema.Types.ObjectId, ref: "Boardgame" },
     role: { type: String, enum: ["user", "assistant"], required: true }, // "user" or "bot"
     content: { type: String, required: true }, // The actual message content
     rating: { type: String, default: "" },

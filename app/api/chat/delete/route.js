@@ -9,7 +9,8 @@ export async function POST(req) {
   try {
     await connectToDB();
 
-    await Message.deleteMany({ chat_id: chat_id });
+    await Message.deleteMany({ chat_id: chat_id});
+    await Message.deleteMany({ parent_id: boardgame_id});
     await Chat.findByIdAndDelete({ _id: chat_id });
     await Chat.deleteMany({ parent_id: boardgame_id });
 
