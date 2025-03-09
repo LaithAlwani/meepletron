@@ -27,7 +27,7 @@ export default function BetaAnnouncement() {
               {/* <WelcomeMessage /> */}
             </div>
           </div>
-          <h2 className="text-3xl font-bold">🚀 Meepletron is Now in BETA! 🎲</h2>
+          <h1 className="text-3xl font-bold">🚀 Meepletron AI Board Games Expert! 🎲</h1>
           <p className="text-lg text-slate-800 dark:text-gray-300">
             Meepletron is officially in{" "}
             <span className="text-blue-500 dark:text-yellow-400 font-semibold">BETA testing</span>,
