@@ -80,7 +80,7 @@ const Card = ({ type, price }) => {
           )} */}
         </ul>
       </div>
-      <CustomLink href="boardgames" className="w-full">Choose Plan</CustomLink>
+      <CustomLink href="sign-in" className="w-full">Get Started</CustomLink>
     </div>
   );
 };
