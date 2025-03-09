@@ -57,7 +57,16 @@ const Card = ({ type, price }) => {
 
         <ul className="my-4 space-y-2">
           <li className="flex items-center gap-2">
-            <FaCheck size={size} className={color} /> Access Game Library
+            <FaCheck size={size} className={color} /> Full Access to the Game Library
+          </li>
+          <li className="flex items-center gap-2">
+            <FaCheck size={size} className={color} /> Chat History
+          </li>
+          <li className="flex items-center gap-2">
+            <FaCheck size={size} className={color} /> Unlimited Questions
+          </li>
+          <li className="flex items-center gap-2">
+            <FaCheck size={size} className={color} /> Voice Input (coming soon)
           </li>
           {/* <li className="flex items-center gap-2">
             <FaCheck size={size} className={color} /> Chat history
