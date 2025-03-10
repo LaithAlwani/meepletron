@@ -269,7 +269,7 @@ const UploadFiles = ({ boardgame, setBoardgame }) => {
       const updateData = { $push: { urls: newUrl } };
       const resUpdate = await fetch("/api/boardgames/update", {
         method: "POST",
-        body: JSON.stringify({ boardgame_id: boardgame._id, updateData }),
+        body: JSON.stringify({ boardgame_id: boardgame._id, is_expansion:boardgame.is_expansion, updateData }),
       });
       if (resUpdate.ok) {
         const { data, message } = await resUpdate.json();

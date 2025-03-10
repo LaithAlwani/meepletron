@@ -4,16 +4,16 @@ import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
-  const { id } = await params;
+  const { exp_id } = await params;
   try {
     await connectToDB();
-    const boardgame = await Boardgame.findById({ _id: id }).populate("expansions").exec();
-    if (!boardgame) return NextResponse.json({ message: "board game not found" }, { status: 404 });
+    const expansion = await Expansion.findById({ _id: exp_id }).populate("parent_id").exec();
+    if (!expansion) return NextResponse.json({ message: "expansion not found" }, { status: 404 });
     //adds +1 to board game counter
-    // boardgame.counter += 1;
-    // await boardgame.save();
+    expansion.counter += 1;
+    await expansion.save();
 
-    return NextResponse.json({ data: boardgame }, { status: 200 });
+    return NextResponse.json(expansion, { status: 200 });
   } catch (err) {
     console.log(err);
     return NextResponse.json({ message: "Error in fetching boardgame" + err }, { status: 500 });

@@ -5,7 +5,7 @@ import { FaComments } from "react-icons/fa";
 import Loader from "./Loader";
 import { Input } from "./ui";
 
-const SearchBoardGame = ({ onBoardGameClick }) => {
+const SearchBoardGame = () => {
   const { query, setQuery, results, loading } = useSearch({ limit: 5 });
 
   return (
@@ -27,9 +27,10 @@ const SearchBoardGame = ({ onBoardGameClick }) => {
               key={boardgame._id}
               className="flex items-center justify-between gap-3 p-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer">
               <Link
-                href={`/boardgames/${boardgame._id}`}
-                className="flex items-center gap-3 w-full"
-                onClick={() => onBoardGameClick?.(boardgame)}>
+                href={`/boardgames/${boardgame.parent_id ? boardgame.parent_id : boardgame._id}${
+                  boardgame.parent_id ? `/expansions/${boardgame._id}` : ""
+                }`}
+                className="flex items-center gap-3 w-full">
                 <img
                   src={boardgame.thumbnail}
                   alt={boardgame.title}

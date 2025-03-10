@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
+import Expansion from "@/models/expansion";
 
 export async function POST(req) {
   const data = await req.json();
@@ -16,12 +17,20 @@ export async function POST(req) {
     if (!fileText.length) {
       return NextResponse.json({ data: "File has no text" }, { status: 500 });
     }
-
-    const doc = await Boardgame.findOneAndUpdate(
-      { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
-      { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
-      { new: true } // Return the updated document
-    );
+    let doc;
+    if (!boardgame.is_expansion) {
+      doc = await Boardgame.findOneAndUpdate(
+        { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
+        { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
+        { new: true } // Return the updated document
+      );
+    } else {
+      doc = await Expansion.findOneAndUpdate(
+        { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
+        { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
+        { new: true } // Return the updated document
+      );
+    }
 
     if (!doc) return NextResponse.json({ data: "Boardgame not found" }, { status: 500 });
     for (const chunk in fileText) {
@@ -33,7 +42,7 @@ export async function POST(req) {
       fileText[chunk].metadata.bg_refrence_url = blob.path;
     }
     // const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small" });
-    const embeddings = new OpenAIEmbeddings({model: "text-embedding-3-large"});
+    const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-large" });
 
     const pinecone = new PineconeClient();
     const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);

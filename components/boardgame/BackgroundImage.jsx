@@ -16,8 +16,7 @@ export default function BackgroundImage({ image, title }) {
           alt={`${title} board game`}
           title={`${title} board game`}
           quality={10}
-          style={{ objectFit: "cover" }}
-          objectPosition="top"
+          style={{ objectFit: "cover", objectPosition:"top" }}
           fill
           priority
         />

@@ -47,9 +47,8 @@ export default function ChatPage() {
       const res = await fetch(`/api/boardgames/${params.id}`);
       if (res.ok) {
         const { data } = await res.json();
-        setBoardgame(data.boardgame);
-        setExpansions(data.expansions);
-        setCurrentGame(data.boardgame);
+        setBoardgame(data);
+        setCurrentGame(data);
       }
     } catch (err) {
       console.log(err);
@@ -146,18 +145,17 @@ export default function ChatPage() {
         <span onClick={router.back} className="text-lg cursor-pointer">
           <IoArrowBack />
         </span>
-        {currentGame && (
-          <Link href={`/boardgames/${currentGame._id}`} className="flex items-center gap-2">
-            <img
-              src={currentGame?.thumbnail}
-              alt={currentGame?.title}
-              className="h-10 rounded-md"
-            />
-            <h2 className="font-semibold">{currentGame?.title}</h2>
-          </Link>
-        )}
 
-        {expansions.length > 0 && (
+        <Link
+          href={`/boardgames/${currentGame.parent_id ? currentGame.parent_id : currentGame?._id}${
+            currentGame.parent_id ? `/expansions/${currentGame._id}` : ""
+          }`}
+          className="flex items-center gap-2">
+          <img src={currentGame?.thumbnail} alt={currentGame?.title} className="h-10 rounded-md" />
+          <h2 className="font-semibold">{currentGame?.title}</h2>
+        </Link>
+
+        {boardgame.expansions.length > 0 && (
           <span
             onClick={() => setSideNavOpen(!sideNavOpen)}
             className="cursor-pointer text-xl ml-auto">
@@ -184,7 +182,7 @@ export default function ChatPage() {
             setSideNavOpen={setSideNavOpen}
           />
 
-          {expansions.map((exp) => (
+          {boardgame.expansions.map((exp) => (
             <ListItem
               key={exp._id}
               game={exp}

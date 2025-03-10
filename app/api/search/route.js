@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
+import Expansion from "@/models/expansion";
 
 export async function GET(req) {
   try {
@@ -36,7 +37,13 @@ export async function GET(req) {
 
     boardgames = await Boardgame.find(
       { $and: regexConditions }, // Ensures all words appear somewhere in the title
-      { title: 1, thumbnail: 1, urls: 1, isExpansion: 1, parent_id: 1 }
+      { title: 1, thumbnail: 1, urls: 1, is_expansion: 1, parent_id: 1 }
+    )
+      .limit(limit)
+      .lean();
+    const expansions = await Expansion.find(
+      { $and: regexConditions }, // Ensures all words appear somewhere in the title
+      { title: 1, thumbnail: 1, urls: 1, is_expansion: 1, parent_id: 1 }
     )
       .limit(limit)
       .lean();
@@ -75,6 +82,7 @@ export async function GET(req) {
       }
       boardgames = await dbQuery.exec(); // Use `.exec()` for consistency
     }
+    boardgames.push(...expansions)
 
     return NextResponse.json({ data: boardgames }, { status: 200 });
   } catch (error) {

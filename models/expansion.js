@@ -1,6 +1,6 @@
 import { model, models, Schema } from "mongoose";
 
-const boardgameSchema = new Schema(
+const expansionSchema = new Schema(
   {
     title: {
       type: String,
@@ -23,29 +23,29 @@ const boardgameSchema = new Schema(
       type: Number,
       required: true,
     },
-    min_age: {
-      type: String,
-      required: true,
-    },
     play_time: {
       type: Number,
       required: true,
     },
+    min_age: String,
     is_expansion: Boolean,
-    expansions:[{type: Schema.Types.ObjectId, ref: "Expansion"}],
     description: String,
-    bgg_id: String,
+    bgg_id: {
+      type: String,
+      required: true,
+    },
     designers: [],
     artists: [],
     publishers: [],
     categories: [],
     game_mechanics: [],
     urls: [],
+    parent_id: { type: Schema.Types.ObjectId, ref: "Boardgame" },
     counter: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
 
-const Boardgame = models.Boardgame || model("Boardgame", boardgameSchema);
+const Expansion = models.Expansion || model("Expansion", expansionSchema);
 
-export default Boardgame;
+export default Expansion;
