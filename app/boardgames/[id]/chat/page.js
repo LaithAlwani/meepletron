@@ -152,7 +152,7 @@ export default function ChatPage() {
           }`}
           className="flex items-center gap-2">
           <img src={currentGame?.thumbnail} alt={currentGame?.title} className="h-10 rounded-md" />
-          <h2 className="font-semibold">{currentGame?.title}</h2>
+          <h2 className="capitalize font-semibold">{currentGame?.title}</h2>
         </Link>
 
         {boardgame.expansions.length > 0 && (
