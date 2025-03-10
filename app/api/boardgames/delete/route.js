@@ -4,6 +4,7 @@ import connectToDB from "@/utils/database";
 import { DeleteObjectsCommand, S3Client } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import Expansion from "@/models/expansion";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -26,9 +27,12 @@ export async function POST(req) {
   }
 
   const { boardgame } = await req.json();
+
   //check if boardgame exits.
-  if (!boardgame) return NextResponse.json({ message: `Please provide a boardgame` }, { status: 404 });
-  if(!boardgame.urls.length) return NextResponse.json({ message: `No files to delete` }, { status: 404 })
+  if (!boardgame)
+    return NextResponse.json({ message: `Please provide a boardgame` }, { status: 404 });
+  if (!boardgame.urls.length)
+    return NextResponse.json({ message: `No files to delete` }, { status: 404 });
   try {
     //delet docs from pincone
     await deletePinconeDocs(boardgame._id);
@@ -36,12 +40,14 @@ export async function POST(req) {
     await deleteFiles(boardgame);
 
     await connectToDB();
-    const doc = await Boardgame.findByIdAndUpdate(
-      { _id: boardgame._id },
-      { urls: [] },
-      { new: true }
-    );
-    if (!doc) return NextResponse.json({ data: `The Board Game does not exist` }, { status: 404 });
+    let doc;
+    if (boardgame.parent_id) {
+      doc = await Expansion.findByIdAndUpdate({ _id: boardgame._id }, { urls: [] }, { new: true });
+    } else {
+      doc = await Boardgame.findByIdAndUpdate({ _id: boardgame._id }, { urls: [] }, { new: true });
+    }
+    if (!doc)
+      return NextResponse.json({ message: `The Board Game does not exist` }, { status: 404 });
     return NextResponse.json(
       { data: doc, message: `${doc.title} delete successfully` },
       { status: 201 }
@@ -53,10 +59,6 @@ export async function POST(req) {
 
 const deleteFiles = async (boardgame) => {
   const filePathinS3 = [];
-  // filePathinS3.push(boardgame?.image?.split("amazonaws.com/").pop());
-  // filePathinS3.push(boardgame?.thumbnail?.split("amazonaws.com/").pop());
-  // if (boardgame.wallpaper) filePathinS3.push(boardgame?.wallpaper?.split("amazonaws.com/").pop());
-
   boardgame.urls.forEach(({ path }) => {
     filePathinS3.push(path.split("amazonaws.com/").pop());
   });
