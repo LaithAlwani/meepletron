@@ -17,22 +17,8 @@ export async function POST(req) {
     if (!fileText.length) {
       return NextResponse.json({ data: "File has no text" }, { status: 500 });
     }
-    let doc;
-    if (!boardgame.is_expansion) {
-      doc = await Boardgame.findOneAndUpdate(
-        { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
-        { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
-        { new: true } // Return the updated document
-      );
-    } else {
-      doc = await Expansion.findOneAndUpdate(
-        { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
-        { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
-        { new: true } // Return the updated document
-      );
-    }
-
-    if (!doc) return NextResponse.json({ data: "Boardgame not found" }, { status: 500 });
+    
+    
     for (const chunk in fileText) {
       fileText[chunk].metadata.bg_id = boardgame._id.toString();
       fileText[chunk].metadata.parent_id = boardgame.is_expansion
@@ -51,6 +37,22 @@ export async function POST(req) {
       maxConcurrency: 5,
     });
     await vectorStore.addDocuments(fileText);
+    let doc;
+    if (!boardgame.is_expansion) {
+      doc = await Boardgame.findOneAndUpdate(
+        { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
+        { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
+        { new: true } // Return the updated document
+      );
+    } else {
+      doc = await Expansion.findOneAndUpdate(
+        { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
+        { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
+        { new: true } // Return the updated document
+      );
+    }
+
+    if (!doc) return NextResponse.json({ data: "Boardgame not found" }, { status: 500 });
     return NextResponse.json(
       { data: doc, message: `${boardgame.title} Data Embedded` },
       { status: 200 }

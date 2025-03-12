@@ -95,7 +95,7 @@ const deletePinconeDocs = async (id) => {
   const pineconeIndex = pinecone.index(process.env.PINECONE_INDEX_NAME);
   try {
     const results = await pineconeIndex.query({
-      vector: Array(1536).fill(0), // Dummy vector (not used because we filter)
+      vector: Array(3072).fill(0), // Dummy vector (not used because we filter)
       topK: 1000, // Retrieve as many matches as possible
       includeMetadata: true,
       filter: { bg_id: id }, // Filter by bg_id
