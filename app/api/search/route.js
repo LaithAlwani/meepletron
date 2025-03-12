@@ -3,6 +3,8 @@ import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
 import Expansion from "@/models/expansion";
 
+
+
 export async function GET(req) {
   try {
     const url = new URL(req.url);
@@ -34,6 +36,7 @@ export async function GET(req) {
       title: { $regex: word, $options: "i" }, // Case-insensitive search
     }));
     let boardgames;
+    let expansions;
 
     boardgames = await Boardgame.find(
       { $and: regexConditions }, // Ensures all words appear somewhere in the title
@@ -41,15 +44,14 @@ export async function GET(req) {
     )
       .limit(limit)
       .lean();
-    const expansions = await Expansion.find(
+    expansions = await Expansion.find(
       { $and: regexConditions }, // Ensures all words appear somewhere in the title
       { title: 1, thumbnail: 1, urls: 1, is_expansion: 1, parent_id: 1 }
     )
       .limit(limit)
       .lean();
-
-    if (boardgames.length === 0) {
-      let dbQuery = Boardgame.aggregate([
+    
+      const options = [
         {
           $search: {
             index: "title_designer", // Your Atlas Search index name
@@ -76,15 +78,29 @@ export async function GET(req) {
           }
         },
         { $sort: { score: -1 } }
-      ]);
-      if (!isNaN(limit) && limit > 0) {
-        dbQuery = dbQuery.limit(limit);
-      }
-      boardgames = await dbQuery.exec(); // Use `.exec()` for consistency
-    }
+      ]
+      
+
+    // if (boardgames.length === 0) {
+    //   options[0]['$search'].index="title_designer"
+    //   console.log(options[0]['$search'].index)
+    //   let dbQuery = Boardgame.aggregate(options);
+    //   if (!isNaN(limit) && limit > 0) {
+    //     dbQuery = dbQuery.limit(limit);
+    //   }
+    //   boardgames = await dbQuery.exec(); // Use `.exec()` for consistency
+    // }
+    // if (expansions.length === 0) {
+    //   options[0]['$search'].index="expansion-search"
+    //   let dbQuery = Expansion.aggregate(options);
+    //   if (!isNaN(limit) && limit > 0) {
+    //     dbQuery = dbQuery.limit(limit);
+    //   }
+    //   expansions = await dbQuery.exec(); // Use `.exec()` for consistency
+    // }
     boardgames.push(...expansions)
 
-    return NextResponse.json({ data: boardgames }, { status: 200 });
+    return NextResponse.json(boardgames, { status: 200 });
   } catch (error) {
     console.error("Error fetching board games:", error);
     return NextResponse.json(
@@ -93,3 +109,5 @@ export async function GET(req) {
     );
   }
 }
+
+

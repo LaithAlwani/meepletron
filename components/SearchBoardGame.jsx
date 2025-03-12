@@ -19,7 +19,10 @@ const SearchBoardGame = () => {
       <div className="absolute w-full bg-white  dark:bg-slate-600 border border-gray-300 dark:border-slate-800 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto z-10">
         {loading && <Loader width={"3rem"} />}
         {!loading && results?.length === 0 && query.trim() && (
-          <p className="p-3">No results found.</p>
+          <div className="p-3">
+            <h3 className="font-semibold">No results found.</h3>
+            <p>Reqest a Board Game using our <a className="underline" href={"/#contact"}>Contact Form</a></p>
+          </div>
         )}
         {results?.length > 0 &&
           results.map((boardgame) => (

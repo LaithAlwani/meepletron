@@ -41,6 +41,7 @@ export default function Navbar() {
               priority
               alt="robot logo"
               quality={25}
+              sizes="32px"
             />
           </div>
           <span className="text-xl font-bold">Meepletron</span>

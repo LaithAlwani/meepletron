@@ -8,16 +8,18 @@ export default function BoardgameContainer({ boardgame }) {
   const { _id, image, title, parent_id } = boardgame;
   return (
     <div className="relative">
-      <Link href={`/boardgames/${_id}`} className="block w-[11rem] h-[11rem] bg-white dark:bg-slate-800" aria-label={`${boardgame.title}`}>
-        <Image
-          src={image}
-          alt={`${title} board game`}
-          title={`${title} board game`}
-          className="w-full h-full rounded-md object-cover object-top"
-          fill
-          sizes={"25vw"}
-          quality={10}
-        />
+      <Link href={`/boardgames/${_id}`} className="block" aria-label={`${boardgame.title}`}>
+        <div className="relative w-[11rem] h-[11rem] bg-white dark:bg-slate-800">
+          <Image
+            src={image}
+            alt={`${title} board game`}
+            title={`${title} board game`}
+            className="w-full h-full rounded-md object-cover object-top"
+            fill
+            sizes={"25vw"}
+            quality={10}
+          />
+        </div>
       </Link>
       {/* <span className="absolute bottom-1 left-1">
         <FavoriteButton />

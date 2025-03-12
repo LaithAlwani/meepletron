@@ -51,6 +51,7 @@ export default async function BoardgamePage({ params }) {
             title={`${boardgame?.title} board game`}
             className="w-full h-full rounded-md object-contain object-center"
             fill
+            sizes="256px"
             quality={75}
             priority
           />
@@ -114,6 +115,8 @@ export default async function BoardgamePage({ params }) {
                     src={exp.thumbnail}
                     alt={exp.title}
                     fill
+                    quality={25}
+                    sizes="64px"
                     className="rounded object-contain"
                   />
                 </div>

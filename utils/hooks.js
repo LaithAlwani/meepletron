@@ -26,8 +26,8 @@ export const useSearch = ({ debounceDelay: debounceDelay = 300, limit }) => {
       setLoading(true);
       try {
         const response = await fetch(`/api/search?query=${debouncedQuery}&limit=${limit}`);
-        const { data } = await response.json();
-        setResults(data);
+        const boardgames = await response.json();
+        setResults(boardgames);
       } catch (error) {
         console.error("Error fetching search results:", error);
       } finally {
