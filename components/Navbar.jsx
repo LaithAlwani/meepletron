@@ -1,7 +1,7 @@
 "use client";
 import { Children, useState } from "react";
 import Link from "next/link";
-import { FaUserLock } from "react-icons/fa";
+import { FaUserLock, FaSearch } from "react-icons/fa";
 import { MdLogin } from "react-icons/md";
 import Image from "next/image";
 import ThemeSwitch from "./ThemeSwitch";
@@ -10,6 +10,8 @@ import { usePathname } from "next/navigation";
 import { ImBubbles } from "react-icons/im";
 import { GiOpenBook } from "react-icons/gi";
 import { FiMenu, FiX } from "react-icons/fi";
+import { Input } from "./ui";
+import SearchBoardGame from "./SearchBoardGame";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -48,49 +50,52 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex justify-center items-center gap-3">
-          <Link href="/chats" aria-label="chats" className="flex flex-col  items-center gap-1">
-            <ImBubbles size={24} /> <span className="text-sm">Chats</span>
-          </Link>
-          <Link
-            href="/boardgames"
-            aria-label="board games"
-            className="flex flex-col items-center gap-1">
-            <GiOpenBook size={24} /> <span className="text-sm">Board Games</span>
-          </Link>
-          <span className="flex flex-col items-center gap-1" >
-            <ThemeSwitch  />
-          </span>
-          {user?.publicMetadata.role === "admin" && (
-            <Link
-              href="/admin/boardgames"
-              aria-label="admin"
-              className="flex flex-col  items-center gap-1">
-              <FaUserLock size={24} /> <span className="text-sm">Admin</span>
+        <div className="flex gap-2">
+          <SearchBar />
+          <div className="hidden md:flex justify-center items-center gap-3">
+            <Link href="/chats" aria-label="chats" className="flex flex-col  items-center gap-1">
+              <ImBubbles size={24} /> <span className="text-sm">Chats</span>
             </Link>
-          )}
-          <span className="flex flex-col items-center ">
-            <SignedIn>
-              <UserButton aria-label="user settings" /> <span className="text-sm">Settings</span>
-            </SignedIn>
-            <SignedOut>
+            <Link
+              href="/boardgames"
+              aria-label="board games"
+              className="flex flex-col items-center gap-1">
+              <GiOpenBook size={24} /> <span className="text-sm">Board Games</span>
+            </Link>
+            <span className="flex flex-col items-center gap-1">
+              <ThemeSwitch />
+            </span>
+            {user?.publicMetadata.role === "admin" && (
               <Link
-                href="/sign-in"
-                aria-label="sign-in"
+                href="/admin/boardgames"
+                aria-label="admin"
                 className="flex flex-col  items-center gap-1">
-                <MdLogin size={24} /> <span className="text-sm">Sign In</span>
+                <FaUserLock size={24} /> <span className="text-sm">Admin</span>
               </Link>
-            </SignedOut>
-          </span>
-        </div>
-
-        {/* Mobile Menu Button */}
+            )}
+            <span className="flex flex-col items-center ">
+              <SignedIn>
+                <UserButton aria-label="user settings" /> <span className="text-sm">Settings</span>
+              </SignedIn>
+              <SignedOut>
+                <Link
+                  href="/sign-in"
+                  aria-label="sign-in"
+                  className="flex flex-col  items-center gap-1">
+                  <MdLogin size={24} /> <span className="text-sm">Sign In</span>
+                </Link>
+              </SignedOut>
+            </span>
+          </div>
         <button
           className="md:hidden p-2 z-20"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="menu toggle">
           {isOpen ? <FiX size={30} /> : <FiMenu size={30} />}
         </button>
+        </div>
+
+        {/* Mobile Menu Button */}
       </div>
 
       {/* Mobile Sidebar */}
@@ -112,7 +117,7 @@ export default function Navbar() {
             onClick={() => setIsOpen(false)}>
             <GiOpenBook size={24} /> <span className="text-sm">Board Games</span>
           </Link>
-          <span className="flex items-center gap-2" onClick={()=>setIsOpen(false)}>
+          <span className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
             <ThemeSwitch />
           </span>
           {user?.publicMetadata.role === "admin" && (
@@ -153,5 +158,30 @@ const NavLink = ({ children, href, label }) => {
       onClick={() => setIsOpen(false)}>
       {children}
     </Link>
+  );
+};
+
+const SearchBar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const toggleSearch = () => setIsOpen(!isOpen);
+
+  return (
+    <>
+      <button
+        onClick={toggleSearch}
+        aria-label="toggle search"
+        className="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100 transition-colors">
+        <FaSearch size={24} />
+      </button>
+
+      <div
+        className={`absolute top-[4rem] left-0 w-full   dark:bg-gray-800 transition-transform duration-300 ease-in-out ${
+          isOpen ? "scale-y-100" : "scale-y-0"
+        } transform origin-top`}>
+        <SearchBoardGame />
+      </div>
+    </>
   );
 };
