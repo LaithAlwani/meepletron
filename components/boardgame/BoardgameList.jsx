@@ -19,7 +19,7 @@ const BoardgameSkeleton = () => {
 };
 
 export default function BoardgameList() {
-  const { isLoading, boardgames, error } = useGetBoardgames({limit:20});
+  const { isLoading, boardgames, error } = useGetBoardgames({limit:50});
 
   if (error) toast.error(error);
 

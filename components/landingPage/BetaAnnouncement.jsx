@@ -3,8 +3,10 @@ import { Button } from "@/components/ui";
 import Image from "next/image";
 import { motion } from "motion/react";
 import CustomLink from "../CustomeLink";
+import { useUser } from "@clerk/nextjs";
 
 export default function BetaAnnouncement() {
+  const { user } = useUser();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -39,7 +41,13 @@ export default function BetaAnnouncement() {
             </h3>
             <ul className="list-disc list-inside text-slate-800 dark:text-gray-300 space-y-2">
               <li>Ask questions about board game rules.</li>
-              <li>Request new Board Games using our <a href="#contact" className="underline font-semibold">Contact form</a>.</li>
+              <li>
+                Request new Board Games using our{" "}
+                <a href="#contact" className="underline font-semibold">
+                  Contact form
+                </a>
+                .
+              </li>
               <li>
                 <span className="font-semibold text-black dark:text-white">
                   No account is required during Beta
@@ -61,7 +69,11 @@ export default function BetaAnnouncement() {
               Log in to save and revisit your past chats anytime.
             </p>
           </div>
-          <CustomLink href={"/boardgames"}>Try Meepletron Now</CustomLink>
+          {user ? (
+            <CustomLink href={"/boardgames"}>Try Meepletron Now!</CustomLink>
+          ) : (
+            <CustomLink href={"/sign-in"}>Create a Free Account!</CustomLink>
+          )}
         </div>
       </div>
     </motion.div>
