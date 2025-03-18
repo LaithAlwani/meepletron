@@ -1,6 +1,5 @@
 'use client'
 import { motion } from "motion/react";
-import Image from "next/image";
 
 export default function BackgroundImage({ image, title }) {
   
@@ -11,15 +10,11 @@ export default function BackgroundImage({ image, title }) {
         animate={{ scale: 1, opacity: 0.2 }}
         transition={{ duration: 0.4 }}
         className=" fixed top-0 left-0 w-full h-screen -z-10">
-        <Image
+        <img
           src={image}
           alt={`${title} board game`}
           title={`${title} board game`}
-          quality={10}
-          sizes={"50vw"}
-          style={{ objectFit: "cover", objectPosition:"top" }}
-          fill
-          priority
+          className="w-full h-full object-cover object-top"
         />
       </motion.div>
     )

@@ -1,17 +1,14 @@
 "use client";
-import { Children, useState } from "react";
+import {useState } from "react";
 import Link from "next/link";
-import { FaUserLock, FaSearch } from "react-icons/fa";
+import { FaUserLock } from "react-icons/fa";
 import { MdLogin } from "react-icons/md";
-import Image from "next/image";
 import ThemeSwitch from "./ThemeSwitch";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { ImBubbles } from "react-icons/im";
 import { GiOpenBook } from "react-icons/gi";
 import { FiMenu, FiX } from "react-icons/fi";
-import { Input } from "./ui";
-import SearchBoardGame from "./SearchBoardGame";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -36,14 +33,9 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1" aria-label="logo">
           <div className="relative w-[2rem] h-[2rem]">
-            <Image
+            <img
               src="/logo.webp"
-              style={{ objectFit: "contain" }}
-              fill
-              priority
-              alt="robot logo"
-              quality={25}
-              sizes="32px"
+              className="w-full h-full object-contain"
             />
           </div>
           <span className="text-xl font-bold">Meepletron</span>

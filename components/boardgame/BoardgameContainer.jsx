@@ -1,23 +1,18 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ImBubbles } from "react-icons/im";
-
 import FavoriteButton from "./FavoriteButton";
 
 export default function BoardgameContainer({ boardgame }) {
-  const { _id, image, title, parent_id } = boardgame;
+  const { _id,  thumbnail, title, parent_id } = boardgame;
   return (
     <div className="relative">
       <Link href={`/boardgames/${_id}`} className="block" aria-label={`${boardgame.title}`}>
         <div className="relative w-[11rem] h-[11rem] bg-white dark:bg-slate-800">
-          <Image
-            src={image}
+          <img
+            src={thumbnail}
             alt={`${title} board game`}
             title={`${title} board game`}
             className="w-full h-full rounded-md object-cover object-top"
-            fill
-            sizes={"25vw"}
-            quality={10}
           />
         </div>
       </Link>

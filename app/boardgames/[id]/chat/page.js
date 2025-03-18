@@ -15,10 +15,8 @@ import { Button, Textarea } from "@/components/ui";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
 import { useUser } from "@clerk/nextjs";
-import Image from "next/image";
 import { LuCheck, LuCheckCheck } from "react-icons/lu";
 import { MdOutlineClose } from "react-icons/md";
-import { Six_Caps } from "next/font/google";
 import { generateId } from "ai";
 import { useRouter } from "next/navigation";
 
@@ -28,7 +26,6 @@ export default function ChatPage() {
   const { user } = useUser();
   const [chat, setChat] = useState(null);
   const [boardgame, setBoardgame] = useState(null);
-  const [expansions, setExpansions] = useState([]);
   const [currentGame, setCurrentGame] = useState(null);
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -41,7 +38,6 @@ export default function ChatPage() {
 
   const getBoardgame = async () => {
     setBoardgame(null);
-    setExpansions([]);
     setCurrentGame(null);
     try {
       const res = await fetch(`/api/boardgames/${params.id}`);
@@ -204,13 +200,10 @@ export default function ChatPage() {
           {isLoading && (
             <span className="flex items-end gap-2">
               <span className="relative w-12 h-12">
-                <Image
+                <img
                   src="/logo.webp"
                   alt="logo"
-                  fill
-                  priority
-                  quality={50}
-                  style={{ objectFit: "contain" }}
+                  className="object-contain"
                 />
               </span>
               <TypingIndicator />

@@ -23,9 +23,6 @@ export default async function Home() {
       <BetaAnnouncement />
       <section className="max-w-5xl mx-auto my-8 px-4  animate-slidein">
         <Heading level={2}>Recently Added</Heading>
-        {/* <div className="relative max-w-5xl h-[176px] flex flex-nowrap justify-start overflow-x-scroll overflow-y-hidden  gap-3 my-6">
-          <BoardgameList />
-        </div> */}
         <BoardGameScroller />
       </section>
       <Features />

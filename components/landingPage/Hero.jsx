@@ -1,5 +1,4 @@
 import WelcomeMessage from "@/components/landingPage/WelcomeMessage";
-import Image from "next/image";
 import CustomLink from "@/components/CustomeLink";
 import { Heading } from "../ui";
 
@@ -7,8 +6,8 @@ export default function Hero() {
   return (
     <section className="text-center relative max-w-lg mx-auto px-3 pt-[6rem]">
       <div className="relative  max-w-[18rem]  h-[20rem] mx-auto left-5 my-12">
-        <Image src="/logo.webp" style={{objectFit: "contain"}} fill priority alt="robot logo" quality={75} sizes={"25vw"} />
-        {/* <WelcomeMessage /> */}
+        <img src="/logo.webp" className="w-full h-full object-contain"  alt="robot logo"  />
+        <WelcomeMessage />
       </div>
 
       <div>

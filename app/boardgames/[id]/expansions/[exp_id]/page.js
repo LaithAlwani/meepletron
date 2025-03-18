@@ -1,5 +1,4 @@
 import Loader from "@/components/Loader";
-import Image from "next/image";
 import Link from "next/link";
 import { MdGroups, MdOutlineAccessTimeFilled, MdMenuBook } from "react-icons/md";
 import { FaChild } from "react-icons/fa";
@@ -45,13 +44,11 @@ export default async function ExpansionPage({ params }) {
     <div className="max-w-xl mx-auto px-2 pt-[6rem]">
       <div className="flex flex-col justify-start gap-4 items-center">
         <div className="relative min-w-64 max-w-84 h-64">
-          <Image
+          <img
             src={expansion?.thumbnail}
             alt={`${expansion?.title} board game`}
             title={`${expansion?.title} board game`}
             className="w-full h-full rounded-md object-contain object-center"
-            fill
-            quality={100}
           />
         </div>
         <hgroup>
@@ -106,11 +103,10 @@ export default async function ExpansionPage({ params }) {
         href={`/boardgames/${expansion.parent_id._id}`}
         className="flex justify-start items-center gap-2">
         <div className="relative w-16 h-16 rounded">
-          <Image
+          <img
             src={expansion.parent_id.thumbnail}
             alt={expansion.parent_id.title}
-            fill
-            className="object-contain"
+            className="w-full h-full object-contain"
           />
         </div>
         <h3 className="capitalize font-semibold">

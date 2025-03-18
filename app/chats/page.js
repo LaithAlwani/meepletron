@@ -4,7 +4,6 @@ import CustomToast from "@/components/CustomeToast";
 import Loader from "@/components/Loader";
 import { Input } from "@/components/ui";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -90,11 +89,11 @@ export default function ChatsPage() {
                   href={`/boardgames/${boardgame_id._id}/chat`}
                   className="w-[80%] flex items-end gap-4">
                   <div className="relative flex-shrink-0 w-12 h-12 rounded">
-                    <Image
+                    <img
                       src={boardgame_id.thumbnail}
                       alt={boardgame_id.title}
                       fill
-                      className=" object-contain"
+                      className="w-full h-full object-contain"
                     />
                   </div>
                   <h3 className="capitalize font-semibold overflow-x-hidden text-ellipsis text-nowrap">

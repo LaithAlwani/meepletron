@@ -1,6 +1,4 @@
 "use client";
-import { Button } from "@/components/ui";
-import Image from "next/image";
 import { motion } from "motion/react";
 import CustomLink from "../CustomeLink";
 import { useUser } from "@clerk/nextjs";
@@ -12,19 +10,17 @@ export default function BetaAnnouncement() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="flex justify-center px-4 pt-[4rem] ">
+      className="flex justify-center px-4 pt-[6rem] ">
       <div className="max-w-2xl w-full p-6 ">
         <div className="space-y-6 text-center">
           <div className="flex justify-center text-4xl text-yellow-400">
             <div className="relative  w-[10rem] h-[10rem] mx-auto left-5 ">
-              <Image
+              <img
                 src="/logo.webp"
-                style={{ objectFit: "contain" }}
-                fill
-                priority
+                className="object-contain w-full h-full"
+                
                 alt="robot logo"
-                quality={75}
-                sizes={"25vw"}
+                
               />
               {/* <WelcomeMessage /> */}
             </div>
