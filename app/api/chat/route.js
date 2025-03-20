@@ -5,7 +5,7 @@ import Boardgame from "@/models/boardgame";
 import connectToDB from "@/utils/database";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
-import { streamText } from "ai";
+import { createDataStreamResponse, streamText } from "ai";
 import { NextResponse } from "next/server";
 
 // Allow streaming responses up to 30 seconds
@@ -24,7 +24,11 @@ export async function POST(req) {
     boardgame_id
   );
 
-  const prompt = `You are a board game expert AI. Your primary role is to explain and clarify board game rules in [Game Title], your response should maintain a natural, human-like tone. 
+  const formattedContext = retrievals
+    .map((item) => `${item.text} (Page ${item.pageNumber}) [Source](${item.source})`)
+    .join("\n\n");
+
+  const system = `You are a board game expert AI. Your primary role is to explain and clarify board game rules in [Game Title], your response should maintain a natural, human-like tone. 
 Avoid using verbose words, flowery words, fluffy, words, exaggerated terms, unneccessary and/or superlative adjectives or qualifiers
 (e.g, comprehensive, robust, extensive).  
 
@@ -36,7 +40,7 @@ Avoid using verbose words, flowery words, fluffy, words, exaggerated terms, unne
 **Answering Questions:**  
 - Base all answers strictly on the [Context] provided. 
 - ensure the use of quotes from the cotext
-- refrence the page Number at the end  in paranthsies (Page [Context])"
+- Reference the page number at the end of the answer formatted like this: "[Page X]" where "X" is the page number.
 
 
 **Handling Insufficient Context:**
@@ -60,35 +64,62 @@ _User: "What are the rules for Monopoly Deal?"_
 
 **Game Title:** ${boardgame_title}  
 **Question:** ${userQuestion}  
-**Context:** ${retrievals}`;
-
-  const prompt2 = `Your response should maintain a natural, human-like tone. 
-Avoid using verbose words, flowery words, fluffy, words, exaggerated terms, unneccessary and/or superlative adjectives or qualifiers
-(e.g, comprehensive, robust, extensive).
-Do not introduce any extraneous information or additional context beyond what was originally provided
-by the user [Question] and ensure the narrative remains precise and factual.
-Adhere strictly to the provided guidelines and [Context], avoiding biases or sterotypes.
- 
- Context:${retrievals}
- Question:${userQuestion}`;
-  
-  
+**Context:** ${formattedContext}`;
 
   const google = createGoogleGenerativeAI();
 
   try {
-    const result = await streamText({
-      model: google("gemini-2.0-flash"),
-      prompt: prompt,
-      temperature: 0,
-      topK: 3,
-      frequencyPenalty: 0,
-      presencePenalty: 0,
-      maxRetries: 3,
-      maxTokens:256
-    });
+    return createDataStreamResponse({
+      execute: async (dataStream) => {
+        dataStream.writeData("initialized call");
 
-    return result.toDataStreamResponse();
+        const result = streamText({
+          model: google("gemini-2.0-flash"),
+          system,
+          messages,
+          temperature: 0,
+          topK: 3,
+          frequencyPenalty: 0,
+          presencePenalty: 0,
+          maxRetries: 3,
+          onFinish() {
+            // message annotation:
+            dataStream.writeMessageAnnotation({
+              pageNumber: "nunmber",
+              url: "the url",
+            });
+
+            // call annotation:
+            dataStream.writeData("call completed");
+          },
+        });
+        result.mergeIntoDataStream(dataStream);
+      },
+      onError: (error) => {
+        return error instanceof Error ? error.message : String(error);
+      },
+    });
+    // const result = await streamText({
+    //   model: google("gemini-2.0-flash"),
+    //   prompt: prompt,
+    //   temperature: 0,
+    //   topK: 3,
+    //   frequencyPenalty: 0,
+    //   presencePenalty: 0,
+    //   maxRetries: 3,
+    //   maxTokens: 256,
+    //   // experimental_output: Output.object({
+    //   //   schema: z.array(
+    //   //     z.object({
+    //   //       pageNumber: z.number().describe("the page number"),
+    //   //       text: z.string().describe("a text chunk that answers the user input"),
+    //   //       source: z.string().describe("a url for the pdf file that the text was retrieved from"),
+    //   //     })
+    //   //   ),
+    //   // }),
+    // });
+
+    // return result.toDataStreamResponse();
   } catch (err) {
     console.log(err);
     return NextResponse.json({ message: "failed" }, { status: 500 });
