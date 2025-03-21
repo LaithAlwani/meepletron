@@ -6,7 +6,8 @@ const MessageSchema = new Schema(
     chat_id: { type: Schema.Types.ObjectId, ref: "Chat", required: true },
     parent_id: { type: Schema.Types.ObjectId, ref: "Boardgame" },
     role: { type: String, enum: ["user", "assistant"], required: true }, // "user" or "bot"
-    content: { type: String, required: true }, // The actual message content
+    content: { type: String, required: true },// The actual message content
+    annotations:[],
     rating: { type: String, default: "" },
   },
   { timestamps: true }

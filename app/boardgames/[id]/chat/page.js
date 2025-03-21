@@ -3,7 +3,7 @@ import { useChat } from "ai/react";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { FaPaperPlane, FaMicrophone } from "react-icons/fa";
+import { FaPaperPlane, FaMicrophone, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IoArrowBack } from "react-icons/io5";
 import { FaArrowDown } from "react-icons/fa";
@@ -15,8 +15,6 @@ import { Button, Textarea } from "@/components/ui";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
 import { useUser } from "@clerk/nextjs";
-import { LuCheck, LuCheckCheck } from "react-icons/lu";
-import { MdOutlineClose } from "react-icons/md";
 import { generateId } from "ai";
 import { useRouter } from "next/navigation";
 
@@ -33,7 +31,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef(null);
   const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
-    onFinish: (message) => saveMessage(message.id, message.role, message.content),
+    onFinish: (message) => saveMessage(message.id, message.role, message.content, message.annotations),
   });
 
   const getBoardgame = async () => {
@@ -81,13 +79,14 @@ export default function ChatPage() {
     }
   };
 
-  const saveMessage = async (id, role, content) => {
+  const saveMessage = async (id, role, content, annotations) => {
     if (!id || !role || !content || !chat?._id) return;
     const newMessage = {
       _id: id,
       chat_id: chat._id,
       role,
       content,
+      annotations,
       parent_id: currentGame.parent_id,
     };
     try {
@@ -200,11 +199,7 @@ export default function ChatPage() {
           {isLoading && (
             <span className="flex items-end gap-2">
               <span className="relative w-12 h-12">
-                <img
-                  src="/logo.webp"
-                  alt="logo"
-                  className="object-contain"
-                />
+                <img src="/logo.webp" alt="logo" className="object-contain" />
               </span>
               <TypingIndicator />
             </span>
@@ -283,7 +278,17 @@ const Message = ({ message, user }) => {
         }`}>
         <pre className="text-wrap font-serif">{content}</pre>
         {role === "assistant" && (
-          <RateMessage id={_id || id} exisitingRating={rating} user={user} />
+          <div className="flex justify-end items-end w-full pt-6">
+            {message.annotations && (
+              <a
+                href={message.annotations[0].url}
+                target="_blank"
+                className="mr-auto underline">
+                Source
+              </a>
+            )}
+            <RateMessage id={_id || id} exisitingRating={rating} user={user} />
+          </div>
         )}
       </div>
     </div>
@@ -291,7 +296,7 @@ const Message = ({ message, user }) => {
 };
 
 const RateMessage = ({ id, exisitingRating, user }) => {
-  const size = 22;
+  const size = 18;
   const [rating, setRating] = useState(exisitingRating || "");
 
   const rateMessage = async (rating) => {
@@ -309,26 +314,21 @@ const RateMessage = ({ id, exisitingRating, user }) => {
     toast.custom((t) => <CustomToast message={message} id={t.id} />, { duration: 250 });
   };
   return (
-    <>
-      <div className="flex justify-end gap-1 pt-6 ">
-        <MdOutlineClose
+    <div className="flex flex-col justify-center items-center">
+      <div className="flex justify-center gap-4 ">
+        <FaThumbsDown
           size={size}
-          className={`${rating === "wrong" ? "text-red-500" : ""}`}
+          className={`${rating === "wrong" ? "text-red-800" : ""} cursor-pointer`}
           onClick={() => rateMessage("wrong")}
         />
-        |
-        <LuCheck
+
+        <FaThumbsUp
           size={size}
-          className={`${rating === "partial" ? "text-green-500" : ""}`}
-          onClick={() => rateMessage("partial")}
-        />
-        |
-        <LuCheckCheck
-          size={size}
-          className={`${rating === "correct" ? "text-green-500" : ""}`}
+          className={`${rating === "correct" ? "text-green-800" : ""} cursor-pointer`}
           onClick={() => rateMessage("correct")}
         />
       </div>
-    </>
+      <span className="text-xs mt-2">Feedback</span>
+    </div>
   );
 };

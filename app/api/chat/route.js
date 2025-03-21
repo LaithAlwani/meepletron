@@ -85,8 +85,8 @@ _User: "What are the rules for Monopoly Deal?"_
           onFinish() {
             // message annotation:
             dataStream.writeMessageAnnotation({
-              pageNumber: "nunmber",
-              url: "the url",
+              pageNumber: retrievals[0].pageNumber,
+              url: `${retrievals[0].source}#page=${retrievals[0].pageNumber}`,
             });
 
             // call annotation:
