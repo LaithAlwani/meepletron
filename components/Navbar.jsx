@@ -1,5 +1,5 @@
 "use client";
-import {useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { FaUserLock } from "react-icons/fa";
 import { MdLogin } from "react-icons/md";
@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { ImBubbles } from "react-icons/im";
 import { GiOpenBook } from "react-icons/gi";
 import { FiMenu, FiX } from "react-icons/fi";
+import SearchBoardGame from "./SearchBoardGame";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -29,20 +30,18 @@ export default function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 w-full text-lg p-3 ${trasprent} ${hidden} shadow-sm z-50`}>
-      <div className="flex justify-between items-center max-w-2xl mx-auto">
+      <div className="flex justify-end items-center max-w-2xl mx-auto">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1" aria-label="logo">
+        <Link href="/" className=" flex items-center gap-1 mr-auto" aria-label="logo">
           <div className="relative w-[2rem] h-[2rem]">
-            <img
-              src="/logo.webp"
-              className="w-full h-full object-contain"
-            />
+            <img src="/logo.webp" className="w-full h-full object-contain" />
           </div>
-          <span className="text-xl font-bold">Meepletron</span>
+          <span className="text-xl font-bold ">Meepletron</span>
         </Link>
 
         {/* Desktop Navigation */}
-
+        {/* search button */}
+        <SearchBoardGame />
         <div className="hidden md:flex justify-center items-center gap-3">
           <Link href="/chats" aria-label="chats" className="flex flex-col  items-center gap-1">
             <ImBubbles size={24} /> <span className="text-sm">Chats</span>
