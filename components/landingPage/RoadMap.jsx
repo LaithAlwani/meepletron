@@ -1,19 +1,69 @@
-import connectToDB from "@/utils/database";
 import { Heading } from "../ui";
-import Roadmap from "@/models/roadmap";
-export const dynamic = 'force-dynamic'
 
-const RoadMap = async () => {
-  
-  await connectToDB()
-  const stops = await Roadmap.find({}).lean()
+const RoadMap = () => {
+  const stops = [
+    {
+      title: "Prototype",
+      description: "Creating the initial prototype to test key functionalities.",
+      date: "Oct 2024 • Dec 2024",
+      status: "complete", // Status: "complete", "ongoing", or "coming"
+    },
+    {
+      title: "Refining Text Extraction",
+      description:
+      "Improve the accuracy and relevancy of text extraction from PDF board game manuals for better search results.",
+      date: "Jan 2025 • April 2025",
+      status: "ongoing", // or "complete" or "ongoing"
+    },
+    {
+      title: "Refining AI Answers",
+      description: "Enhancing the precision and accuracy of AI responses.",
+      date: "Jan 2025 • Feb 2025",
+      status: "complete",
+    },
+    {
+      title: "Building Game Library",
+      description: "Extracting information from official board game manuals.",
+      date: "Feb • 2025",
+      status: "ongoing",
+    },
+    {
+      title: "Beta Testing",
+      description: "Testing the product with real users to gather feedback.",
+      date: "Mar 2025 • Jun 2025",
+      status: "ongoing",
+    },
+    {
+      title: "Progressive Web App (PWA)",
+      status: "coming", // or "complete" or "ongoing"
+      date: "April • 2025",
+      description: "Enhance the platform with PWA support, allowing users to install and access it like a native app with offline capabilities."
+    },
+    {
+      title: "User Features",
+      status: "coming", // or "complete" or "coming"
+      date: "Late Q2 • 2025",
+      description: "Introducing new user-focused features like personalized recommendations, saved game progress, and enhanced search tools."
+    },
+    {
+      title: "Launch",
+      description: "Official release of the product to the public.",
+      date: "Early Q3 • 2025",
+      status: "coming",
+    }
+  ];
 
-
-  const getStatusDot = (status) => ({
-    complete: "bg-green-500",
-    ongoing: "bg-yellow-500 animate-ping",
-    coming: "bg-red-500",
-  }[status] || "");
+  const getStatusDot = (status) => {
+    if (status === "complete") {
+      return "bg-green-500";
+    }
+    if (status === "ongoing") {
+      return "bg-yellow-500 animate-ping";
+    }
+    if (status === "coming") {
+      return "bg-red-500";
+    }
+  };
 
   return (
     <div className="flex flex-col items-center py-12">
@@ -51,5 +101,3 @@ const RoadMap = async () => {
 };
 
 export default RoadMap;
-
-
