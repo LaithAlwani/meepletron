@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState, useEffect } from "react";
 
 export const useSearch = ({ debounceDelay: debounceDelay = 300, limit }) => {
@@ -41,27 +41,37 @@ export const useSearch = ({ debounceDelay: debounceDelay = 300, limit }) => {
   return { query, setQuery, results, loading };
 };
 
-export const useGetBoardgames = ({limit}) => {
+export const useGetBoardgames = ({ limit }) => {
   const [boardgames, setBoardgames] = useState([]);
+  const [totalGames, setTotalGames] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const [error, setError] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false); // Track "Load More" loading
 
-  const getBoardgames = async () => {
-    setIsLoading(true);
+  const fetchBoardgames = async () => {
+    if (boardgames.length === 0) setIsLoading(true);
+    setIsLoadingMore(true);
+
     try {
-      const res = await fetch(`/api/boardgames?limit=${limit}`);
-      const { data, message } = await res.json();
+      const res = await fetch(`/api/boardgames?limit=${limit}&page=${page}`);
+      const { data } = await res.json();
       if (!res.ok) return setError(message);
-      setBoardgames(data);
+      setBoardgames((prev) => [...prev, ...data.boardgames]);
+      setPage((prev) => prev + 1);
+      setTotalGames(data.totalGames);
+      setHasMore(boardgames.length + data.boardgames.length < data.totalGames); // Check if more games exist
     } catch (err) {
       setError(err.message);
     } finally {
+      setIsLoadingMore(false);
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    getBoardgames();
+    fetchBoardgames();
   }, []);
-  return { isLoading, boardgames, error };
+  return { isLoading, isLoadingMore, boardgames, totalGames, fetchBoardgames, hasMore, error  };
 };
