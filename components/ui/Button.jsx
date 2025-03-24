@@ -9,7 +9,7 @@ export default function Button({
   isLoading = false,
   styles = "",
 }) {
-  const baseStyles = " px-4 py-2 shadow cursor-pointer font-bold transition transition-all";
+  const baseStyles = "px-4 py-2 shadow cursor-pointer font-bold transition transition-all";
   const variantStyles = {
     primary: `
         dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-900
