@@ -18,7 +18,6 @@ const SearchBoardGame = () => {
 
   useEffect(() => {
     function handleClickOutside(e) {
-      console.log(divRef.current && !divRef.current.contains(e.target));
       if (divRef.current && !divRef.current.contains(e.target)) {
         setIsSearchOpen(false);
       }
