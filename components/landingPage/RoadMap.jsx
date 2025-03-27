@@ -13,7 +13,7 @@ const RoadMap = () => {
       description:
       "Improve the accuracy and relevancy of text extraction from PDF board game manuals for better search results.",
       date: "Jan 2025 • April 2025",
-      status: "ongoing", // or "complete" or "ongoing"
+      status: "complete", // or "complete" or "ongoing"
     },
     {
       title: "Refining AI Answers",
@@ -43,11 +43,11 @@ const RoadMap = () => {
       title: "User Features",
       status: "coming", // or "complete" or "coming"
       date: "Late Q2 • 2025",
-      description: "Introducing new user-focused features like personalized recommendations, saved game progress, and enhanced search tools."
+      description: "Introducing new user-focused features like personalized recommendations, and enhanced search tools."
     },
     {
       title: "Launch",
-      description: "Official release of the product to the public.",
+      description: "Official product release to the public",
       date: "Early Q3 • 2025",
       status: "coming",
     }

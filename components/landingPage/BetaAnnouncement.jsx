@@ -15,23 +15,24 @@ export default function BetaAnnouncement() {
         <div className="space-y-6 text-center">
           <div className="flex justify-center text-4xl text-yellow-400">
             <div className="relative  w-[10rem] h-[10rem] mx-auto left-5 ">
-              <img
-                src="/logo.webp"
-                className="object-contain w-full h-full"
-                
-                alt="robot logo"
-                
-              />
+              <img src="/logo.webp" className="object-contain w-full h-full" alt="robot logo" />
               {/* <WelcomeMessage /> */}
             </div>
           </div>
-          <h1 className="text-3xl font-bold">🚀 Meepletron AI Board Games Expert! 🎲</h1>
+          <h1 className="text-3xl font-bold">Meepletron AI Board Games Expert!</h1>
           <p className="text-lg text-slate-800 dark:text-gray-300">
             Meepletron is officially in{" "}
-            <span className="text-blue-500 dark:text-yellow-400 font-semibold">BETA testing</span>,
+            <span className="text-blue-500 dark:text-yellow-400 font-semibold"> 🚀 BETA testing</span>,
             and we’re excited to have you try it out!
           </p>
           <div className="text-left space-y-4">
+            <h2 className="text-xl font-semibold text-blue-500 dark:text-yellow-400">
+            🎲 What is Meepletron?
+            </h2>
+            <p>
+              Meepletron is your instant board games rule reference—no more flipping through manuals!
+              Quickly look up rules and get clear answers fast.
+            </p>
             <h3 className="text-xl font-semibold text-blue-500 dark:text-yellow-400">
               🟢 What can you do?
             </h3>
