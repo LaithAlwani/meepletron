@@ -2,6 +2,7 @@
 import { motion } from "motion/react";
 import CustomLink from "../CustomeLink";
 import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function BetaAnnouncement() {
   const { user } = useUser();
@@ -22,16 +23,19 @@ export default function BetaAnnouncement() {
           <h1 className="text-3xl font-bold">Meepletron AI Board Games Expert!</h1>
           <p className="text-lg text-slate-800 dark:text-gray-300">
             Meepletron is officially in{" "}
-            <span className="text-blue-500 dark:text-yellow-400 font-semibold"> 🚀 BETA testing</span>,
-            and we’re excited to have you try it out!
+            <span className="text-blue-500 dark:text-yellow-400 font-semibold">
+              {" "}
+              🚀 BETA testing
+            </span>
+            , and we’re excited to have you try it out!
           </p>
           <div className="text-left space-y-4">
             <h2 className="text-xl font-semibold text-blue-500 dark:text-yellow-400">
-            🎲 What is Meepletron?
+              🎲 What is Meepletron?
             </h2>
             <p>
-              Meepletron is your instant board games rule reference—no more flipping through manuals!
-              Quickly look up rules and get clear answers fast.
+              Meepletron is your instant board games rule reference—no more flipping through
+              manuals! Quickly look up rules and get clear answers fast.
             </p>
             <h3 className="text-xl font-semibold text-blue-500 dark:text-yellow-400">
               🟢 What can you do?
@@ -47,9 +51,19 @@ export default function BetaAnnouncement() {
               </li>
               <li>
                 <span className="font-semibold text-black dark:text-white">
-                  No account is required during Beta
+                  No account is required during Beta,{" "}
                 </span>
-                —just start asking!
+                just pick a{" "}
+                <Link className="underline" href="/boardgames">
+                  board game
+                </Link>{" "}
+                and start asking!
+              </li>
+              <li>
+                <span className="font-semibold text-black dark:text-white">
+                  Creating an account will allow you to save your chat history
+                  and rate AI responses, helping us improve the service.
+                </span>
               </li>
             </ul>
             <h3 className="text-xl font-semibold text-blue-500 dark:text-yellow-400">
