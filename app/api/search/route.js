@@ -38,6 +38,12 @@ export async function GET(req) {
     let boardgames;
     let expansions;
 
+    boardgames = await Boardgame.find({ title: new RegExp(`^${query}$`, "i") });
+    
+    if (boardgames.length > 0) {
+      return NextResponse.json( boardgames , {status: 200});
+    }
+    
     boardgames = await Boardgame.find(
       { $and: regexConditions }, // Ensures all words appear somewhere in the title
       { title: 1, thumbnail: 1, urls: 1, is_expansion: 1, parent_id: 1 }
@@ -83,7 +89,7 @@ export async function GET(req) {
 
     if (boardgames.length === 0) {
       options[0]['$search'].index="title_designer"
-      console.log(options[0]['$search'].index)
+      
       let dbQuery = Boardgame.aggregate(options);
       if (!isNaN(limit) && limit > 0) {
         dbQuery = dbQuery.limit(limit);
