@@ -81,15 +81,15 @@ export async function GET(req) {
       ]
       
 
-    // if (boardgames.length === 0) {
-    //   options[0]['$search'].index="title_designer"
-    //   console.log(options[0]['$search'].index)
-    //   let dbQuery = Boardgame.aggregate(options);
-    //   if (!isNaN(limit) && limit > 0) {
-    //     dbQuery = dbQuery.limit(limit);
-    //   }
-    //   boardgames = await dbQuery.exec(); // Use `.exec()` for consistency
-    // }
+    if (boardgames.length === 0) {
+      options[0]['$search'].index="title_designer"
+      console.log(options[0]['$search'].index)
+      let dbQuery = Boardgame.aggregate(options);
+      if (!isNaN(limit) && limit > 0) {
+        dbQuery = dbQuery.limit(limit);
+      }
+      boardgames = await dbQuery.exec(); // Use `.exec()` for consistency
+    }
     // if (expansions.length === 0) {
     //   options[0]['$search'].index="expansion-search"
     //   let dbQuery = Expansion.aggregate(options);
