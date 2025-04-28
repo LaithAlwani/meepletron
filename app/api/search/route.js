@@ -96,14 +96,14 @@ export async function GET(req) {
       }
       boardgames = await dbQuery.exec(); // Use `.exec()` for consistency
     }
-    // if (expansions.length === 0) {
-    //   options[0]['$search'].index="expansion-search"
-    //   let dbQuery = Expansion.aggregate(options);
-    //   if (!isNaN(limit) && limit > 0) {
-    //     dbQuery = dbQuery.limit(limit);
-    //   }
-    //   expansions = await dbQuery.exec(); // Use `.exec()` for consistency
-    // }
+    if (expansions.length === 0) {
+      options[0]['$search'].index="expansion-search"
+      let dbQuery = Expansion.aggregate(options);
+      if (!isNaN(limit) && limit > 0) {
+        dbQuery = dbQuery.limit(limit);
+      }
+      expansions = await dbQuery.exec(); // Use `.exec()` for consistency
+    }
     boardgames.push(...expansions)
 
     return NextResponse.json(boardgames, { status: 200 });
