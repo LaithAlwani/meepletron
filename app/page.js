@@ -26,8 +26,8 @@ export default async function Home() {
         <BoardGameScroller />
       </section>
       <Features />
-      <Pricing />
-      <RoadMap />
+      {/* <Pricing /> */}
+      {/* <RoadMap /> */}
       <ContactForm />
       <footer className="py-3">
         <div className="container max-w-xl mx-auto px-4 text-center">
