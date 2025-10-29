@@ -7,7 +7,7 @@ import CustomToast from "./CustomeToast";
 import { Button, Input, Textarea } from "./ui";
 
 const ContactForm = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", message: "", company:"" });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -17,6 +17,9 @@ const ContactForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("All fields are required");
+    }
 
     try {
       const res = await fetch("/api/contact", {
@@ -33,7 +36,7 @@ const ContactForm = () => {
 
       toast.custom((t) => <CustomToast message={message} id={t.id} />);
 
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: "", email: "", message: "", company:"" });
     } catch (error) {
       toast.error("Error sending message. Try again later.");
     } finally {
@@ -64,6 +67,7 @@ const ContactForm = () => {
             value={formData.email}
             onChange={handleChange}
           />
+          <input type="text" name="company" style={{ display: "none" }} onChange={handleChange} />
           <Textarea
             name="message"
             placeholder="Type message..."
@@ -71,7 +75,7 @@ const ContactForm = () => {
             onChange={handleChange}
           />
           <Button className="w-full" isLoading={loading}>
-             Send Message
+            Send Message
           </Button>
         </form>
       </div>
