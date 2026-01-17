@@ -37,7 +37,7 @@ const BoardGameScroller = () => {
             {boardgames.length >0 && <div className="relative">
               <Link
                 href={"/boardgames"}
-                className="flex justify-center items-center w-[11rem] h-[11rem] underline rounded text-slate-700 text-center font-semibold bg-slate-400">
+                className="flex justify-center items-center w-[11rem] h-[11rem] underline rounded text-slate-700 text-center font-semibold bg-slate-200">
                 View All
               </Link>
             </div>}

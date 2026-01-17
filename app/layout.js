@@ -27,8 +27,8 @@ const poppins = Poppins({
 });
 
 export const viewport = {
-  maximumScale: 1,
-  userScalable:false,
+  // maximumScale: 1,
+  // userScalable:false,
   viewport:
     "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
   themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],

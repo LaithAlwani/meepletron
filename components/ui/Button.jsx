@@ -16,7 +16,7 @@ export default function Button({
         bg-blue-600 text-white hover:bg-blue-700"
       disabled:bg-gray-500`,
     secondary: "bg-gray-500 text-white hover:bg-gray-600",
-    outline: "border border-blue-500 text-blue-500 hover:bg-blue-50",
+    outline: "border border-blue-500 text-blue-700 hover:bg-blue-50",
     accept: "bg-green-500 disabled:bg-green-300 text-white ",
     reject: "bg-red-500 disabled:bg-red-300 text-white   ",
   };

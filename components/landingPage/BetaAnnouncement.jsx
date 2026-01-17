@@ -23,21 +23,21 @@ export default function BetaAnnouncement() {
           <h1 className="text-3xl font-bold">Meepletron AI Board Games Expert!</h1>
           <p className="text-lg text-slate-800 dark:text-gray-300">
             Meepletron is officially in{" "}
-            <span className="text-blue-500 dark:text-yellow-400 font-semibold">
+            <span className="text-blue-700 dark:text-yellow-400 font-semibold">
               {" "}
               🚀 BETA testing
             </span>
             , and we’re excited to have you try it out!
           </p>
           <div className="text-left space-y-4">
-            <h2 className="text-xl font-semibold text-blue-500 dark:text-yellow-400">
+            <h2 className="text-xl font-semibold text-blue-700 dark:text-yellow-400">
               🎲 What is Meepletron?
             </h2>
             <p>
               Meepletron is your instant board games rule reference—no more flipping through
               manuals! Quickly look up rules and get clear answers fast.
             </p>
-            <h3 className="text-xl font-semibold text-blue-500 dark:text-yellow-400">
+            <h3 className="text-xl font-semibold text-blue-700 dark:text-yellow-400">
               🟢 What can you do?
             </h3>
             <ul className="list-disc list-inside text-slate-800 dark:text-gray-300 space-y-2">
@@ -66,14 +66,14 @@ export default function BetaAnnouncement() {
                 </span>
               </li>
             </ul>
-            <h3 className="text-xl font-semibold text-blue-500 dark:text-yellow-400">
+            <h3 className="text-xl font-semibold text-blue-700 dark:text-yellow-400">
               💡 Your feedback matters!
             </h3>
             <p className="text-slate-800 dark:text-gray-300">
               Since we're in BETA, your input is crucial. Let us know if an answer was helpful to
               help us improve Meepletron!
             </p>
-            <h3 className="text-xl font-semibold text-blue-500 dark:text-yellow-400">
+            <h3 className="text-xl font-semibold text-blue-700 dark:text-yellow-400">
               🔹 Want to access your chat history?
             </h3>
             <p className="text-slate-800 dark:text-gray-300">

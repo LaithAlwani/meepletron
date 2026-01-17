@@ -55,7 +55,7 @@ const Card = ({ icon, header, text1, text2, text3 }) => {
       </div> */}
       <div className="bg-gray-200 dark:bg-slate-800  p-6 w-72 h-96  shadow-lg flex flex-col justify-center items-center text-center transition-all duration-300 hover:scale-105 hover:shadow-xl">
         <div className="text-4xl text-yellow-400 mb-6">{icon}</div>
-        <h4 className="text-3xl font-bold text-blue-600 dark:text-yellow-500 mb-6">{header}</h4>
+        <h3 className="text-3xl font-bold text-blue-700 dark:text-yellow-500 mb-6">{header}</h3>
         <em>{text1}</em>
         <em>{text2}</em>
         <em>{text3}</em>

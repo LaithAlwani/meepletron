@@ -32,9 +32,9 @@ export default function Navbar() {
     <nav className={`fixed top-0 left-0 w-full text-lg p-3 ${trasprent} ${hidden} shadow-sm z-50`}>
       <div className="flex justify-end items-center max-w-2xl mx-auto">
         {/* Logo */}
-        <Link href="/" className=" flex items-center gap-1 mr-auto" aria-label="logo">
+        <Link href="/" className=" flex items-center gap-1 mr-auto" aria-label="Meepletron logo">
           <div className="relative w-[2rem] h-[2rem]">
-            <img src="/logo.webp" className="w-full h-full object-contain" />
+            <img src="/logo.webp" className="w-full h-full object-contain" alt="Meepletron logo" />
           </div>
           <span className="text-xl font-bold ">Meepletron</span>
         </Link>

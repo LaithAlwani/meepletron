@@ -12,7 +12,7 @@ export default function Hero() {
 
       <div>
         <Heading level={1}>Meepletron</Heading>
-        <strong className="block italic text-2xl font-semibold text-blue-600 dark:text-yellow-500 mb-2">AI Board Games Expert</strong>
+        <strong className="block italic text-2xl font-semibold text-blue-700 dark:text-yellow-500 mb-2">AI Board Games Expert</strong>
         <p className="text-lg mt-4">
           Meepletron is your AI-powered board game expert, answering questions directly from
           manuals. Say goodbye to wasting time on game night searching for rule details—get instant
