@@ -20,6 +20,7 @@
     "@pinecone-database/pinecone": "^4.0.0",
     "@vercel/speed-insights": "^1.1.0",
     "ai": "^4.0.22",
+    "he": "^1.2.0",
     "langchain": "^0.3.8",
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.3",
@@ -33,6 +34,7 @@
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.1",
     "react-icons": "^5.4.0",
+    "sharp": "^0.34.5",
     "svix": "^1.45.1"
   },
   "devDependencies": {
