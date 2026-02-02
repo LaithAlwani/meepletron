@@ -16,13 +16,14 @@ export async function POST(req) {
   const { messages, boardgame_id, boardgame_title } = await req.json();
   await connectToDB();
   const userQuestion = messages[messages.length - 1].content;
-
+  
   const retrievals = await queryPineconeVectorStore(
     pinecone,
     process.env.PINECONE_INDEX_NAME,
     userQuestion,
     boardgame_id
   );
+  
 
   const formattedContext = retrievals
     .map((item) => `${item.text} (Page ${item.pageNumber}) [Source](${item.source})`)
