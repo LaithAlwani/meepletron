@@ -21,14 +21,7 @@ export default function BetaAnnouncement() {
             </div>
           </div>
           <h1 className="text-3xl font-bold">Meepletron AI Board Games Expert!</h1>
-          <p className="text-lg text-slate-800 dark:text-gray-300">
-            Meepletron is officially in{" "}
-            <span className="text-blue-700 dark:text-yellow-400 font-semibold">
-              {" "}
-              🚀 BETA testing
-            </span>
-            , and we’re excited to have you try it out!
-          </p>
+
           <div className="text-left space-y-4">
             <h2 className="text-xl font-semibold text-blue-700 dark:text-yellow-400">
               🎲 What is Meepletron?
@@ -37,7 +30,13 @@ export default function BetaAnnouncement() {
               Meepletron is your instant board games rule reference—no more flipping through
               manuals! Quickly look up rules and get clear answers fast.
             </p>
-            <h3 className="text-xl font-semibold text-blue-700 dark:text-yellow-400">
+            
+            <p className="text-slate-800 dark:text-gray-300">
+              Meepletron is not designed to replace the official rulebook. Instead, it serves as a
+              fast reference tool and reminder during gameplay.
+            </p>
+
+            {/* <h3 className="text-xl font-semibold text-blue-700 dark:text-yellow-400">
               🟢 What can you do?
             </h3>
             <ul className="list-disc list-inside text-slate-800 dark:text-gray-300 space-y-2">
@@ -47,31 +46,20 @@ export default function BetaAnnouncement() {
                 <a href="#contact" className="underline font-semibold">
                   Contact form
                 </a>
-                .
               </li>
               <li>
-                <span className="font-semibold text-black dark:text-white">
-                  No account is required during Beta,{" "}
-                </span>
-                just pick a{" "}
-                <Link className="underline" href="/boardgames">
-                  board game
-                </Link>{" "}
-                and start asking!
-              </li>
-              <li>
-                <span className="font-semibold text-black dark:text-white">
-                  Creating an account will allow you to save your chat history
-                  and rate AI responses, helping us improve the service.
+                <span className=" text-black dark:text-white">
+                  Creating an account will allow you to save your chat history and rate AI
+                  responses, helping us improve the service.
                 </span>
               </li>
-            </ul>
+            </ul> */}
             <h3 className="text-xl font-semibold text-blue-700 dark:text-yellow-400">
               💡 Your feedback matters!
             </h3>
             <p className="text-slate-800 dark:text-gray-300">
-              Since we're in BETA, your input is crucial. Let us know if an answer was helpful to
-              help us improve Meepletron!
+              Feedback helps us improve accuracy and expand support for more games. Let us know how
+              we’re doing!
             </p>
             <h3 className="text-xl font-semibold text-blue-700 dark:text-yellow-400">
               🔹 Want to access your chat history?
@@ -83,7 +71,7 @@ export default function BetaAnnouncement() {
           {user ? (
             <CustomLink href={"/boardgames"}>Try Meepletron Now!</CustomLink>
           ) : (
-            <CustomLink href={"/sign-in"}>Create a Free Account!</CustomLink>
+            <CustomLink href={"/sign-in"}>Create Account</CustomLink>
           )}
         </div>
       </div>
