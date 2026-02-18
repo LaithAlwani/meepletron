@@ -75,7 +75,7 @@ _User: "What are the rules for Monopoly Deal?"_
         dataStream.writeData("initialized call");
 
         const result = streamText({
-          model: google("gemini-2.0-flash"),
+          model: google("gemini-2.5-flash"),
           system,
           messages,
           temperature: 0,
