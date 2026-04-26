@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 export const useSearch = ({ debounceDelay: debounceDelay = 300, limit }) => {
   const [query, setQuery] = useState("");
@@ -45,33 +45,41 @@ export const useGetBoardgames = ({ limit }) => {
   const [boardgames, setBoardgames] = useState([]);
   const [totalGames, setTotalGames] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [error, setError] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false); // Track "Load More" loading
+  const [error, setError] = useState(false);
+  const pageRef = useRef(1);
+  const busyRef = useRef(false); // prevents concurrent fetches
 
-  const fetchBoardgames = async () => {
-    if (boardgames.length === 0) setIsLoading(true);
-    setIsLoadingMore(true);
+  const fetchBoardgames = useCallback(async () => {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    if (pageRef.current === 1) setIsLoading(true);
+    else setIsLoadingMore(true);
 
     try {
-      const res = await fetch(`/api/boardgames?limit=${limit}&page=${page}`);
+      const res = await fetch(`/api/boardgames?limit=${limit}&page=${pageRef.current}`);
       const { data } = await res.json();
-      if (!res.ok) return setError(message);
-      setBoardgames((prev) => [...prev, ...data.boardgames]);
-      setPage((prev) => prev + 1);
+      if (!res.ok) { setError(data?.message ?? "Failed to load"); return; }
+      setBoardgames((prev) => {
+        const next = [...prev, ...data.boardgames];
+        setHasMore(next.length < data.totalGames);
+        return next;
+      });
       setTotalGames(data.totalGames);
-      setHasMore(boardgames.length + data.boardgames.length < data.totalGames); // Check if more games exist
+      pageRef.current += 1;
     } catch (err) {
       setError(err.message);
     } finally {
-      setIsLoadingMore(false);
       setIsLoading(false);
+      setIsLoadingMore(false);
+      busyRef.current = false;
     }
-  };
+  }, [limit]);
 
   useEffect(() => {
     fetchBoardgames();
-  }, []);
-  return { isLoading, isLoadingMore, boardgames, totalGames, fetchBoardgames, hasMore, error  };
+  }, [fetchBoardgames]);
+
+  return { isLoading, isLoadingMore, boardgames, totalGames, fetchBoardgames, hasMore, error };
 };

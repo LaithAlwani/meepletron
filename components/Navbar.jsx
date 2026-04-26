@@ -9,7 +9,6 @@ import { usePathname } from "next/navigation";
 import { ImBubbles } from "react-icons/im";
 import { GiOpenBook } from "react-icons/gi";
 import { FiMenu, FiX } from "react-icons/fi";
-import SearchBoardGame from "./SearchBoardGame";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -40,8 +39,6 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        {/* search button */}
-        <SearchBoardGame />
         <div className="hidden md:flex justify-center items-center gap-3">
           <Link href="/chats" aria-label="chats" className="flex flex-col  items-center gap-1">
             <ImBubbles size={24} /> <span className="text-sm">Chats</span>

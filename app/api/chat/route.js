@@ -1,5 +1,6 @@
 import { queryPineconeVectorStore } from "@/lib/vector-store";
 import Chat from "@/models/chat";
+import Message from "@/models/message";
 import User from "@/models/user";
 import Boardgame from "@/models/boardgame";
 import connectToDB from "@/utils/database";
@@ -11,6 +12,7 @@ import { NextResponse } from "next/server";
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 const pinecone = new PineconeClient();
+const google = createGoogleGenerativeAI();
 
 export async function POST(req) {
   const { messages, boardgame_id, boardgame_title } = await req.json();
@@ -23,7 +25,21 @@ export async function POST(req) {
     userQuestion,
     boardgame_id
   );
-  
+
+  if (!Array.isArray(retrievals) || retrievals.length === 0) {
+    return createDataStreamResponse({
+      execute: async (dataStream) => {
+        const result = streamText({
+          model: google("gemini-2.5-flash"),
+          system: `You are a friendly board game assistant. The rulebook for "${boardgame_title}" has not been uploaded yet, so you have no information to draw from. In one or two sentences, let the user know that no rulebook has been added for this game yet, so you can't answer their questions right now. Suggest they check back later or let an admin know.`,
+          messages,
+          temperature: 0,
+        });
+        result.mergeIntoDataStream(dataStream);
+      },
+      onError: (error) => (error instanceof Error ? error.message : String(error)),
+    });
+  }
 
   const formattedContext = retrievals
     .map((item) => `${item.text} (Page ${item.pageNumber}) [Source](${item.source})`)
@@ -66,8 +82,6 @@ _User: "What are the rules for Monopoly Deal?"_
 **Game Title:** ${boardgame_title}  
 **Question:** ${userQuestion}  
 **Context:** ${formattedContext}`;
-
-  const google = createGoogleGenerativeAI();
 
   try {
     return createDataStreamResponse({
@@ -129,18 +143,40 @@ _User: "What are the rules for Monopoly Deal?"_
 
 export async function GET(req) {
   const url = new URL(req.url);
-  const searchParams = new URLSearchParams(url.searchParams);
-  const user_id = searchParams.get("user_id");
+  const user_id = new URLSearchParams(url.searchParams).get("user_id");
 
   await connectToDB();
   const user = await User.findOne({ clerk_id: user_id });
   if (!user) return NextResponse.json({ message: "user not found" }, { status: 404 });
-  const chats = await Chat.find({ user_id: user?._id })
+
+  const chats = await Chat.find({ user_id: user._id })
     .populate({ path: "boardgame_id", select: "title thumbnail is_expansion" })
-    .sort({ updatedAt: -1 })
+    .sort({ last_message_at: -1 })
     .lean();
-  const filteredChats = chats.filter((chat) => {
-    return chat.boardgame_id && !chat.boardgame_id.is_expansion;
+
+  const filteredChats = chats.filter((c) => c.boardgame_id && !c.boardgame_id.is_expansion);
+
+  // Batch-fetch the last assistant message for every chat in one query
+  const chatIds = filteredChats.map((c) => c._id);
+  const lastMessages = await Message.find({ chat_id: { $in: chatIds }, role: "assistant" })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  // Keep only the first (newest) result per chat
+  const lastMsgMap = {};
+  for (const msg of lastMessages) {
+    const key = msg.chat_id.toString();
+    if (!lastMsgMap[key]) lastMsgMap[key] = msg;
+  }
+
+  const enriched = filteredChats.map((chat) => {
+    const msg = lastMsgMap[chat._id.toString()];
+    return {
+      ...chat,
+      last_message: msg?.content ?? chat.last_message ?? "",
+      last_message_at: msg?.createdAt ?? chat.last_message_at,
+    };
   });
-  return NextResponse.json({ data: filteredChats, message: "success" }, { status: 200 });
+
+  return NextResponse.json({ data: enriched, message: "success" }, { status: 200 });
 }

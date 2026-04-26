@@ -9,13 +9,12 @@ export async function POST(req) {
   try {
     await connectToDB();
     await Message.create(chatMessage);
+    const chatUpdate = { last_message_at: Date.now() };
+    if (chatMessage.role === "assistant") chatUpdate.last_message = chatMessage.content;
     if (chatMessage.parent_id) {
-      await Chat.findOneAndUpdate(
-        { boardgame_id: chatMessage.parent_id },
-        { last_message_at: Date.now() }
-      );
+      await Chat.findOneAndUpdate({ boardgame_id: chatMessage.parent_id }, chatUpdate);
     } else {
-      await Chat.findByIdAndUpdate({ _id: chatMessage.chat_id }, { last_message_at: Date.now() });
+      await Chat.findByIdAndUpdate(chatMessage.chat_id, chatUpdate);
     }
     return NextResponse.json({ message: "success" }, { status: 201 });
   } catch (err) {

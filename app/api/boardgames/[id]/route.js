@@ -1,5 +1,5 @@
 import Boardgame from "@/models/boardgame";
-import Expansion from "@/models/expansion";
+import "@/models/expansion"; // register Expansion model so populate("expansions") works
 import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
 
@@ -7,15 +7,13 @@ export async function GET(req, { params }) {
   const { id } = await params;
   try {
     await connectToDB();
-    const boardgame = await Boardgame.findById({ _id: id }).populate("expansions").exec();
+    const boardgame = await Boardgame.findById(id).populate("expansions").exec();
+
     if (!boardgame) return NextResponse.json({ message: "board game not found" }, { status: 404 });
-    //adds +1 to board game counter
-    // boardgame.counter += 1;
-    // await boardgame.save();
 
     return NextResponse.json({ data: boardgame }, { status: 200 });
   } catch (err) {
     console.log(err);
-    return NextResponse.json({ message: "Error in fetching boardgame" + err }, { status: 500 });
+    return NextResponse.json({ message: "Error fetching boardgame: " + err }, { status: 500 });
   }
 }

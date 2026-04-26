@@ -68,7 +68,7 @@ const SearchBoardGame = () => {
                 className="flex items-center justify-between gap-3 p-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer"
                 onClick={() => setIsSearchOpen(false)}>
                 <Link
-                  href={`/boardgames/${boardgame.parent_id ? boardgame.parent_id : boardgame._id}${
+                  href={`/boardgames/${boardgame.parent_id ? boardgame.parent_id : (boardgame.slug || boardgame._id)}${
                     boardgame.parent_id ? `/expansions/${boardgame._id}` : ""
                   }`}
                   className="flex items-center gap-3 w-full">
@@ -81,7 +81,7 @@ const SearchBoardGame = () => {
                 </Link>
                 <Link
                   href={`/boardgames/${
-                    boardgame.parent_id ? boardgame.parent_id : boardgame._id
+                    boardgame.parent_id ? boardgame.parent_id : (boardgame.slug || boardgame._id)
                   }/chat`}
                   className="flex items-center gap-2 border border-slate-500 dark:border-slate-300 rounded-md p-2 text-gray-500 dark:text-slate-200  hover:text-gray-800 dark:hover:text-slate-100">
                   <FaComments size={20} />

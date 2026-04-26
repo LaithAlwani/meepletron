@@ -1,6 +1,6 @@
-import Loader from "@/components/Loader";
 import Link from "next/link";
-import { MdGroups, MdOutlineAccessTimeFilled, MdMenuBook } from "react-icons/md";
+import { notFound } from "next/navigation";
+import { MdGroups, MdOutlineAccessTimeFilled, MdMenuBook, MdOpenInNew } from "react-icons/md";
 import { FaChild } from "react-icons/fa";
 import { ImBubbles } from "react-icons/im";
 
@@ -10,118 +10,235 @@ const prod = "https://www.meepletron.com";
 async function getBoardgame(id) {
   try {
     const res = await fetch(
-      `${process.env.NODE_ENV != "production" ? dev : prod}/api/boardgames/${id}`,
-      {
-        next: { revalidate: 86400 }, // Ensure fresh data
-      }
+      `${process.env.NODE_ENV !== "production" ? dev : prod}/api/boardgames/${id}`,
+      { next: { revalidate: 86400 } }
     );
-
-    if (!res.ok) {
-      const { message } = await res.json();
-      throw new Error(message);
-    }
-
+    if (!res.ok) return null;
     const { data } = await res.json();
-    return { boardgame: data };
-  } catch (error) {
-    return { boardgame: null };
+    return data;
+  } catch {
+    return null;
   }
+}
+
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const boardgame = await getBoardgame(id);
+  return {
+    title: boardgame ? `${boardgame.title} | Meepletron` : "Board Game | Meepletron",
+    description: boardgame?.description?.slice(0, 160),
+    alternates: { canonical: `/boardgames/${id}` },
+    openGraph: { images: [boardgame?.image] },
+  };
 }
 
 export default async function BoardgamePage({ params }) {
   const { id } = await params;
-  const {boardgame} = await getBoardgame(id);
-  
-  if (!boardgame) {
-    return (
-      <div className="pt-[6rem]">
-        <Loader />
-      </div>
-    );
-  }
+  const boardgame = await getBoardgame(id);
+  if (!boardgame) notFound();
+
+  const {
+    _id, title, year, thumbnail,
+    min_players, max_players, min_age, play_time,
+    designers, artists, publishers, categories, game_mechanics,
+    description, urls, expansions,
+  } = boardgame;
 
   return (
-    <div className="max-w-xl mx-auto px-2 pt-[6rem]">
-      <div className="flex flex-col justify-start gap-4 items-center">
-        <div className="relative w-64 h-64">
-          <img
-            src={boardgame?.thumbnail}
-            alt={`${boardgame?.title} board game`}
-            title={`${boardgame?.title} board game`}
-            className="w-full h-full rounded-md object-contain object-center"
-          />
-        </div>
-        <hgroup>
-          <span className="text-xs px-4 font-semibold tracking-[1px]">
-            {boardgame?.designers[0]}
-          </span>
-          <h1 className="text-lg sm:text-2xl px-4 font-extrabold text-blue-600 dark:text-yellow-500 uppercase drop-shadow-xl mb-6">
-            {boardgame?.title} <span className="text-xs">({boardgame?.year})</span>
-          </h1>
-        </hgroup>
-        <div className="w-[256px] mx-auto flex justify-between items-start">
-          <p className="flex flex-col justify-start items-center gap-2">
-            <MdGroups size={24} />
-            <span className="font-medium">
-              {boardgame?.min_players} - {boardgame?.max_players}
-            </span>
-          </p>
-          <p className="flex flex-col justify-start items-center gap-2">
-            <MdOutlineAccessTimeFilled size={24} />
-            <span className="font-medium">{boardgame?.play_time}</span>
-          </p>
-          <p className="flex flex-col justify-start items-center gap-2">
-            <FaChild size={24} />
-            <span className="font-medium">{boardgame?.min_age}+</span>
-          </p>
-          {boardgame?.urls.length > 0 && (
-            <a
-              target="_blank"
-              href={`${boardgame?.urls[0].path}`}
-              className="flex flex-col justify-start items-center gap-2 capitalize">
-              <MdMenuBook size={24} />
-              <span className="font-medium">Rules</span>
-            </a>
-          )}
-          <Link
-            className="flex flex-col justify-start items-center gap-2"
-            href={`/boardgames/${
-              boardgame.is_expansion ? boardgame.parent_id._id : boardgame._id
-            }/chat`}>
-            <ImBubbles size={24} />
-            <span className="font-medium">Chat</span>
-          </Link>
-        </div>
-      </div>
+    <main className="min-h-screen pt-20 pb-16 px-4">
+      <div className="max-w-5xl mx-auto">
 
-      {/* Expansions Section */}
-      {boardgame?.expansions?.length > 0 && (
-        <div>
-          <div className="relative flex py-5 items-center">
-            <div className="w-[3rem] border-t-2 border-gray-400 dark:border-yellow-300"></div>
-            <h2 className="px-4 text-2xl font-bold italic dark:text-yellow-500">Expansions</h2>
-            <div className="flex-grow border-t-2 border-gray-400 dark:border-yellow-300"></div>
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-slate-400 mb-8">
+          <Link href="/boardgames" className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
+            Board Games
+          </Link>
+          <span>/</span>
+          <span className="capitalize text-gray-800 dark:text-slate-200 font-medium truncate max-w-[200px]">
+            {title}
+          </span>
+        </nav>
+
+        {/* Hero */}
+        <div className="flex flex-col sm:flex-row gap-8 mb-12">
+          <div className="w-48 shrink-0 mx-auto sm:mx-0">
+            <img
+              src={thumbnail}
+              alt={title}
+              className="w-full rounded-2xl shadow-lg object-cover aspect-square"
+            />
           </div>
-          <ul className="list-disc">
-            {boardgame.expansions.map((exp) => (
-              <li key={exp._id} className="flex justify-start items-end gap-2 mb-2">
-                <div className="relative w-16 h-16">
-                  <img
-                    src={exp.thumbnail}
-                    alt={exp.title}
-                    className="w-full h-full rounded object-contain"
-                  />
-                </div>
-                <Link href={`/boardgames/${boardgame._id}/expansions/${exp._id}`}>
-                  <h3 className="capitalize font-semibold">
-                    {exp.title} <span className="text-xs">({exp.year})</span>
-                  </h3>
-                </Link>
-              </li>
-            ))}
-          </ul>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center justify-start gap-3 mb-1">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white capitalize leading-tight">
+                {title}
+              </h1>
+              {year && (
+                <span className="shrink-0 text-sm font-medium text-gray-500 dark:text-slate-400 bg-white/80 dark:bg-slate-800 px-3 py-1 rounded-full border border-gray-200 dark:border-slate-700">
+                  {year}
+                </span>
+              )}
+            </div>
+
+            {designers?.length > 0 && (
+              <p className="text-sm text-gray-500 dark:text-slate-400 mb-5">
+                by {designers.join(", ")}
+              </p>
+            )}
+
+            {/* Stats */}
+            <div className="flex flex-wrap gap-3 mb-6">
+              <StatBadge icon={<MdGroups size={18} />} value={`${min_players}–${max_players}`} label="Players" />
+              <StatBadge icon={<MdOutlineAccessTimeFilled size={18} />} value={`${play_time} min`} label="Play Time" />
+              <StatBadge icon={<FaChild size={16} />} value={`${min_age}+`} label="Min Age" />
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={`/boardgames/${_id}/chat`}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 dark:bg-yellow-500 text-white dark:text-slate-900 font-semibold text-sm hover:bg-blue-700 dark:hover:bg-yellow-400 transition-colors shadow-sm">
+                <ImBubbles size={16} />
+                Chat about rules
+              </Link>
+              {urls?.length > 0 && (
+                <a
+                  href={urls[0].path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 text-gray-700 dark:text-slate-300 font-semibold text-sm hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                  <MdMenuBook size={16} />
+                  Rulebook
+                </a>
+              )}
+            </div>
+          </div>
         </div>
-      )}
+
+        {/* Description */}
+        {description && (
+          <InfoSection title="About">
+            <p className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
+              {description}
+            </p>
+          </InfoSection>
+        )}
+
+        {/* Info grid */}
+        {(categories?.length > 0 || game_mechanics?.length > 0 || artists?.length > 0 || publishers?.length > 0) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0 mb-2">
+            {categories?.length > 0 && (
+              <InfoSection title="Categories">
+                <ChipList items={categories} />
+              </InfoSection>
+            )}
+            {game_mechanics?.length > 0 && (
+              <InfoSection title="Mechanics">
+                <ChipList items={game_mechanics} />
+              </InfoSection>
+            )}
+            {artists?.length > 0 && (
+              <InfoSection title="Artists">
+                <p className="text-sm text-gray-600 dark:text-slate-400">{artists.join(", ")}</p>
+              </InfoSection>
+            )}
+            {publishers?.length > 0 && (
+              <InfoSection title="Publishers">
+                <p className="text-sm text-gray-600 dark:text-slate-400">{publishers.join(", ")}</p>
+              </InfoSection>
+            )}
+          </div>
+        )}
+
+        {/* All rulebook files */}
+        {urls?.length > 1 && (
+          <InfoSection title="Files">
+            <ul className="space-y-2">
+              {urls.map((url, i) => (
+                <li key={i}>
+                  <a
+                    href={url.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-yellow-400 hover:underline underline-offset-2 transition-colors">
+                    <MdMenuBook size={15} />
+                    Rulebook {urls.length > 1 ? i + 1 : ""}
+                    <MdOpenInNew size={12} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </InfoSection>
+        )}
+
+        {/* Expansions */}
+        {expansions?.length > 0 && (
+          <InfoSection title={`Expansions (${expansions.length})`}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {expansions.map((exp) => (
+                <Link
+                  key={exp._id}
+                  href={`/boardgames/${_id}/expansions/${exp._id}`}
+                  className="group flex flex-col">
+                  <div className="aspect-square overflow-hidden rounded-xl shadow-sm">
+                    <img
+                      src={exp.thumbnail}
+                      alt={exp.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="mt-1.5 text-xs font-medium text-gray-700 dark:text-slate-300 capitalize truncate px-0.5 leading-tight">
+                    {exp.title}
+                  </p>
+                  {exp.year && (
+                    <p className="text-[10px] text-gray-400 dark:text-slate-500 px-0.5">{exp.year}</p>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </InfoSection>
+        )}
+      </div>
+    </main>
+  );
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function StatBadge({ icon, value, label }) {
+  return (
+    <div className="flex items-center gap-2.5 bg-white/70 dark:bg-slate-800/70 border border-gray-200 dark:border-slate-700 px-3 py-2 rounded-xl text-sm backdrop-blur-sm">
+      <span className="text-blue-600 dark:text-yellow-500">{icon}</span>
+      <div>
+        <p className="font-semibold text-gray-900 dark:text-white leading-none">{value}</p>
+        <p className="text-[10px] text-gray-400 dark:text-slate-500 leading-tight mt-0.5">{label}</p>
+      </div>
+    </div>
+  );
+}
+
+function InfoSection({ title, children }) {
+  return (
+    <section className="mb-8">
+      <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500 mb-3 pb-2 border-b border-gray-100 dark:border-slate-800">
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
+function ChipList({ items }) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {items.map((item) => (
+        <span
+          key={item}
+          className="text-xs px-2.5 py-1 rounded-full bg-gray-100 dark:bg-slate-700/80 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-600">
+          {item}
+        </span>
+      ))}
     </div>
   );
 }

@@ -12,20 +12,33 @@ const s3Client = new S3Client({
 });
 
 export async function POST(req) {
+  const reqUrl = new URL(req.url);
+  const isTemp = reqUrl.searchParams.get("temp") === "true";
+
   const data = await req.formData();
   const filename = data.get("filename");
   const filetype = data.get("filetype");
   const id = data.get("id");
 
-  if (!filename || !id)
+  if (!filename || (!id && !isTemp))
     return NextResponse.json({ message: "please attach file" }, { status: 500 });
 
-  const pathDev = `_temp_boardgames/resources/${filename}`;
-  const pathProd = `resources/${filename}`;
+  let key;
+  if (isTemp) {
+    const ext = filename.split(".").pop();
+    const uuid = crypto.randomUUID();
+    key = process.env.NODE_ENV !== "production"
+      ? `_temp_boardgames/resources/temp-${uuid}.${ext}`
+      : `resources/temp-${uuid}.${ext}`;
+  } else {
+    key = process.env.NODE_ENV !== "production"
+      ? `_temp_boardgames/resources/${filename}`
+      : `resources/${filename}`;
+  }
 
   const uploadCommand = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: process.env.NODE_ENV != "production" ? pathDev : pathProd,
+    Key: key,
     ContentType: filetype,
   });
 
@@ -33,8 +46,8 @@ export async function POST(req) {
     const signedUrl = await getSignedUrl(s3Client, uploadCommand, { expiresIn: 3600 });
     const urlData = {
       signedUrl,
-      objectUrl: `https://meepletron-storage.s3.us-east-2.amazonaws.com/${process.env.NODE_ENV !="production" ? pathDev:pathProd}`
-    }
+      objectUrl: `https://meepletron-storage.s3.us-east-2.amazonaws.com/${key}`,
+    };
     return NextResponse.json(
       { urlData, message: "File uploaded successfully" },
       { status: 201 }
@@ -43,7 +56,7 @@ export async function POST(req) {
     console.log(error);
     return NextResponse.json(
       { error: error.message },
-      { status: 400 } // The webhook will retry 5 times waiting for a status 200
+      { status: 400 }
     );
   }
 }

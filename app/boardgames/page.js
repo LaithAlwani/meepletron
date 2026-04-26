@@ -1,5 +1,4 @@
 import BoardgameList from "@/components/boardgame/BoardgameList";
-import SearchBoardGame from "@/components/SearchBoardGame";
 
 export const metadata = {
   title: "Board Games",
@@ -8,12 +7,12 @@ export const metadata = {
   },
 };
 
-export default async function BoargamePage() {
+export default function BoardgamePage() {
   return (
-    <section className="max-w-xl pt-[6rem] px-2 mx-auto mb-6 min-h-full">
-      
-
-      <BoardgameList />
-    </section>
+    <main className="min-h-screen pt-20 pb-16 px-4">
+      <div className="max-w-7xl mx-auto">
+        <BoardgameList />
+      </div>
+    </main>
   );
 }

@@ -1,82 +1,84 @@
 "use client";
 import { useRef } from "react";
-import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
-import BoardgameContainer from "./BoardgameContainer";
-import { useGetBoardgames } from "@/utils/hooks";
+import { motion } from "motion/react";
 import Link from "next/link";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { useGetBoardgames } from "@/utils/hooks";
+import BoardgameContainer from "./BoardgameContainer";
 
-const BoardGameScroller = () => {
-  const { boardgames, isLoading, error } = useGetBoardgames({limit:9});
+export default function BoardgameScroller() {
+  const { boardgames, isLoading } = useGetBoardgames({ limit: 10 });
   const scrollRef = useRef(null);
 
-  const scroll = (direction) => {
-    if (scrollRef.current) {
-      const scrollAmount = 300; // Adjust as needed
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
+  const scroll = (dir) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * 220, behavior: "smooth" });
   };
 
   return (
-    <div className="relative w-full px-4">
-      <ScrollButton dir="left" scroll={scroll}>
-        <LuChevronLeft size={24} />
-      </ScrollButton>
-      <div
-        ref={scrollRef}
-        className="relative h-[176px] flex justify-start gap-4 overflow-x-scroll hide-scrollbar">
-        {isLoading ? (
-          <BoardgameSkeleton />
-        ) : (
-          <>
-            {boardgames.map((boardgame) => (
-            <BoardgameContainer boardgame={boardgame} key={boardgame._id} />
-            ))}
-            {boardgames.length >0 && <div className="relative">
-              <Link
-                href={"/boardgames"}
-                className="flex justify-center items-center w-[11rem] h-[11rem] underline rounded text-slate-700 text-center font-semibold bg-slate-200">
-                View All
-              </Link>
-            </div>}
-          </>
-        )}
+    <section className="py-24 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header row */}
+        <div className="flex items-end justify-between mb-8">
+          <div>
+            <p className="text-xs uppercase tracking-widest font-semibold text-blue-600 dark:text-yellow-500 mb-1">
+              New Arrivals
+            </p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Recently Added
+            </h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => scroll(-1)}
+              aria-label="Scroll left"
+              className="hidden sm:flex w-8 h-8 rounded-full items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-yellow-400 hover:border-blue-300 dark:hover:border-yellow-600 transition-colors shadow-sm"
+            >
+              <MdChevronLeft size={20} />
+            </button>
+            <button
+              onClick={() => scroll(1)}
+              aria-label="Scroll right"
+              className="hidden sm:flex w-8 h-8 rounded-full items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-yellow-400 hover:border-blue-300 dark:hover:border-yellow-600 transition-colors shadow-sm"
+            >
+              <MdChevronRight size={20} />
+            </button>
+            <Link
+              href="/boardgames"
+              className="text-sm font-medium text-blue-600 dark:text-yellow-400 hover:underline whitespace-nowrap"
+            >
+              View all games →
+            </Link>
+          </div>
+        </div>
+
+        {/* Scroll track */}
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto pb-3 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {isLoading
+            ? [...Array(10)].map((_, i) => (
+                <div key={i} className="flex flex-col gap-2 shrink-0 w-40">
+                  <div className="aspect-square w-full rounded-xl bg-gray-200 dark:bg-slate-700 animate-pulse" />
+                  <div className="h-3 w-3/4 rounded bg-gray-200 dark:bg-slate-700 animate-pulse" />
+                </div>
+              ))
+            : boardgames.map((boardgame, index) => (
+                <motion.div
+                  key={boardgame._id}
+                  className="shrink-0 w-40"
+                  initial={{ opacity: 0, x: 16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "0px -80px 0px 0px" }}
+                  transition={{ duration: 0.35, delay: index * 0.04 }}
+                >
+                  <BoardgameContainer boardgame={boardgame} />
+                </motion.div>
+              ))}
+        </div>
       </div>
-      <ScrollButton dir="right" scroll={scroll}>
-        <LuChevronRight size={24} />
-      </ScrollButton>
-    </div>
+    </section>
   );
-};
-
-export default BoardGameScroller;
-
-const ScrollButton = ({ children, dir, scroll }) => {
-  return (
-    <span
-      className={`absolute ${
-        dir === "right" ? "-right-0" : "-left-0"
-      } top-1/2 -translate-y-1/2 z-10 p-2
-  rounded-full shadow-lg bg-slate-800 hover:bg-slate-700 text-white dark:bg-slate-300 dark:hover:bg-slate-200 dark:text-slate-800  transition hidden md:block cursor-pointer`}
-      onClick={() => scroll(dir)}>
-      {children}
-    </span>
-  );
-};
-
-const BoardgameSkeleton = () => {
-  return (
-    <div className="flex gap-4">
-      {[...Array(10)].map(
-        (
-          _,
-          i // Render 8 skeletons (adjust as needed)
-        ) => (
-          <div key={i} className="w-[11rem] h-[11rem] bg-gray-200 animate-pulse rounded"></div> // Adjust size
-        )
-      )}
-    </div>
-  );
-};
+}

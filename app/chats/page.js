@@ -1,38 +1,62 @@
 "use client";
-import CustomLink from "@/components/CustomeLink";
 import CustomToast from "@/components/CustomeToast";
 import Loader from "@/components/Loader";
 import { Input } from "@/components/ui";
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
+import { IoChatbubbles } from "react-icons/io5";
+
+// ─── Date helper ──────────────────────────────────────────────────────────────
+
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  if (isNaN(date)) return "";
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+  const isThisYear = date.getFullYear() === now.getFullYear();
+  if (isToday) return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  if (isThisYear) return date.toLocaleDateString([], { month: "short", day: "numeric" });
+  return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+}
+
+// ─── Guest localStorage helpers ───────────────────────────────────────────────
+
+const GUEST_PREFIX = "meepletron_guest_";
+
+function loadAllGuestChats() {
+  const chats = [];
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (!key?.startsWith(GUEST_PREFIX)) continue;
+      try {
+        const { expiresAt, game, messages } = JSON.parse(localStorage.getItem(key));
+        if (Date.now() > expiresAt) {
+          localStorage.removeItem(key);
+          continue;
+        }
+        if (game && messages?.length > 0) {
+          chats.push({ key, game, messages, expiresAt });
+        }
+      } catch {}
+    }
+  } catch {}
+  return chats;
+}
+
+// ─── Page component ───────────────────────────────────────────────────────────
 
 export default function ChatsPage() {
   const { user, isLoaded } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [chats, setChats] = useState([]);
+  const [guestChats, setGuestChats] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleInput = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const filteredData = useMemo(() => {
-    if (!searchTerm) {
-      return chats;
-    }
-
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-
-    return chats.filter((item) => {
-      if (item.boardgame_id && item.boardgame_id.title) {
-        return item.boardgame_id.title.toLowerCase().includes(lowerCaseSearchTerm);
-      }
-      return false; // No match if boardgame_id or title is missing
-    });
-  }, [chats, searchTerm]);
 
   const getChats = async () => {
     if (!user) return;
@@ -57,66 +81,188 @@ export default function ChatsPage() {
     const { message } = await res.json();
     if (!res.ok) return toast.error(message);
     toast.custom((t) => <CustomToast message={message} id={t.id} />);
-    setChats(chats.filter((chat) => chat._id != chat_id));
+    setChats((prev) => prev.filter((chat) => chat._id !== chat_id));
+  };
+
+  const deleteGuestChat = (key) => {
+    try { localStorage.removeItem(key); } catch {}
+    setGuestChats((prev) => prev.filter((c) => c.key !== key));
   };
 
   useEffect(() => {
     getChats();
   }, [user]);
 
-  if (!user && isLoaded) {
-    return (
-      <div className="h-screen w-screen flex flex-col justify-center items-center">
-        <p className="mb-2 text-lg">Please sign in to start a chat history</p>
-        <SignInButton className="min-w-32 text-center inline-block  bg-blue-600 text-white py-3 px-6 shadow-sm hover:bg-blue-700 dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-900 font-bold transition duration-300" />
-      </div>
-    );
+  useEffect(() => {
+    if (isLoaded && !user) {
+      setGuestChats(loadAllGuestChats());
+    }
+  }, [isLoaded, user]);
+
+  const displayChats = user ? chats : guestChats;
+
+  const filteredChats = useMemo(() => {
+    if (!searchTerm) return displayChats;
+    const lower = searchTerm.toLowerCase();
+    return displayChats.filter((item) => {
+      const title = user ? item.boardgame_id?.title : item.game?.title;
+      return title?.toLowerCase().includes(lower);
+    });
+  }, [displayChats, searchTerm, user]);
+
+  if (!isLoaded || (user && isLoading)) {
+    return <div className="pt-24"><Loader width="6rem" /></div>;
   }
 
-  return isLoaded && !isLoading ? (
-    <div className="max-w-2xl mx-auto pt-[5rem] px-4">
-      {chats.length > 0 ? (
-        <>
-          <div className="max-w-lg mx-auto">
-            <Input value={searchTerm} onChange={handleInput} placeholder="search chats" />
-          </div>
-          <ul className="my-6">
-            {filteredData.map(({ _id, boardgame_id }) => (
-              <li
-                key={_id}
-                className="w-full flex justify-between items-end gap-4 mb-2 py-2 border-b">
-                <Link
-                  href={`/boardgames/${boardgame_id._id}/chat`}
-                  className="w-[80%] flex items-end gap-4">
-                  <div className="relative flex-shrink-0 w-12 h-12 rounded">
-                    <img
-                      src={boardgame_id.thumbnail}
-                      alt={boardgame_id.title}
-                      fill
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <h3 className="capitalize font-semibold overflow-x-hidden text-ellipsis text-nowrap">
-                    {boardgame_id.title}
-                  </h3>
-                </Link>
-                <span className="flex-shrink-0" onClick={() => deleteChat(_id, boardgame_id._id)}>
-                  <MdDelete size={24} color="red" />
-                </span>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : (
-        <div className="flex flex-col justify-center items-center pt-20">
-          <h2 className="text-lg font-semibold">No Chats Available</h2>
-          <CustomLink href={"/boardgames"}>Go to Board Games</CustomLink>
+  return (
+    <div className="min-h-screen pt-20 pb-16 px-4">
+      <div className="max-w-2xl mx-auto">
+
+        {/* Guest banner */}
+        <AnimatePresence>
+          {isLoaded && !user && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="mb-6 rounded-2xl bg-amber-50 dark:bg-yellow-500/10 border border-amber-200 dark:border-yellow-500/20 px-4 py-3 text-sm text-amber-700 dark:text-yellow-400">
+              <Link
+                href="/sign-in"
+                className="font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity">
+                Sign in
+              </Link>{" "}
+              to save your chat history permanently — guest chats are kept for 30 days and stored only on this device.
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Header */}
+        <div className="mb-6">
+          <p className="text-xs uppercase tracking-widest text-gray-400 dark:text-slate-500 font-medium mb-1">
+            {user ? "Your account" : "This device"}
+          </p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Chat History</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
+            {displayChats.length > 0
+              ? `${displayChats.length} conversation${displayChats.length !== 1 ? "s" : ""}`
+              : "No conversations yet"}
+          </p>
         </div>
-      )}
+
+        {/* Search */}
+        {displayChats.length > 1 && (
+          <div className="mb-4">
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search chats…"
+            />
+          </div>
+        )}
+
+        {/* Chat list */}
+        {filteredChats.length > 0 ? (
+          <ul className="space-y-2">
+            <AnimatePresence initial={false}>
+              {filteredChats.map((item) => {
+                if (user) {
+                  const { _id, boardgame_id, last_message, last_message_at, updatedAt } = item;
+                  return (
+                    <ChatCard
+                      key={_id}
+                      title={boardgame_id.title}
+                      thumbnail={boardgame_id.thumbnail}
+                      href={`/boardgames/${boardgame_id._id}/chat`}
+                      preview={last_message}
+                      date={formatDate(last_message_at || updatedAt)}
+                      onDelete={() => deleteChat(_id, boardgame_id._id)}
+                    />
+                  );
+                } else {
+                  const { key, game, messages } = item;
+                  const lastMsg = [...messages].reverse().find((m) => m.role === "assistant");
+                  return (
+                    <ChatCard
+                      key={key}
+                      title={game.title}
+                      thumbnail={game.thumbnail}
+                      href={`/boardgames/${game._id}/chat`}
+                      preview={lastMsg?.content}
+                      date={formatDate(lastMsg?.createdAt)}
+                      onDelete={() => deleteGuestChat(key)}
+                    />
+                  );
+                }
+              })}
+            </AnimatePresence>
+          </ul>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center gap-4 pt-20 text-center">
+            <IoChatbubbles size={52} className="text-gray-200 dark:text-slate-700" />
+            <div>
+              <h3 className="font-semibold text-gray-700 dark:text-slate-300">
+                {searchTerm ? "No matching chats" : "No chats yet"}
+              </h3>
+              <p className="text-sm text-gray-400 dark:text-slate-500 mt-1">
+                {searchTerm
+                  ? "Try a different search term."
+                  : "Start a conversation from any board game page."}
+              </p>
+            </div>
+            {!searchTerm && (
+              <Link
+                href="/boardgames"
+                className="text-sm font-medium text-blue-600 dark:text-yellow-400 hover:underline underline-offset-2 transition-colors">
+                Browse board games →
+              </Link>
+            )}
+          </motion.div>
+        )}
+      </div>
     </div>
-  ) : (
-    <div className="pt-[6rem]">
-      <Loader width={"6rem"} />
-    </div>
+  );
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function ChatCard({ title, thumbnail, href, preview, date, onDelete }) {
+  return (
+    <motion.li
+      layout
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+      className="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 hover:border-blue-200 dark:hover:border-yellow-500/30 shadow-sm hover:shadow transition-all group">
+      <Link href={href} className="flex items-center gap-3 flex-1 min-w-0">
+        <img
+          src={thumbnail}
+          alt={title}
+          className="w-12 h-12 rounded-xl object-cover shrink-0 shadow-sm"
+        />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline justify-between gap-2">
+            <h3 className="capitalize font-semibold text-sm text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-yellow-400 transition-colors">
+              {title}
+            </h3>
+            {date && (
+              <span className="text-[11px] text-gray-400 dark:text-slate-500 shrink-0">{date}</span>
+            )}
+          </div>
+          {preview && (
+            <p className="text-xs text-gray-400 dark:text-slate-500 truncate mt-0.5">
+              {preview}
+            </p>
+          )}
+        </div>
+      </Link>
+      <button
+        onClick={onDelete}
+        className="shrink-0 p-2 rounded-xl text-gray-300 dark:text-slate-600 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400 transition-all">
+        <MdDelete size={18} />
+      </button>
+    </motion.li>
   );
 }

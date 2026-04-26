@@ -1,14 +1,10 @@
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import Hero from "@/components/landingPage/Hero";
-import Features from "@/components/landingPage/Features";
-import Pricing from "@/components/landingPage/Pricing";
-import RoadMap from "@/components/landingPage/RoadMap";
-import ContactForm from "@/components/ContactForm";
-import BoardgameList from "@/components/boardgame/BoardgameList";
-import { Heading } from "@/components/ui";
-import BoardGameScroller from "@/components/boardgame/BoardgameScroller";
 import BetaAnnouncement from "@/components/landingPage/BetaAnnouncement";
+import HowItWorks from "@/components/landingPage/HowItWorks";
+import Features from "@/components/landingPage/Features";
+import BoardgameScroller from "@/components/boardgame/BoardgameScroller";
+import ContactForm from "@/components/ContactForm";
 
 export const metadata = {
   alternates: {
@@ -16,73 +12,88 @@ export const metadata = {
   },
 };
 
-export default async function Home() {
+export default function Home() {
   return (
     <>
-      {/* <Hero /> */}
       <BetaAnnouncement />
-      <section className="max-w-5xl mx-auto my-8 px-4  animate-slidein">
-        <Heading level={2}>Recently Added</Heading>
-        <BoardGameScroller />
-      </section>
+      <HowItWorks />
       <Features />
-      {/* <Pricing /> */}
-      {/* <RoadMap /> */}
+      <BoardgameScroller />
       <ContactForm />
-      <footer className="py-3">
-        <div className="container max-w-xl mx-auto px-4 text-center">
-          <div className="flex justify-center space-x-4 p-2">
+      <footer className="py-12 px-4 border-t border-gray-100 dark:border-slate-800">
+        <div className="max-w-xl mx-auto text-center">
+          <div className="flex justify-center space-x-5 mb-4">
             <a
               href="https://www.facebook.com/profile.php?id=61572349896501"
               target="_blank"
               rel="noreferrer noopener"
-              referrerPolicy="no-referrer">
-              <FaFacebookF size={24} aria-label="facebook" className="" />
+              referrerPolicy="no-referrer"
+              aria-label="Facebook"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <FaFacebookF size={20} />
             </a>
             <a
               href="https://www.instagram.com/meeple_tron/"
               target="_blank"
               rel="noreferrer noopener"
-              referrerPolicy="no-referrer">
-              <FaInstagram size={24} aria-label="instagram" className="" />
+              referrerPolicy="no-referrer"
+              aria-label="Instagram"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <FaInstagram size={20} />
             </a>
             <a
               href="#"
-              // target="_blank"
               rel="noreferrer noopener"
-              referrerPolicy="no-referrer">
-              <FaYoutube size={24} aria-label="youtube" className="" />
+              referrerPolicy="no-referrer"
+              aria-label="YouTube"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <FaYoutube size={20} />
             </a>
             <a
               href="#"
-              // target="_blank"
               rel="noreferrer noopener"
-              referrerPolicy="no-referrer">
-              <FaLinkedinIn size={24} aria-label="linkedin" className="" />
+              referrerPolicy="no-referrer"
+              aria-label="LinkedIn"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <FaLinkedinIn size={20} />
             </a>
             <a
               href="https://x.com/meepletron45657"
-              // target="_blank"
               rel="noreferrer noopener"
-              referrerPolicy="no-referrer">
-              <FaXTwitter size={24} aria-label="twitter-x" className="" />
+              referrerPolicy="no-referrer"
+              aria-label="X / Twitter"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <FaXTwitter size={20} />
             </a>
           </div>
-          <nav className="text-center">
-            <ul className="flex justify-center space-x-4">
+          <nav className="mb-3">
+            <ul className="flex justify-center gap-4 text-sm">
               <li>
-                <a href="/privacy-policy" className="underline">
+                <a
+                  href="/privacy-policy"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 underline transition-colors"
+                >
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="/terms-of-service" className="underline">
+                <a
+                  href="/terms-of-service"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 underline transition-colors"
+                >
                   Terms of Service
                 </a>
               </li>
             </ul>
           </nav>
-          <p>&copy; 2025 Meepletron • All rights reserved</p>
+          <p className="text-xs text-gray-400 dark:text-slate-500">
+            &copy; 2025 Meepletron &bull; All rights reserved
+          </p>
         </div>
       </footer>
     </>
