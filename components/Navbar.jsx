@@ -41,11 +41,11 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex justify-center items-center gap-3">
-          <Link href="/chats" aria-label="chats" className="flex flex-col items-center gap-1">
-            <ImBubbles size={24} /> <span className="text-sm">Chats</span>
-          </Link>
           <Link href="/boardgames" aria-label="board games" className="flex flex-col items-center gap-1">
             <GiOpenBook size={24} /> <span className="text-sm">Board Games</span>
+          </Link>
+          <Link href="/chats" aria-label="chats" className="flex flex-col items-center gap-1">
+            <ImBubbles size={24} /> <span className="text-sm">Chats</span>
           </Link>
           <span className="flex flex-col items-center gap-1">
             <ThemeSwitch />
@@ -90,11 +90,11 @@ export default function Navbar() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}>
         <div className="p-5 flex flex-col gap-4">
-          <Link href="/chats" aria-label="chats" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-            <ImBubbles size={24} /> <span className="text-sm">Chats</span>
-          </Link>
           <Link href="/boardgames" aria-label="board games" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
             <GiOpenBook size={24} /> <span className="text-sm">Board Games</span>
+          </Link>
+          <Link href="/chats" aria-label="chats" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
+            <ImBubbles size={24} /> <span className="text-sm">Chats</span>
           </Link>
           <span className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
             <ThemeSwitch />

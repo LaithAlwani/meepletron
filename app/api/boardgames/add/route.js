@@ -28,21 +28,7 @@ export async function POST(req) {
 
   boardgame.description = cleanText(boardgame.description);
 
-  // Generate unique slug for base games
-  if (boardgame.parent_id === "null") {
-    const base = boardgame.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-    let slug = base;
-    let n = 1;
-    while (await Boardgame.findOne({ slug })) slug = `${base}-${n++}`;
-    boardgame.slug = slug;
-  }
-
   const safeTitle = boardgame.title.replace(/\s+/g, "-").toLowerCase();
-  const { orginalURL, thumbnailURL } = await covertAndUpload(safeTitle, boardgame.image);
-
-  boardgame.image = orginalURL;
-  boardgame.thumbnail = thumbnailURL;
-
   const isExpansion = boardgame.parent_id !== "null";
 
   // Pre-check: does game already exist?
@@ -62,7 +48,12 @@ export async function POST(req) {
   let pineconeStored = false;
 
   try {
-    // 1. Create game in MongoDB
+    // 1. Upload image to S3
+    const { orginalURL, thumbnailURL } = await covertAndUpload(safeTitle, boardgame.image);
+    boardgame.image = orginalURL;
+    boardgame.thumbnail = thumbnailURL;
+
+    // 2. Create game in MongoDB
     if (!isExpansion) {
       game = await Boardgame.create(boardgame);
     } else {
@@ -76,7 +67,7 @@ export async function POST(req) {
       });
     }
 
-    // 2. Handle rulebook file + embeddings
+    // 3. Handle rulebook file + embeddings
     if (chunks?.length && tempFileUrl) {
       const ext = tempFileUrl.split(".").pop();
       permanentKey =
@@ -178,7 +169,7 @@ export async function POST(req) {
 }
 
 const covertAndUpload = async (safeTitle, url) => {
-  const response = await fetch(url);
+  const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
   if (!response.ok) throw new Error(`Failed to fetch image`);
 
   const originalBuffer = await response.arrayBuffer();
@@ -214,17 +205,12 @@ const covertAndUpload = async (safeTitle, url) => {
     ContentType: "image/webp",
   };
 
-  try {
-    await s3Client.send(new PutObjectCommand(imageParams));
-    await s3Client.send(new PutObjectCommand(thumbnailParams));
+  await s3Client.send(new PutObjectCommand(imageParams));
+  await s3Client.send(new PutObjectCommand(thumbnailParams));
 
-    const orginalURL = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${imagePath}`;
-    const thumbnailURL = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${thumbnailPath}`;
-    return { orginalURL, thumbnailURL };
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
+  const orginalURL = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${imagePath}`;
+  const thumbnailURL = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${thumbnailPath}`;
+  return { orginalURL, thumbnailURL };
 };
 
 function cleanText(input) {

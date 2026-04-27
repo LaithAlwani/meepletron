@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { MdGroups, MdOutlineAccessTimeFilled, MdMenuBook, MdOpenInNew } from "react-icons/md";
 import { FaChild } from "react-icons/fa";
 import { ImBubbles } from "react-icons/im";
+import ExpandableText from "@/components/ExpandableText";
 
 const dev = "http://localhost:3000";
 const prod = "https://www.meepletron.com";
@@ -150,9 +151,7 @@ export default async function ExpansionPage({ params }) {
         {/* Description */}
         {description && (
           <InfoSection title="About">
-            <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-              {description}
-            </p>
+            <ExpandableText text={description} className="text-gray-700 dark:text-slate-300" />
           </InfoSection>
         )}
 
@@ -186,7 +185,7 @@ export default async function ExpansionPage({ params }) {
         )}
 
         {/* All rulebook files */}
-        {urls?.length > 1 && (
+        
           <InfoSection title="Files">
             <ul className="space-y-2">
               {urls.map((url, i) => (
@@ -204,7 +203,7 @@ export default async function ExpansionPage({ params }) {
               ))}
             </ul>
           </InfoSection>
-        )}
+        
 
         {/* Parent game */}
         {parent_id && (
