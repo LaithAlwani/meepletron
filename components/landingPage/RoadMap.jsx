@@ -70,7 +70,7 @@ const RoadMap = () => {
       <Heading level={2}>Road Map 2025</Heading>
       <div className="relative w-full max-w-xl">
         {/* Vertical Line */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-200"></div>
+        <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-border"></div>
         {stops.map((stop, index) => (
           <div
             key={index}
@@ -80,8 +80,8 @@ const RoadMap = () => {
             {/* Content */}
             <div className="w-1/2 text-right px-4">
               <Heading level={4}>{stop.title}</Heading>
-              <p className="text-sm text-gray-600 dark:text-gray-200">{stop.description}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-300 font-light mt-1">
+              <p className="text-sm text-foreground">{stop.description}</p>
+              <p className="text-sm text-muted font-light mt-1">
                 {stop.date}
               </p>
             </div>

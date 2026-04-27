@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import CustomLink from "../CustomeLink";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
@@ -27,7 +27,7 @@ export default function Carousel({ items }) {
         />
         <span className="font-semibold tracking-widest">{boardgames[index].designers[0]}</span>
         <motion.h1
-          className=" text-[2em] lg:text-[3em] font-black text-blue-600 dark:text-yellow-500 uppercase drop-shadow-md mb-4"
+          className="text-[2em] lg:text-[3em] font-black text-primary uppercase drop-shadow-md mb-4"
           transition={{ duration: 1 }}>
           {boardgames[index].title}
         </motion.h1>
@@ -37,13 +37,12 @@ export default function Carousel({ items }) {
         <div className=" text-left md:px-0 [&>*]:mr-2">
           <Link
             href={`/boardgames/${boardgames[index]._id}`}
-            className="text-center inline-block p-3  border-2 border-black text-black dark:text-white dark:border-white font-semibold min-w-32 ">
-            {" "}
+            className="text-center inline-block p-3 border-2 border-foreground text-foreground font-semibold min-w-32">
             More
           </Link>
           <Link
             href={`/boardgames/${boardgames[index]._id}/chat`}
-            className="text-center inline-block p-3 bg-slate-300 border-2 border-slate-300 text-black  font-semibold min-w-32">
+            className="text-center inline-block p-3 bg-surface-muted border-2 border-border text-foreground font-semibold min-w-32">
             Chat
           </Link>
         </div>
@@ -51,10 +50,10 @@ export default function Carousel({ items }) {
 
       {/* Thumbnail Row */}
       <div>
-        <div className="relative flex py-1 items-center ">
-          <div className="w-[3rem] border-t-2 border-gray-800 dark:border-yellow-300"></div>
-          <h2 className=" px-4 text-2xl font-bold italic dark:text-yellow-500 drop-shadow-md">Recently Added</h2>
-          <div className="flex-grow border-t-2 border-gray-800 dark:border-yellow-300"></div>
+        <div className="relative flex py-1 items-center">
+          <div className="w-[3rem] border-t-2 border-primary"></div>
+          <h2 className="px-4 text-2xl font-bold italic text-primary drop-shadow-md">Recently Added</h2>
+          <div className="flex-grow border-t-2 border-primary"></div>
         </div>
         <div className=" p-2 flex flex-nowrap gap-2 items-center justify-start lg:justify-center overflow-x-scroll">
           {boardgames.map((boardgame, i) => (
@@ -62,8 +61,8 @@ export default function Carousel({ items }) {
               key={i}
               src={boardgame.image}
               alt={boardgame.title}
-              className={` h-32 rounded-lg cursor-pointer   ${
-                i === index ? "border-2 border-blue-500 dark:border-yellow-500 h-36" : ""
+              className={`h-32 rounded-lg cursor-pointer ${
+                i === index ? "border-2 border-primary h-36" : ""
               }`}
               onClick={() => setIndex(i)}
             />

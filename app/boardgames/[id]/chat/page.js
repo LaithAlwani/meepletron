@@ -17,13 +17,14 @@ import { useUser } from "@clerk/nextjs";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import { generateId } from "ai";
 import { useRouter } from "next/navigation";
+import { GUEST_CHAT_KEY_PREFIX } from "@/utils/constants";
 
 // ─── Guest localStorage helpers ───────────────────────────────────────────────
 
 const EXPIRY_MS = 30 * 24 * 60 * 60 * 1000;
 
 function guestKey(boardgameId) {
-  return `meepletron_guest_${boardgameId}`;
+  return `${GUEST_CHAT_KEY_PREFIX}${boardgameId}`;
 }
 
 function loadGuestMessages(boardgameId) {

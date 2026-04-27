@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 export default function TypingIndicator() {
   return (
@@ -6,7 +6,7 @@ export default function TypingIndicator() {
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          className="w-2 h-2 bg-gray-500 rounded-full"
+          className="w-2 h-2 bg-muted rounded-full"
           animate={{ opacity: [1, 0, 1] }}
           transition={{
             repeat: Infinity,

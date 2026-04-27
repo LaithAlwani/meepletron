@@ -15,7 +15,7 @@ export default function Pricing() {
     <section id="pricing" className="py-12 max-w-xl mx-auto">
       <div className="container mx-auto px-4">
         <Heading level={2}>Pricing</Heading>
-        <div className=" flex flex-col justify-start gap-8 mx-auto w-72 bg-gray-200 dark:bg-slate-800 shadow-md shadow-gray-400 dark:shadow-slate-700 h-[22rem]">
+        <div className="flex flex-col justify-start gap-8 mx-auto w-72 bg-surface-muted shadow-md h-[22rem]">
           <div className="flex justify-between items-center  ">
             {/* <PeriodTab isMonthly={isMonthly} label="monthly" onClick={handleClick} value="month" /> */}
             {/* <PeriodTab isMonthly={!isMonthly} label="annually" onClick={handleClick} value="year" /> */}
@@ -49,7 +49,7 @@ const Card = ({ type, price }) => {
       <div>
         <h4 className="text-3xl font-bold border-b border-gray-400 pb-2">
           {price}
-          <span className="text-xs font-light text-slate-500 dark:text-slate-400">
+          <span className="text-xs font-light text-muted">
             {/* {type === "Monthly" ? " /mo." : type === "Annually" ? " /yr." : " "} */}/ Until Beta
             Ends
           </span>

@@ -16,22 +16,22 @@ export default function TermsOfService() {
           Please read them carefully before using the service.
         </p>
         <h2 className="text-xl font-semibold mt-6 mb-4 ">1. Eligibility</h2>
-        <p className="text-gray-700 mb-4">
+        <p className="text-muted mb-4">
           You must be at least 13 years old to use our services. By using Meeple Tron, you confirm
           that you meet this requirement.
         </p>
         <h2 className="text-xl font-semibold mt-6 mb-4 ">2. Prohibited Use</h2>
-        <p className="text-gray-700 mb-4">
+        <p className="text-muted mb-4">
           You agree not to use the service for any unlawful purposes or in a way that violates these
           Terms, including uploading harmful content or interfering with our systems.
         </p>
         <h2 className="text-xl font-semibold mt-6 mb-4 ">3. Intellectual Property</h2>
-        <p className="text-gray-700 mb-4">
+        <p className="text-muted mb-4">
           All content and trademarks on Meeple Tron are the property of Meeple Tron or its
           licensors. Unauthorized use is prohibited.
         </p>
         <h2 className="text-xl font-semibold mt-6 mb-4 ">4. Termination</h2>
-        <p className="text-gray-700 mb-4">
+        <p className="text-muted mb-4">
           We reserve the right to suspend or terminate your access to Meeple Tron at our sole
           discretion if you violate these Terms.
         </p>

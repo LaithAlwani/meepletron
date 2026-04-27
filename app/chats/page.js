@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 import { IoChatbubbles } from "react-icons/io5";
+import { GUEST_CHAT_KEY_PREFIX } from "@/utils/constants";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
@@ -22,7 +23,7 @@ function formatDate(dateStr) {
   return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
 }
 
-const GUEST_PREFIX = "meepletron_guest_";
+const GUEST_PREFIX = GUEST_CHAT_KEY_PREFIX;
 
 function loadAllGuestChats() {
   const chats = [];

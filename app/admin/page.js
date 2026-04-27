@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MdOutlineMessage, MdSmartToy, MdThumbUp, MdMenuBook, MdStorage, MdOutlineHelpOutline } from "react-icons/md";
+import { StatCard } from "@/components/ui";
 
 export default function AdminPage() {
   const [stats, setStats] = useState(null);
@@ -24,9 +25,9 @@ export default function AdminPage() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
-          <StatCard icon={<MdStorage size={22} />} label="All Messages" value={stats?.total} loading={loading} color="slate" />
-          <StatCard icon={<MdOutlineMessage size={22} />} label="By Users" value={stats?.userMessages} loading={loading} color="blue" />
-          <StatCard icon={<MdSmartToy size={22} />} label="By AI" value={stats?.aiMessages} loading={loading} color="violet" />
+          <StatCard icon={<MdStorage size={22} />} label="All Messages" value={stats?.total} loading={loading} color="slate" size="lg" />
+          <StatCard icon={<MdOutlineMessage size={22} />} label="By Users" value={stats?.userMessages} loading={loading} color="blue" size="lg" />
+          <StatCard icon={<MdSmartToy size={22} />} label="By AI" value={stats?.aiMessages} loading={loading} color="violet" size="lg" />
         </div>
         <div className="grid grid-cols-2 gap-4 mb-10">
           <StatCard
@@ -41,6 +42,7 @@ export default function AdminPage() {
             }
             loading={loading}
             color="green"
+            size="lg"
           />
           <StatCard
             icon={<MdOutlineHelpOutline size={22} />}
@@ -49,6 +51,7 @@ export default function AdminPage() {
             sub={stats?.aiMessages > 0 ? `${Math.round((stats.unratedAI / stats.aiMessages) * 100)}% of AI responses` : null}
             loading={loading}
             color="amber"
+            size="lg"
           />
         </div>
 
@@ -67,38 +70,6 @@ export default function AdminPage() {
         </div>
 
       </div>
-    </div>
-  );
-}
-
-function StatCard({ icon, label, value, sub, loading, color }) {
-  const colors = {
-    slate:  "bg-gray-100 dark:bg-slate-700/60 text-gray-600 dark:text-slate-300",
-    blue:   "bg-blue-100 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400",
-    violet: "bg-violet-100 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400",
-    green:  "bg-green-100 dark:bg-green-500/15 text-green-600 dark:text-green-400",
-    amber:  "bg-amber-100 dark:bg-amber-500/15 text-amber-600 dark:text-amber-400",
-  };
-
-  return (
-    <div className="flex flex-col gap-3 p-5 rounded-2xl bg-surface border border-border-muted shadow-sm">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${colors[color]}`}>
-        {icon}
-      </div>
-      {loading ? (
-        <div className="space-y-2">
-          <div className="h-7 w-16 rounded-lg bg-border animate-pulse" />
-          <div className="h-3 w-24 rounded bg-border animate-pulse" />
-        </div>
-      ) : (
-        <div>
-          <p className="text-2xl font-bold text-foreground tabular-nums">
-            {typeof value === "string" ? value : (value?.toLocaleString() ?? "—")}
-          </p>
-          {sub && <p className="text-xs text-subtle mt-0.5 tabular-nums">{sub}</p>}
-        </div>
-      )}
-      <p className="text-xs text-subtle leading-tight">{label}</p>
     </div>
   );
 }

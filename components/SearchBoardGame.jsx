@@ -48,7 +48,7 @@ const SearchBoardGame = () => {
           onChange={(e) => setQuery(e.target.value)}
         />
 
-        <div className="absolute w-full max-h-80 bg-white dark:bg-slate-600 rounded-b shadow-lg mt-1 overflow-y-auto z-10">
+        <div className="absolute w-full max-h-80 bg-surface rounded-b shadow-lg mt-1 overflow-y-auto z-10">
           {loading && <Loader width={"3rem"} />}
           {!loading && results?.length === 0 && query.trim() && (
             <div className="p-3">
@@ -65,7 +65,7 @@ const SearchBoardGame = () => {
             results.map((boardgame) => (
               <div
                 key={boardgame._id}
-                className="flex items-center justify-between gap-3 p-3 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer"
+                className="flex items-center justify-between gap-3 p-3 hover:bg-surface-muted cursor-pointer"
                 onClick={() => setIsSearchOpen(false)}>
                 <Link
                   href={`/boardgames/${boardgame.parent_id ? boardgame.parent_id : (boardgame.slug || boardgame._id)}${
@@ -77,13 +77,13 @@ const SearchBoardGame = () => {
                     alt={boardgame.title}
                     className="w-12 h-12 rounded-md object-cover"
                   />
-                  <span className="capitalize font-semibold text-sm  ">{boardgame.title}</span>
+                  <span className="capitalize font-semibold text-sm">{boardgame.title}</span>
                 </Link>
                 <Link
                   href={`/boardgames/${
                     boardgame.parent_id ? boardgame.parent_id : (boardgame.slug || boardgame._id)
                   }/chat`}
-                  className="flex items-center gap-2 border border-slate-500 dark:border-slate-300 rounded-md p-2 text-gray-500 dark:text-slate-200  hover:text-gray-800 dark:hover:text-slate-100">
+                  className="flex items-center gap-2 border border-border rounded-md p-2 text-muted hover:text-foreground">
                   <FaComments size={20} />
                   Chat
                 </Link>

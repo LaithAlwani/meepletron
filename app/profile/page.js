@@ -2,11 +2,13 @@
 import { useEffect, useState } from "react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import Loader from "@/components/Loader";
 import { motion } from "motion/react";
 import {
   MdOutlineMessage, MdSmartToy, MdThumbUp, MdOutlineChat,
   MdLogout, MdOutlineCalendarToday,
 } from "react-icons/md";
+import { StatCard } from "@/components/ui";
 
 export default function ProfilePage() {
   const { user: clerkUser, isLoaded } = useUser();
@@ -14,6 +16,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -33,6 +36,14 @@ export default function ProfilePage() {
   const memberSince = stats?.user?.createdAt
     ? new Date(stats.user.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })
     : null;
+
+  if (signingOut) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-bg">
+        <Loader width="3rem" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-bg pt-24 pb-16 px-4">
@@ -67,7 +78,7 @@ export default function ProfilePage() {
           )}
 
           <button
-            onClick={() => signOut(() => router.push("/"))}
+            onClick={() => { setSigningOut(true); signOut(() => router.push("/sign-in")); }}
             className="mt-6 flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-medium text-muted hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-500/30 transition-all"
           >
             <MdLogout size={16} />
@@ -97,37 +108,6 @@ export default function ProfilePage() {
         </motion.div>
 
       </div>
-    </div>
-  );
-}
-
-function StatCard({ icon, label, value, sub, loading, color }) {
-  const colors = {
-    slate:  "bg-gray-100 dark:bg-slate-700/60 text-gray-600 dark:text-slate-300",
-    blue:   "bg-blue-100 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400",
-    violet: "bg-violet-100 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400",
-    green:  "bg-green-100 dark:bg-green-500/15 text-green-600 dark:text-green-400",
-  };
-
-  return (
-    <div className="flex flex-col gap-3 p-5 rounded-2xl bg-surface border border-border-muted shadow-sm">
-      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${colors[color]}`}>
-        {icon}
-      </div>
-      {loading ? (
-        <div className="space-y-1.5">
-          <div className="h-6 w-14 rounded-lg bg-border animate-pulse" />
-          <div className="h-3 w-20 rounded bg-border animate-pulse" />
-        </div>
-      ) : (
-        <div>
-          <p className="text-2xl font-bold text-foreground tabular-nums">
-            {typeof value === "string" ? value : (value?.toLocaleString() ?? "—")}
-          </p>
-          {sub && <p className="text-xs text-subtle mt-0.5">{sub}</p>}
-        </div>
-      )}
-      <p className="text-xs text-subtle leading-tight">{label}</p>
     </div>
   );
 }

@@ -2,13 +2,11 @@ import Link from "next/link";
 
 export default function BoardgamePage() {
   return (
-    <div className="min-h-screen bg-[#f7f7f7] dark:bg-slate-900 pt-24 pb-16 px-4">
+    <div className="min-h-screen bg-bg pt-24 pb-16 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="mb-10">
-          <p className="text-xs uppercase tracking-widest text-gray-400 dark:text-slate-500 font-medium mb-1">
-            Admin Panel
-          </p>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Board Game Manager</h1>
+          <p className="text-xs uppercase tracking-widest text-primary font-medium mb-1">Admin Panel</p>
+          <h1 className="text-3xl font-bold text-foreground">Board Game Manager</h1>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -42,15 +40,15 @@ function ActionCard({ href, icon, title, description }) {
   return (
     <Link
       href={href}
-      className="group block bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm ring-1 ring-gray-200 dark:ring-slate-700 hover:ring-blue-400 dark:hover:ring-yellow-500 transition-all duration-200 hover:shadow-md">
-      <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-yellow-500/10 flex items-center justify-center text-blue-600 dark:text-yellow-400 mb-4">
+      className="group block bg-surface rounded-2xl p-6 shadow-sm ring-1 ring-border hover:ring-primary/40 transition-all duration-200 hover:shadow-md">
+      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-4">
         {icon}
       </div>
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-yellow-400 transition-colors">
+      <h2 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
         {title}
       </h2>
-      <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">{description}</p>
-      <div className="flex items-center text-sm font-medium text-blue-600 dark:text-yellow-400">
+      <p className="text-sm text-muted mb-4">{description}</p>
+      <div className="flex items-center text-sm font-medium text-primary">
         Open
         <span className="ml-1 group-hover:translate-x-1 transition-transform inline-block">→</span>
       </div>

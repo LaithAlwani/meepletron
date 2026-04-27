@@ -9,9 +9,11 @@ export default {
   theme: {
     extend: {
       /* ── Colour tokens ─────────────────────────────────────────────────────
-         All brand colours are driven by CSS variables in globals.css.
-         The primary colour uses the `/ <alpha-value>` syntax so Tailwind's
-         opacity modifiers work (bg-primary/10, text-primary/50, …).
+         All brand colours are driven by CSS variables in globals.css so that
+         a single token class (bg-surface, text-muted, …) resolves to the
+         correct value in both light and dark mode at runtime.
+         Primary uses the `/ <alpha-value>` syntax so opacity modifiers work:
+         bg-primary/10, text-primary/50, etc.
       ─────────────────────────────────────────────────────────────────────── */
       colors: {
         primary: {
@@ -40,29 +42,29 @@ export default {
         mono: ["var(--font-mono)"],
       },
 
-      /* ── Font sizes (CSS-variable-driven for global resizing) ──────────── */
+      /* ── Font sizes ────────────────────────────────────────────────────── */
       fontSize: {
-        xs:   ["var(--text-xs)",   { lineHeight: "1rem" }],
-        sm:   ["var(--text-sm)",   { lineHeight: "1.25rem" }],
-        base: ["var(--text-base)", { lineHeight: "1.5rem" }],
-        lg:   ["var(--text-lg)",   { lineHeight: "1.75rem" }],
-        xl:   ["var(--text-xl)",   { lineHeight: "1.75rem" }],
-        "2xl":["var(--text-2xl)",  { lineHeight: "2rem" }],
-        "3xl":["var(--text-3xl)",  { lineHeight: "2.25rem" }],
-        "4xl":["var(--text-4xl)",  { lineHeight: "2.5rem" }],
-        "5xl":["var(--text-5xl)",  { lineHeight: "1.1" }],
-        "6xl":["var(--text-6xl)",  { lineHeight: "1.1" }],
+        xs:    ["0.75rem",  { lineHeight: "1rem" }],
+        sm:    ["0.875rem", { lineHeight: "1.25rem" }],
+        base:  ["1rem",     { lineHeight: "1.5rem" }],
+        lg:    ["1.125rem", { lineHeight: "1.75rem" }],
+        xl:    ["1.25rem",  { lineHeight: "1.75rem" }],
+        "2xl": ["1.5rem",   { lineHeight: "2rem" }],
+        "3xl": ["1.875rem", { lineHeight: "2.25rem" }],
+        "4xl": ["2.25rem",  { lineHeight: "2.5rem" }],
+        "5xl": ["3rem",     { lineHeight: "1.1" }],
+        "6xl": ["3.75rem",  { lineHeight: "1.1" }],
       },
 
       /* ── Border radius ─────────────────────────────────────────────────── */
       borderRadius: {
-        sm:    "var(--radius-sm)",
-        DEFAULT:"var(--radius)",
-        md:    "var(--radius)",
-        lg:    "var(--radius-lg)",
-        xl:    "var(--radius-xl)",
-        "2xl": "var(--radius-2xl)",
-        full:  "var(--radius-full)",
+        sm:      "0.5rem",
+        DEFAULT: "0.75rem",
+        md:      "0.75rem",
+        lg:      "1rem",
+        xl:      "1.25rem",
+        "2xl":   "1.5rem",
+        full:    "9999px",
       },
     },
   },
