@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
 import { useUser } from "@clerk/nextjs";
+import ThemeSwitch from "@/components/ThemeSwitch";
 import { generateId } from "ai";
 import { useRouter } from "next/navigation";
 
@@ -235,6 +236,11 @@ export default function ChatPage() {
             )}
           </div>
         </Link>
+
+        {/* Theme toggle */}
+        <div className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-500 dark:text-slate-400 shrink-0 flex items-center cursor-pointer [&>span]:hidden">
+          <ThemeSwitch />
+        </div>
 
         {/* Expansions button — always visible */}
         <button
