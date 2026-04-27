@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FaUserLock } from "react-icons/fa";
 import { MdLogin } from "react-icons/md";
 import ThemeSwitch from "./ThemeSwitch";
-import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { ImBubbles } from "react-icons/im";
 import { GiOpenBook } from "react-icons/gi";
@@ -70,15 +70,24 @@ export default function Navbar() {
               <FaUserLock size={24} /> <span className="text-sm">Admin</span>
             </Link>
           )}
-          <span className="flex flex-col items-center ">
+          <span className="flex flex-col items-center">
             <SignedIn>
-              <UserButton aria-label="user settings" /> <span className="text-sm">Settings</span>
+              <Link href="/profile" aria-label="profile" className="flex flex-col items-center gap-1">
+                {user?.imageUrl ? (
+                  <img src={user.imageUrl} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-yellow-500/20 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-yellow-400">
+                    {user?.firstName?.[0] ?? "?"}
+                  </div>
+                )}
+                <span className="text-sm">Profile</span>
+              </Link>
             </SignedIn>
             <SignedOut>
               <Link
                 href="/sign-in"
                 aria-label="sign-in"
-                className="flex flex-col  items-center gap-1">
+                className="flex flex-col items-center gap-1">
                 <MdLogin size={24} /> <span className="text-sm">Sign In</span>
               </Link>
             </SignedOut>
@@ -126,9 +135,20 @@ export default function Navbar() {
             </Link>
           )}
           <SignedIn>
-            <span className="flex items-center gap-2">
-              <UserButton aria-label="user settings" /> <span className="text-sm">Settings</span>
-            </span>
+            <Link
+              href="/profile"
+              aria-label="profile"
+              className="flex items-center gap-2"
+              onClick={() => setIsOpen(false)}>
+              {user?.imageUrl ? (
+                <img src={user.imageUrl} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
+              ) : (
+                <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-yellow-500/20 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-yellow-400">
+                  {user?.firstName?.[0] ?? "?"}
+                </div>
+              )}
+              <span className="text-sm">Profile</span>
+            </Link>
           </SignedIn>
           <SignedOut>
             <Link
