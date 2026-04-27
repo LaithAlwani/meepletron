@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FaUserLock } from "react-icons/fa";
 import { MdLogin } from "react-icons/md";
 import ThemeSwitch from "./ThemeSwitch";
-import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { ImBubbles } from "react-icons/im";
 import { GiOpenBook } from "react-icons/gi";
@@ -12,7 +12,7 @@ import { FiMenu, FiX } from "react-icons/fi";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -55,24 +55,28 @@ export default function Navbar() {
               <FaUserLock size={24} /> <span className="text-sm">Admin</span>
             </Link>
           )}
-          <span className="flex flex-col items-center">
-            <SignedIn>
+          <span className="flex flex-col items-center gap-1 min-w-[2.5rem]">
+            {!isLoaded ? (
+              <>
+                <div className="w-6 h-6 rounded-full bg-surface-muted" />
+                <span className="text-sm opacity-0">Sign In</span>
+              </>
+            ) : user ? (
               <Link href="/profile" aria-label="profile" className="flex flex-col items-center gap-1">
-                {user?.imageUrl ? (
+                {user.imageUrl ? (
                   <img src={user.imageUrl} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
                 ) : (
                   <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center text-xs font-bold text-primary">
-                    {user?.firstName?.[0] ?? "?"}
+                    {user.firstName?.[0] ?? "?"}
                   </div>
                 )}
                 <span className="text-sm">Profile</span>
               </Link>
-            </SignedIn>
-            <SignedOut>
+            ) : (
               <Link href="/sign-in" aria-label="sign-in" className="flex flex-col items-center gap-1">
                 <MdLogin size={24} /> <span className="text-sm">Sign In</span>
               </Link>
-            </SignedOut>
+            )}
           </span>
         </div>
 
@@ -104,23 +108,22 @@ export default function Navbar() {
               <FaUserLock size={28} /> <span className="text-sm">Admin</span>
             </Link>
           )}
-          <SignedIn>
+          {user ? (
             <Link href="/profile" aria-label="profile" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-              {user?.imageUrl ? (
+              {user.imageUrl ? (
                 <img src={user.imageUrl} alt="avatar" className="w-6 h-6 rounded-full object-cover" />
               ) : (
                 <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center text-xs font-bold text-primary">
-                  {user?.firstName?.[0] ?? "?"}
+                  {user.firstName?.[0] ?? "?"}
                 </div>
               )}
               <span className="text-sm">Profile</span>
             </Link>
-          </SignedIn>
-          <SignedOut>
+          ) : (
             <Link href="/sign-in" aria-label="sign in" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
               <MdLogin size={24} /> <span className="text-sm">Sign In</span>
             </Link>
-          </SignedOut>
+          )}
         </div>
       </div>
     </nav>
