@@ -31,10 +31,7 @@ function loadGuestMessages(boardgameId) {
     const raw = localStorage.getItem(guestKey(boardgameId));
     if (!raw) return [];
     const { expiresAt, messages } = JSON.parse(raw);
-    if (Date.now() > expiresAt) {
-      localStorage.removeItem(guestKey(boardgameId));
-      return [];
-    }
+    if (Date.now() > expiresAt) { localStorage.removeItem(guestKey(boardgameId)); return []; }
     return messages;
   } catch {
     return [];
@@ -45,14 +42,11 @@ function saveGuestMessages(boardgameId, messages, game) {
   try {
     const key = guestKey(boardgameId);
     const existing = JSON.parse(localStorage.getItem(key) || "{}");
-    localStorage.setItem(
-      key,
-      JSON.stringify({
-        expiresAt: existing.expiresAt ?? Date.now() + EXPIRY_MS,
-        game: game ?? existing.game,
-        messages,
-      })
-    );
+    localStorage.setItem(key, JSON.stringify({
+      expiresAt: existing.expiresAt ?? Date.now() + EXPIRY_MS,
+      game: game ?? existing.game,
+      messages,
+    }));
   } catch {}
 }
 
@@ -73,9 +67,7 @@ export default function ChatPage() {
   const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
     onFinish: (message) => {
-      if (user) {
-        saveMessage(message.id, message.role, message.content, message.annotations);
-      }
+      if (user) saveMessage(message.id, message.role, message.content, message.annotations);
     },
   });
 
@@ -106,11 +98,7 @@ export default function ChatPage() {
       if (Object.keys(data.chat).length === 0) {
         const createRes = await fetch(`/api/boardgames/${game._id}/chat`, {
           method: "POST",
-          body: JSON.stringify({
-            user_id: user?.id,
-            boardgame_id: game._id,
-            parent_id: game.parent_id,
-          }),
+          body: JSON.stringify({ user_id: user?.id, boardgame_id: game._id, parent_id: game.parent_id }),
         });
         const { data: newChat, message: createMsg } = await createRes.json();
         if (!createRes.ok) throw new Error(createMsg);
@@ -130,14 +118,7 @@ export default function ChatPage() {
     try {
       const res = await fetch("/api/chat/save-message", {
         method: "POST",
-        body: JSON.stringify({
-          _id: id,
-          chat_id: chat._id,
-          role,
-          content,
-          annotations,
-          parent_id: currentGame?.parent_id,
-        }),
+        body: JSON.stringify({ _id: id, chat_id: chat._id, role, content, annotations, parent_id: currentGame?.parent_id }),
       });
       const { message } = await res.json();
       if (!res.ok) throw new Error(message);
@@ -173,33 +154,19 @@ export default function ChatPage() {
 
   // ─── Effects ──────────────────────────────────────────────────────────────
 
+  useEffect(() => { getBoardgame(); }, []);
+  useEffect(() => { if (user && currentGame) getChat(currentGame); }, [currentGame, user]);
   useEffect(() => {
-    getBoardgame();
-  }, []);
-
-  useEffect(() => {
-    if (user && currentGame) getChat(currentGame);
-  }, [currentGame, user]);
-
-  useEffect(() => {
-    if (isLoaded && !user && currentGame) {
-      setMessages(loadGuestMessages(currentGame._id));
-    }
+    if (isLoaded && !user && currentGame) setMessages(loadGuestMessages(currentGame._id));
   }, [currentGame, isLoaded, user]);
-
   useEffect(() => {
     if (!user && isLoaded && !isLoading && messages.length > 0 && currentGame) {
       saveGuestMessages(currentGame._id, messages, {
-        _id: currentGame._id,
-        title: currentGame.title,
-        thumbnail: currentGame.thumbnail,
+        _id: currentGame._id, title: currentGame.title, thumbnail: currentGame.thumbnail,
       });
     }
   }, [isLoading]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  useEffect(() => { scrollToBottom(); }, [messages]);
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
@@ -210,10 +177,10 @@ export default function ChatPage() {
   return (
     <section className="h-[100svh] flex flex-col">
       {/* Header */}
-      <nav className="shrink-0 flex items-center gap-2 px-3 py-2.5 border-b border-gray-100 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm">
+      <nav className="shrink-0 flex items-center gap-2 px-3 py-2.5 border-b border-border-muted bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm">
         <button
           onClick={() => router.back()}
-          className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-600 dark:text-slate-300 shrink-0">
+          className="p-2 rounded-xl hover:bg-surface-muted transition-colors text-muted shrink-0">
           <IoArrowBack size={18} />
         </button>
 
@@ -222,30 +189,22 @@ export default function ChatPage() {
             currentGame?.parent_id ? `/expansions/${currentGame._id}` : ""
           }`}
           className="flex items-center gap-2.5 flex-1 min-w-0 group">
-          <img
-            src={currentGame?.thumbnail}
-            alt={currentGame?.title}
-            className="h-9 w-9 rounded-xl object-cover shrink-0 shadow-sm"
-          />
+          <img src={currentGame?.thumbnail} alt={currentGame?.title} className="h-9 w-9 rounded-xl object-cover shrink-0 shadow-sm" />
           <div className="min-w-0">
-            <h2 className="capitalize font-semibold text-sm truncate text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-yellow-400 transition-colors">
+            <h2 className="capitalize font-semibold truncate text-foreground group-hover:text-primary transition-colors">
               {currentGame?.title}
             </h2>
-            {currentGame?.parent_id && (
-              <p className="text-xs text-gray-400 dark:text-slate-500 truncate">Expansion</p>
-            )}
+            {currentGame?.parent_id && <p className="text-sm text-subtle truncate">Expansion</p>}
           </div>
         </Link>
 
-        {/* Theme toggle */}
-        <div className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-500 dark:text-slate-400 shrink-0 flex items-center cursor-pointer [&>span]:hidden">
+        <div className="p-2 rounded-xl hover:bg-surface-muted transition-colors text-muted shrink-0 flex items-center cursor-pointer [&>span]:hidden">
           <ThemeSwitch />
         </div>
 
-        {/* Expansions button — always visible */}
         <button
           onClick={() => setSideNavOpen(true)}
-          className="relative p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-500 dark:text-slate-400 shrink-0 flex flex-col items-center gap-0.5">
+          className="relative p-2 rounded-xl hover:bg-surface-muted transition-colors text-muted shrink-0 flex flex-col items-center gap-0.5">
           <BsLayers size={18} />
           <span className="text-[10px] font-medium leading-none">
             {expansionCount > 0 ? `${expansionCount}` : "EXP"}
@@ -272,80 +231,63 @@ export default function ChatPage() {
       </AnimatePresence>
 
       {/* Messages */}
-      <div
-        ref={scrollContainerRef}
-        onScroll={handleScroll}
-        className="flex-1 overflow-y-auto hide-scrollbar py-4">
+      <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto hide-scrollbar py-4">
         <div className="max-w-xl mx-auto px-4">
 
-        {/* Empty state */}
-        {messages.length === 0 && !isLoading && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-col items-center gap-4 pt-10 pb-6 text-center px-6">
-            <div className="relative">
-              <img
-                src={currentGame?.thumbnail}
-                alt={currentGame?.title}
-                className="w-24 h-24 rounded-2xl object-cover shadow-lg"
-              />
-              <img
-                src="/logo.webp"
-                alt="Meepletron"
-                className="absolute -bottom-2 -right-2 w-9 h-9 rounded-full border-2 border-white dark:border-slate-900 shadow object-contain bg-white dark:bg-slate-800"
-              />
-            </div>
-            <div>
-              <h3 className="font-bold text-lg text-gray-900 dark:text-white capitalize">
-                {currentGame?.title}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-slate-400 mt-1 leading-relaxed">
-                Ask me anything about the rules,<br className="hidden sm:block" /> setup, or strategy.
-              </p>
-            </div>
-            <div className="flex flex-wrap justify-center gap-2 mt-1">
-              {["How do I set up the game?", "What are the win conditions?", "How does turn order work?"].map((q) => (
-                <button
-                  key={q}
-                  onClick={() => {
-                    handleInputChange({ target: { value: q } });
-                    inputRef.current?.focus();
-                  }}
-                  className="text-xs px-3 py-1.5 rounded-full border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 hover:border-blue-300 dark:hover:border-yellow-500/50 transition-all">
-                  {q}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        <div className="space-y-3">
-          <AnimatePresence initial={false}>
-            {messages.map((message) => (
-              <Message key={message._id || message.id} message={message} user={user} />
-            ))}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {isLoading && (
-              <motion.div
-                key="typing"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 6 }}
-                className="flex items-end gap-2">
+          {messages.length === 0 && !isLoading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col items-center gap-4 pt-10 pb-6 text-center px-6">
+              <div className="relative">
+                <img src={currentGame?.thumbnail} alt={currentGame?.title} className="w-24 h-24 rounded-2xl object-cover shadow-lg" />
                 <img
                   src="/logo.webp"
-                  alt="logo"
-                  className="w-7 h-7 object-contain rounded-full shrink-0 border border-gray-100 dark:border-slate-700"
+                  alt="Meepletron"
+                  className="absolute -bottom-2 -right-2 w-9 h-9 rounded-full border-2 border-bg shadow object-contain bg-surface"
                 />
-                <TypingIndicator />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-foreground capitalize">{currentGame?.title}</h3>
+                <p className="text-sm text-muted mt-1 leading-relaxed">
+                  Ask me anything about the rules,<br className="hidden sm:block" /> setup, or strategy.
+                </p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2 mt-1">
+                {["How do I set up the game?", "What are the win conditions?", "How does turn order work?"].map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => { handleInputChange({ target: { value: q } }); inputRef.current?.focus(); }}
+                    className="text-xs px-3 py-1.5 rounded-full border border-border text-muted hover:bg-surface-muted hover:border-primary/50 transition-all">
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          <div className="space-y-3">
+            <AnimatePresence initial={false}>
+              {messages.map((message) => (
+                <Message key={message._id || message.id} message={message} user={user} />
+              ))}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {isLoading && (
+                <motion.div
+                  key="typing"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  className="flex items-end gap-2">
+                  <img src="/logo.webp" alt="logo" className="w-7 h-7 object-contain rounded-full shrink-0 border border-border-muted" />
+                  <TypingIndicator />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
@@ -358,17 +300,17 @@ export default function ChatPage() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.9 }}
             onClick={scrollToBottom}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-white dark:bg-slate-800 shadow-lg border border-gray-200 dark:border-slate-700 rounded-full p-2.5 text-gray-500 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors z-10">
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-surface shadow-lg border border-border rounded-full p-2.5 text-muted hover:bg-surface-muted transition-colors z-10">
             <FaArrowDown size={13} />
           </motion.button>
         )}
       </AnimatePresence>
 
       {/* Input form */}
-      <div className="shrink-0 px-3 pb-4 pt-2 border-t border-gray-100 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm">
+      <div className="shrink-0 px-3 pb-4 pt-2 border-t border-border-muted bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm">
         <form
           onSubmit={onSubmit}
-          className="max-w-xl mx-auto flex items-end gap-2 bg-gray-100 dark:bg-slate-800 rounded-2xl px-3 py-2 ring-1 ring-gray-200 dark:ring-slate-700 focus-within:ring-blue-400 dark:focus-within:ring-yellow-500 transition-all">
+          className="max-w-xl mx-auto flex items-end gap-2 bg-surface-muted rounded-2xl px-3 py-2 ring-1 ring-border focus-within:ring-primary transition-all">
           <Textarea
             placeholder="Ask Meepletron…"
             rows="1"
@@ -377,21 +319,18 @@ export default function ChatPage() {
             disabled={isLoading}
             onChange={handleInputChange}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                onSubmit(e);
-              }
+              if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onSubmit(e); }
             }}
             onInput={(e) => {
               e.target.style.height = "auto";
               e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
             }}
-            className="flex-1 bg-transparent border-none outline-none resize-none text-sm text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-500"
+            className="flex-1 bg-transparent border-none focus:ring-0 outline-none resize-none text-sm text-foreground placeholder:text-subtle"
           />
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="shrink-0 p-2.5 rounded-xl bg-blue-600 dark:bg-yellow-500 text-white dark:text-slate-900 hover:bg-blue-700 dark:hover:bg-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+            className="shrink-0 p-2.5 rounded-xl bg-primary text-primary-fg hover:bg-primary-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
             <FaPaperPlane size={13} />
           </button>
         </form>
@@ -415,40 +354,30 @@ export default function ChatPage() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              className="fixed top-0 right-0 w-72 h-full bg-white dark:bg-slate-900 z-20 shadow-2xl flex flex-col">
+              className="fixed top-0 right-0 w-72 h-full bg-bg z-20 shadow-2xl flex flex-col">
 
-              {/* Side nav header */}
-              <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100 dark:border-slate-800">
+              <div className="flex items-center justify-between px-4 py-4 border-b border-border-muted">
                 <div>
-                  <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Game Selector</h3>
-                  <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">
-                    Switch between base game &amp; expansions
-                  </p>
+                  <h3 className="font-semibold text-sm text-foreground">Game Selector</h3>
+                  <p className="text-xs text-subtle mt-0.5">Switch between base game &amp; expansions</p>
                 </div>
                 <button
                   onClick={() => setSideNavOpen(false)}
-                  className="p-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-500 dark:text-slate-400">
+                  className="p-1.5 rounded-xl hover:bg-surface-muted transition-colors text-muted">
                   <IoClose size={18} />
                 </button>
               </div>
 
               <div className="flex-1 overflow-y-auto">
-                {/* Base game section */}
-                <p className="px-4 pt-4 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500">
+                <p className="px-4 pt-4 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-subtle">
                   Base Game
                 </p>
-                <ListItem
-                  game={boardgame}
-                  currentGame={currentGame}
-                  setCurrentGame={setCurrentGame}
-                  setSideNavOpen={setSideNavOpen}
-                />
+                <ListItem game={boardgame} currentGame={currentGame} setCurrentGame={setCurrentGame} setSideNavOpen={setSideNavOpen} />
 
-                {/* Expansions section */}
-                <p className="px-4 pt-4 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500 border-t border-gray-100 dark:border-slate-800 mt-2">
+                <p className="px-4 pt-4 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-subtle border-t border-border-muted mt-2">
                   Expansions
                   {expansionCount > 0 && (
-                    <span className="ml-1.5 bg-blue-100 dark:bg-yellow-500/20 text-blue-600 dark:text-yellow-400 px-1.5 py-0.5 rounded-full text-[10px] font-bold">
+                    <span className="ml-1.5 bg-primary/15 text-primary px-1.5 py-0.5 rounded-full text-[10px] font-bold">
                       {expansionCount}
                     </span>
                   )}
@@ -456,21 +385,13 @@ export default function ChatPage() {
 
                 {expansionCount > 0 ? (
                   boardgame.expansions.map((exp) => (
-                    <ListItem
-                      key={exp._id}
-                      game={exp}
-                      currentGame={currentGame}
-                      setCurrentGame={setCurrentGame}
-                      setSideNavOpen={setSideNavOpen}
-                    />
+                    <ListItem key={exp._id} game={exp} currentGame={currentGame} setCurrentGame={setCurrentGame} setSideNavOpen={setSideNavOpen} />
                   ))
                 ) : (
                   <div className="flex flex-col items-center gap-2 py-8 px-4 text-center">
-                    <BsLayers size={28} className="text-gray-300 dark:text-slate-600" />
-                    <p className="text-sm font-medium text-gray-400 dark:text-slate-500">No expansions yet</p>
-                    <p className="text-xs text-gray-300 dark:text-slate-600">
-                      Expansions will appear here once they're added.
-                    </p>
+                    <BsLayers size={28} className="text-border" />
+                    <p className="text-sm font-medium text-subtle">No expansions yet</p>
+                    <p className="text-xs text-subtle">Expansions will appear here once they&apos;re added.</p>
                   </div>
                 )}
               </div>
@@ -488,20 +409,13 @@ const ListItem = ({ game, currentGame, setCurrentGame, setSideNavOpen }) => {
   const isActive = currentGame?._id === game?._id;
   return (
     <li
-      onClick={() => {
-        setCurrentGame(game);
-        setSideNavOpen(false);
-      }}
+      onClick={() => { setCurrentGame(game); setSideNavOpen(false); }}
       className={`flex items-center gap-3 mx-2 mb-0.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all capitalize text-sm font-medium list-none ${
-        isActive
-          ? "bg-blue-500 dark:bg-yellow-500 text-white dark:text-slate-900 shadow-sm"
-          : "text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800"
+        isActive ? "bg-primary text-primary-fg shadow-sm" : "text-foreground hover:bg-surface-muted"
       }`}>
       <img src={game?.thumbnail} alt={game?.title} className="w-9 h-9 rounded-lg object-cover shrink-0 shadow-sm" />
       <span className="truncate">{game?.title}</span>
-      {isActive && (
-        <span className="ml-auto text-[10px] font-semibold opacity-80 shrink-0">Active</span>
-      )}
+      {isActive && <span className="ml-auto text-[10px] font-semibold opacity-80 shrink-0">Active</span>}
     </li>
   );
 };
@@ -510,7 +424,6 @@ const Message = ({ message, user }) => {
   const { _id, id, role, content, rating, annotations } = message;
   const isUser = role === "user";
 
-  // Don't render an empty AI bubble — the TypingIndicator covers the "thinking" state
   if (!isUser && !content) return null;
 
   return (
@@ -521,19 +434,15 @@ const Message = ({ message, user }) => {
       transition={{ duration: 0.18 }}
       className={`flex items-end gap-2 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
       {!isUser && (
-        <img
-          src="/logo.webp"
-          alt="Meepletron"
-          className="w-7 h-7 object-contain rounded-full shrink-0 mb-1 border border-gray-100 dark:border-slate-700"
-        />
+        <img src="/logo.webp" alt="Meepletron" className="w-7 h-7 object-contain rounded-full shrink-0 mb-1 border border-border-muted" />
       )}
 
       <div className={`max-w-[80%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-1.5`}>
         <div
-          className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+          className={`px-4 py-2.5 rounded-2xl leading-relaxed whitespace-pre-wrap ${
             isUser
-              ? "bg-blue-600 text-white dark:bg-yellow-500 dark:text-slate-900 rounded-br-md shadow-sm"
-              : "bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-white rounded-bl-md shadow-sm ring-1 ring-gray-200/60 dark:ring-slate-700/60"
+              ? "bg-primary text-primary-fg rounded-br-md shadow-sm"
+              : "bg-surface-muted text-foreground rounded-bl-md shadow-sm ring-1 ring-border-muted"
           }`}>
           {content}
         </div>
@@ -545,7 +454,7 @@ const Message = ({ message, user }) => {
                 href={annotations[0].url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs bg-blue-50 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-slate-600 text-blue-600 dark:text-slate-300 px-2.5 py-1 rounded-full transition-colors border border-blue-100 dark:border-slate-600">
+                className="text-xs bg-primary/10 hover:bg-primary/20 text-primary px-2.5 py-1 rounded-full transition-colors border border-primary/20">
                 📄 Source
               </a>
             )}
@@ -577,21 +486,11 @@ const RateMessage = ({ id, existingRating, user }) => {
 
   return (
     <div className="flex items-center gap-1.5">
-      <button
-        onClick={() => rateMessage("wrong")}
-        className="p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
-        <FaThumbsDown
-          size={12}
-          className={rating === "wrong" ? "text-red-500" : "text-gray-300 dark:text-slate-600"}
-        />
+      <button onClick={() => rateMessage("wrong")} className="p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
+        <FaThumbsDown size={14} className={rating === "wrong" ? "text-red-500" : "text-muted"} />
       </button>
-      <button
-        onClick={() => rateMessage("correct")}
-        className="p-1 rounded-md hover:bg-green-50 dark:hover:bg-green-500/10 transition-all">
-        <FaThumbsUp
-          size={12}
-          className={rating === "correct" ? "text-green-500" : "text-gray-300 dark:text-slate-600"}
-        />
+      <button onClick={() => rateMessage("correct")} className="p-1 rounded-md hover:bg-green-50 dark:hover:bg-green-500/10 transition-all">
+        <FaThumbsUp size={14} className={rating === "correct" ? "text-green-500" : "text-muted"} />
       </button>
     </div>
   );

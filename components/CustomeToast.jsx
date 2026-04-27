@@ -1,6 +1,6 @@
-import { IoCloseCircleOutline } from "react-icons/io5";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { toast } from "react-hot-toast";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 export default function CustomToast({ message, id }) {
   return (
@@ -9,16 +9,17 @@ export default function CustomToast({ message, id }) {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: 50, opacity: 0 }}
       transition={{ type: "spring", stiffness: 100, damping: 15 }}
-      className="flex items-center gap-4 bg-white dark:bg-gray-900 text-gray-800 dark:text-white px-6 py-4 rounded-xl shadow-lg border border-gray-300 dark:border-gray-700 transform"
+      className="flex items-center gap-4 bg-surface text-foreground px-6 py-4 rounded-xl shadow-lg border border-border"
     >
-      <span className="text-lg font-bold text-green-600 dark:text-green-400">✅ Success</span>
+      <span className="text-sm font-bold text-green-500">✅ Success</span>
       <p className="capitalize flex-1 text-sm">{message}</p>
-      <span
+      <button
         onClick={() => toast.remove(id)}
-        className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+        className="text-muted hover:text-foreground transition-colors"
+        aria-label="Dismiss"
       >
         <IoCloseCircleOutline size={20} />
-      </span>
+      </button>
     </motion.div>
   );
 }

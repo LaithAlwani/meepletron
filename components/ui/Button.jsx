@@ -1,6 +1,16 @@
 "use client";
 import Loader from "../Loader";
 
+const base = "inline-flex items-center justify-center px-4 py-2 rounded-lg font-semibold shadow-sm cursor-pointer transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+
+const variants = {
+  primary:   "bg-primary text-primary-fg hover:bg-primary-hover disabled:opacity-50",
+  secondary: "bg-gray-500 text-white hover:bg-gray-600 disabled:opacity-50",
+  outline:   "border border-primary text-primary hover:bg-primary/10",
+  accept:    "bg-green-500 text-white hover:bg-green-600 disabled:opacity-50",
+  reject:    "bg-red-500 text-white hover:bg-red-600 disabled:opacity-50",
+};
+
 export default function Button({
   children,
   onClick,
@@ -10,24 +20,13 @@ export default function Button({
   type = "submit",
   styles = "",
 }) {
-  const baseStyles = "px-4 py-2 shadow cursor-pointer font-bold transition-all rounded-lg";
-  const variantStyles = {
-    primary:
-      "dark:bg-yellow-500 dark:hover:bg-yellow-400 dark:text-slate-900 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 dark:disabled:bg-slate-600",
-    secondary: "bg-gray-500 text-white hover:bg-gray-600",
-    outline: "border border-blue-500 text-blue-700 hover:bg-blue-50",
-    accept: "bg-green-500 disabled:bg-green-300 text-white hover:bg-green-600",
-    reject: "bg-red-500 disabled:bg-red-300 text-white hover:bg-red-600",
-  };
-
   return (
     <button
       onClick={onClick}
       disabled={isLoading || disabled}
       type={type}
-      className={`${baseStyles} ${variantStyles[variant]} ${styles} ${
-        isLoading || disabled ? "opacity-50 cursor-not-allowed" : ""
-      }`}>
+      className={`${base} ${variants[variant]} ${styles} ${isLoading || disabled ? "cursor-not-allowed" : ""}`}
+    >
       {isLoading ? <Loader width="1rem" /> : children}
     </button>
   );

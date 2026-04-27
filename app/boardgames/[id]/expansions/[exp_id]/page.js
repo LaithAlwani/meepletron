@@ -11,7 +11,7 @@ async function getExpansion(id) {
   try {
     const res = await fetch(
       `${process.env.NODE_ENV !== "production" ? dev : prod}/api/expansions/${id}`,
-      { next: { revalidate: 86400 } }
+      { next: { revalidate: 86400 } },
     );
     if (!res.ok) return null;
     return await res.json();
@@ -36,10 +36,21 @@ export default async function ExpansionPage({ params }) {
   if (!expansion) notFound();
 
   const {
-    title, year, thumbnail,
-    min_players, max_players, min_age, play_time,
-    designers, artists, publishers, categories, game_mechanics,
-    description, urls, parent_id,
+    title,
+    year,
+    thumbnail,
+    min_players,
+    max_players,
+    min_age,
+    play_time,
+    designers,
+    artists,
+    publishers,
+    categories,
+    game_mechanics,
+    description,
+    urls,
+    parent_id,
   } = expansion;
 
   const parentSlug = parent_id?.slug || parent_id?._id;
@@ -47,10 +58,11 @@ export default async function ExpansionPage({ params }) {
   return (
     <main className="min-h-screen pt-20 pb-16 px-4">
       <div className="max-w-5xl mx-auto">
-
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-slate-400 mb-8 flex-wrap">
-          <Link href="/boardgames" className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
+          <Link
+            href="/boardgames"
+            className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
             Board Games
           </Link>
           <span>/</span>
@@ -60,7 +72,7 @@ export default async function ExpansionPage({ params }) {
             {parent_id?.title}
           </Link>
           <span>/</span>
-          <span className="capitalize text-gray-800 dark:text-slate-200 font-medium truncate max-w-[160px]">
+          <span className="capitalize text-gray-800 dark:text-slate-300 font-medium truncate max-w-[160px]">
             {title}
           </span>
         </nav>
@@ -76,11 +88,11 @@ export default async function ExpansionPage({ params }) {
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
+            <p className="text-xs uppercase tracking-widest text-blue-600 dark:text-yellow-500 font-semibold mb-1">
+              Expansion
+            </p>
+            <div className="flex flex-wrap items-center justify-start gap-3 mb-1">
               <div>
-                <p className="text-xs uppercase tracking-widest text-blue-600 dark:text-yellow-500 font-semibold mb-1">
-                  Expansion
-                </p>
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white capitalize leading-tight">
                   {title}
                 </h1>
@@ -100,8 +112,16 @@ export default async function ExpansionPage({ params }) {
 
             {/* Stats */}
             <div className="flex flex-wrap gap-3 mb-6">
-              <StatBadge icon={<MdGroups size={18} />} value={`${min_players}–${max_players}`} label="Players" />
-              <StatBadge icon={<MdOutlineAccessTimeFilled size={18} />} value={`${play_time} min`} label="Play Time" />
+              <StatBadge
+                icon={<MdGroups size={18} />}
+                value={`${min_players}–${max_players}`}
+                label="Players"
+              />
+              <StatBadge
+                icon={<MdOutlineAccessTimeFilled size={18} />}
+                value={`${play_time} min`}
+                label="Play Time"
+              />
               <StatBadge icon={<FaChild size={16} />} value={`${min_age}+`} label="Min Age" />
             </div>
 
@@ -130,14 +150,17 @@ export default async function ExpansionPage({ params }) {
         {/* Description */}
         {description && (
           <InfoSection title="About">
-            <p className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
+            <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
               {description}
             </p>
           </InfoSection>
         )}
 
         {/* Info grid */}
-        {(categories?.length > 0 || game_mechanics?.length > 0 || artists?.length > 0 || publishers?.length > 0) && (
+        {(categories?.length > 0 ||
+          game_mechanics?.length > 0 ||
+          artists?.length > 0 ||
+          publishers?.length > 0) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-0 mb-2">
             {categories?.length > 0 && (
               <InfoSection title="Categories">
@@ -151,12 +174,12 @@ export default async function ExpansionPage({ params }) {
             )}
             {artists?.length > 0 && (
               <InfoSection title="Artists">
-                <p className="text-sm text-gray-600 dark:text-slate-400">{artists.join(", ")}</p>
+                <p className="text-sm text-gray-700 dark:text-slate-300">{artists.join(", ")}</p>
               </InfoSection>
             )}
             {publishers?.length > 0 && (
               <InfoSection title="Publishers">
-                <p className="text-sm text-gray-600 dark:text-slate-400">{publishers.join(", ")}</p>
+                <p className="text-sm text-gray-700 dark:text-slate-300">{publishers.join(", ")}</p>
               </InfoSection>
             )}
           </div>
@@ -174,7 +197,7 @@ export default async function ExpansionPage({ params }) {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-yellow-400 hover:underline underline-offset-2">
                     <MdMenuBook size={15} />
-                    Rulebook {urls.length > 1 ? i + 1 : ""}
+                    {url.path.split("https://meepletron-storage.s3.us-east-2.amazonaws.com/resources/")[1]}
                     <MdOpenInNew size={12} />
                   </a>
                 </li>
@@ -218,7 +241,9 @@ function StatBadge({ icon, value, label }) {
       <span className="text-blue-600 dark:text-yellow-500">{icon}</span>
       <div>
         <p className="font-semibold text-gray-900 dark:text-white leading-none">{value}</p>
-        <p className="text-[10px] text-gray-400 dark:text-slate-500 leading-tight mt-0.5">{label}</p>
+        <p className="text-[10px] text-gray-400 dark:text-slate-500 leading-tight mt-0.5">
+          {label}
+        </p>
       </div>
     </div>
   );
@@ -227,7 +252,7 @@ function StatBadge({ icon, value, label }) {
 function InfoSection({ title, children }) {
   return (
     <section className="mb-8">
-      <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500 mb-3 pb-2 border-b border-gray-100 dark:border-slate-800">
+      <h2 className="font-semibold uppercase tracking-widest text-gray-500 dark:text-slate-400 mb-3 pb-2 border-b border-gray-100 dark:border-slate-800">
         {title}
       </h2>
       {children}

@@ -6,10 +6,10 @@ import { MdSend, MdCheckCircle } from "react-icons/md";
 import CustomToast from "./CustomeToast";
 
 const fieldClass =
-  "peer w-full bg-transparent border-0 border-b-2 border-gray-200 dark:border-slate-600 pt-5 pb-1.5 text-sm text-gray-900 dark:text-white placeholder-transparent focus:outline-none focus:border-blue-500 dark:focus:border-yellow-500 transition-colors";
+  "peer w-full bg-transparent border-0 border-b-2 border-border pt-5 pb-1.5 text-sm text-foreground placeholder-transparent focus:outline-none focus:border-primary transition-colors";
 
 const labelClass =
-  "absolute left-0 top-1 text-xs font-medium text-gray-400 dark:text-slate-500 transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 peer-focus:top-1 peer-focus:text-xs peer-focus:text-blue-500 dark:peer-focus:text-yellow-500 pointer-events-none";
+  "absolute left-0 top-1 text-xs font-medium text-subtle transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-subtle peer-focus:top-1 peer-focus:text-xs peer-focus:text-primary pointer-events-none";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "", company: "" });
@@ -53,7 +53,7 @@ export default function ContactForm() {
   return (
     <section id="contact" className="py-24 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-slate-700">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-lg border border-border-muted">
 
           {/* Left panel */}
           <motion.div
@@ -61,20 +61,19 @@ export default function ContactForm() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="relative bg-blue-600 dark:bg-yellow-500 p-10 flex flex-col justify-between overflow-hidden"
+            className="relative bg-primary p-10 flex flex-col justify-between overflow-hidden"
           >
-            {/* Decorative circles */}
-            <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/10 dark:bg-slate-900/10" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-white/10 dark:bg-slate-900/10" />
+            <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/10" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-white/10" />
 
             <div className="relative z-10">
-              <p className="text-xs font-semibold uppercase tracking-widest text-blue-100 dark:text-yellow-900 mb-4">
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/70 dark:text-slate-900/70 mb-4">
                 Get In Touch
               </p>
-              <h2 className="text-3xl font-bold text-white dark:text-slate-900 leading-snug mb-4">
+              <h2 className="text-3xl font-bold text-primary-fg leading-snug mb-4">
                 Have a suggestion or request?
               </h2>
-              <p className="text-sm text-blue-100 dark:text-yellow-900/80 leading-relaxed">
+              <p className="text-sm text-white/80 dark:text-slate-900/80 leading-relaxed">
                 Tell us about a game you&apos;d like to see added, share feedback, or just say hi. We read every message.
               </p>
             </div>
@@ -82,7 +81,7 @@ export default function ContactForm() {
             <div className="relative z-10 mt-10 space-y-3">
               {["Request a new game", "Report an issue", "Partnership inquiry"].map((item) => (
                 <div key={item} className="flex items-center gap-2.5 text-sm text-white/90 dark:text-slate-900/80">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-slate-900 shrink-0" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary-fg shrink-0" />
                   {item}
                 </div>
               ))}
@@ -95,7 +94,7 @@ export default function ContactForm() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="bg-white dark:bg-slate-800 p-10 flex flex-col justify-center"
+            className="bg-surface p-10 flex flex-col justify-center"
           >
             <AnimatePresence mode="wait">
               {sent ? (
@@ -107,14 +106,14 @@ export default function ContactForm() {
                   transition={{ duration: 0.35 }}
                   className="flex flex-col items-center justify-center text-center gap-4 py-8"
                 >
-                  <MdCheckCircle size={52} className="text-blue-500 dark:text-yellow-500" />
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">Message sent!</h3>
-                  <p className="text-sm text-gray-500 dark:text-slate-400">
+                  <MdCheckCircle size={52} className="text-primary" />
+                  <h3 className="text-xl font-bold text-foreground">Message sent!</h3>
+                  <p className="text-sm text-muted">
                     Thanks for reaching out. We&apos;ll get back to you soon.
                   </p>
                   <button
                     onClick={handleReset}
-                    className="mt-2 text-sm font-medium text-blue-600 dark:text-yellow-400 hover:underline"
+                    className="mt-2 text-sm font-medium text-primary hover:underline"
                   >
                     Send another
                   </button>
@@ -133,48 +132,28 @@ export default function ContactForm() {
                   <input type="text" name="company" className="hidden" onChange={handleChange} />
 
                   <div className="relative">
-                    <input
-                      type="text"
-                      name="name"
-                      id="cf-name"
-                      placeholder="Full Name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className={fieldClass}
-                    />
+                    <input type="text" name="name" id="cf-name" placeholder="Full Name"
+                      value={formData.name} onChange={handleChange} className={fieldClass} />
                     <label htmlFor="cf-name" className={labelClass}>Full Name</label>
                   </div>
 
                   <div className="relative">
-                    <input
-                      type="email"
-                      name="email"
-                      id="cf-email"
-                      placeholder="Email Address"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={fieldClass}
-                    />
+                    <input type="email" name="email" id="cf-email" placeholder="Email Address"
+                      value={formData.email} onChange={handleChange} className={fieldClass} />
                     <label htmlFor="cf-email" className={labelClass}>Email Address</label>
                   </div>
 
                   <div className="relative">
-                    <textarea
-                      name="message"
-                      id="cf-message"
-                      placeholder="Your message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows={4}
-                      className={`${fieldClass} resize-none`}
-                    />
+                    <textarea name="message" id="cf-message" placeholder="Your message"
+                      value={formData.message} onChange={handleChange} rows={4}
+                      className={`${fieldClass} resize-none`} />
                     <label htmlFor="cf-message" className={labelClass}>Your message</label>
                   </div>
 
                   <button
                     type="submit"
                     disabled={loading}
-                    className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 dark:bg-yellow-500 text-white dark:text-slate-900 font-semibold text-sm hover:bg-blue-700 dark:hover:bg-yellow-400 disabled:opacity-60 transition-colors shadow-sm"
+                    className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-fg font-semibold text-sm hover:bg-primary-hover disabled:opacity-60 transition-colors shadow-sm"
                   >
                     {loading ? (
                       <span className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />

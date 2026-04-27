@@ -104,7 +104,7 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`min-h-svh mx-auto bg-[#f7f7f7] dark:bg-slate-900 text-black dark:text-white ${geistSans.variable} ${geistMono.variable} ${poppins.variable} antialiased `}>
+          className={`min-h-svh mx-auto bg-bg text-foreground ${geistSans.variable} ${geistMono.variable} ${poppins.variable} font-sans antialiased`}>
           <Providers>
             <Toaster position="top-right" containerClassName="relative" />
             <Navbar />

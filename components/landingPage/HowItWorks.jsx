@@ -24,9 +24,8 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="py-24 px-4 bg-gray-50 dark:bg-slate-800/30">
+    <section className="py-24 px-4 bg-surface-muted">
       <div className="max-w-5xl mx-auto">
-        {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -34,18 +33,13 @@ export default function HowItWorks() {
           transition={{ duration: 0.5 }}
           className="text-center mb-14"
         >
-          <p className="text-xs uppercase tracking-widest font-semibold text-blue-600 dark:text-yellow-500 mb-3">
+          <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-3">
             Simple by design
           </p>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
-            How It Works
-          </h2>
-          <p className="text-gray-500 dark:text-slate-400 text-base">
-            Three simple steps to rule clarity
-          </p>
+          <h2 className="text-3xl font-bold text-foreground mb-3">How It Works</h2>
+          <p className="text-muted text-base">Three simple steps to rule clarity</p>
         </motion.div>
 
-        {/* Steps grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {steps.map((step, index) => (
             <motion.div
@@ -54,18 +48,14 @@ export default function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.12 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-slate-700"
+              className="bg-surface rounded-2xl p-8 shadow-sm border border-border-muted"
             >
-              <span className="block text-6xl font-black text-gray-100 dark:text-slate-700 leading-none mb-4 select-none">
+              <span className="block text-6xl font-black text-border leading-none mb-4 select-none">
                 {step.num}
               </span>
               <span className="text-4xl block mb-4">{step.icon}</span>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                {step.title}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed">
-                {step.desc}
-              </p>
+              <h3 className="text-xl font-bold text-foreground mb-2">{step.title}</h3>
+              <p className="text-sm text-muted leading-relaxed">{step.desc}</p>
             </motion.div>
           ))}
         </div>

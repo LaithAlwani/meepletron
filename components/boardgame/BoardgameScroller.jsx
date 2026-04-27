@@ -19,41 +19,34 @@ export default function BoardgameScroller() {
   return (
     <section className="py-24 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header row */}
         <div className="flex items-end justify-between mb-8">
           <div>
-            <p className="text-xs uppercase tracking-widest font-semibold text-blue-600 dark:text-yellow-500 mb-1">
+            <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-1">
               New Arrivals
             </p>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Recently Added
-            </h2>
+            <h2 className="text-3xl font-bold text-foreground">Recently Added</h2>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => scroll(-1)}
               aria-label="Scroll left"
-              className="hidden sm:flex w-8 h-8 rounded-full items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-yellow-400 hover:border-blue-300 dark:hover:border-yellow-600 transition-colors shadow-sm"
+              className="hidden sm:flex w-8 h-8 rounded-full items-center justify-center border border-border bg-surface text-muted hover:text-primary hover:border-primary/50 transition-colors shadow-sm"
             >
               <MdChevronLeft size={20} />
             </button>
             <button
               onClick={() => scroll(1)}
               aria-label="Scroll right"
-              className="hidden sm:flex w-8 h-8 rounded-full items-center justify-center border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-yellow-400 hover:border-blue-300 dark:hover:border-yellow-600 transition-colors shadow-sm"
+              className="hidden sm:flex w-8 h-8 rounded-full items-center justify-center border border-border bg-surface text-muted hover:text-primary hover:border-primary/50 transition-colors shadow-sm"
             >
               <MdChevronRight size={20} />
             </button>
-            <Link
-              href="/boardgames"
-              className="text-sm font-medium text-blue-600 dark:text-yellow-400 hover:underline whitespace-nowrap"
-            >
+            <Link href="/boardgames" className="text-sm font-medium text-primary hover:underline whitespace-nowrap">
               View all games →
             </Link>
           </div>
         </div>
 
-        {/* Scroll track */}
         <div
           ref={scrollRef}
           className="flex gap-4 overflow-x-auto pb-3 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
@@ -61,8 +54,8 @@ export default function BoardgameScroller() {
           {isLoading
             ? [...Array(10)].map((_, i) => (
                 <div key={i} className="flex flex-col gap-2 shrink-0 w-40">
-                  <div className="aspect-square w-full rounded-xl bg-gray-200 dark:bg-slate-700 animate-pulse" />
-                  <div className="h-3 w-3/4 rounded bg-gray-200 dark:bg-slate-700 animate-pulse" />
+                  <div className="aspect-square w-full rounded-xl bg-border animate-pulse" />
+                  <div className="h-3 w-3/4 rounded bg-border animate-pulse" />
                 </div>
               ))
             : boardgames.map((boardgame, index) => (

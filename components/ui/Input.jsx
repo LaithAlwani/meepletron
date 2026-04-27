@@ -1,17 +1,15 @@
-const Input = ({ name, ref = null, type = "text", placeholder, value, onChange, isHidden = false }) => {
-  return (
-    <input
-      type={type}
-      ref={ref}
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      className="w-full px-4 py-2 border border-gray-300  focus:outline-none  focus:ring-2 focus:ring-blue-500 dark:focus:ring-yellow-500  text-gray-900 dark:text-white"
-      required
-      hidden={isHidden}
-    />
-  );
-};
+const Input = ({ name, ref = null, type = "text", placeholder, value, onChange, isHidden = false }) => (
+  <input
+    ref={ref}
+    type={type}
+    name={name}
+    placeholder={placeholder}
+    value={value}
+    onChange={onChange}
+    required
+    hidden={isHidden}
+    className="w-full px-4 py-2 rounded-lg border border-border bg-surface text-foreground placeholder:text-subtle focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+  />
+);
 
 export default Input;
