@@ -127,7 +127,7 @@ export default function Navbar() {
           </span>
           {user?.publicMetadata.role === "admin" && (
             <Link
-              href="/admin/boardgames"
+              href="/admin"
               aria-label="admin"
               className="flex items-center gap-2"
               onClick={() => setIsOpen(false)}>
