@@ -72,8 +72,8 @@ export async function POST(req) {
       const ext = tempFileUrl.split(".").pop();
       permanentKey =
         process.env.NODE_ENV !== "production"
-          ? `_temp_boardgames/resources/${game._id}-rulebook.${ext}`
-          : `resources/${game._id}-rulebook.${ext}`;
+          ? `_temp_boardgames/resources/${safeTitle}-rulebook.${ext}`
+          : `resources/${safeTitle}-rulebook.${ext}`;
 
       const tempKey = tempFileUrl.split("amazonaws.com/").pop();
 
