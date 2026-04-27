@@ -14,8 +14,6 @@ import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
-export const maxDuration = 120;
-
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
