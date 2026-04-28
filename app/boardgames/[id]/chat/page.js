@@ -1,7 +1,7 @@
 "use client";
 import { useChat } from "ai/react";
 import { useParams } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { FaPaperPlane, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { BsLayers } from "react-icons/bs";
@@ -17,7 +17,7 @@ import { useUser } from "@clerk/nextjs";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import { generateId } from "ai";
 import { useRouter } from "next/navigation";
-import { GUEST_CHAT_KEY_PREFIX } from "@/utils/constants";
+import { GUEST_CHAT_KEY_PREFIX, USER_CHAT_KEY_PREFIX } from "@/utils/constants";
 import ReactMarkdown from "react-markdown";
 
 // ─── Guest localStorage helpers ───────────────────────────────────────────────
@@ -50,6 +50,44 @@ function saveGuestMessages(boardgameId, messages, game) {
       messages,
     }));
   } catch {}
+}
+
+// ─── Signed-in user message cache ─────────────────────────────────────────────
+
+function userCacheKey(boardgameId) {
+  return `${USER_CHAT_KEY_PREFIX}${boardgameId}`;
+}
+
+function loadUserCache(boardgameId) {
+  try {
+    const raw = localStorage.getItem(userCacheKey(boardgameId));
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function saveUserCache(boardgameId, chatId, messages) {
+  try {
+    localStorage.setItem(userCacheKey(boardgameId), JSON.stringify({ chatId, messages }));
+  } catch {}
+}
+
+// ─── Date helpers ─────────────────────────────────────────────────────────────
+
+function getDateLabel(date) {
+  if (!date) return null;
+  const d = new Date(date);
+  if (isNaN(d)) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const msgDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diffDays = Math.round((today - msgDay) / 86_400_000);
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return d.toLocaleDateString("en-US", { weekday: "long" });
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
 // ─── Page component ────────────────────────────────────────────────────────────
@@ -95,6 +133,13 @@ export default function ChatPage() {
   };
 
   const getChat = async (game) => {
+    const cached = loadUserCache(game._id);
+    if (cached) {
+      setChat({ _id: cached.chatId });
+      setMessages(cached.messages);
+      return;
+    }
+
     setMessages([]);
     try {
       const res = await fetch(`/api/boardgames/${game._id}/chat`);
@@ -113,6 +158,7 @@ export default function ChatPage() {
       } else {
         setChat(data.chat);
         setMessages(data.messages);
+        saveUserCache(game._id, data.chat._id, data.messages);
       }
     } catch (err) {
       toast.error(err.message);
@@ -169,6 +215,9 @@ export default function ChatPage() {
       saveGuestMessages(currentGame._id, messages, {
         _id: currentGame._id, title: currentGame.title, thumbnail: currentGame.thumbnail,
       });
+    }
+    if (user && !isLoading && messages.length > 0 && currentGame && chat?._id) {
+      saveUserCache(currentGame._id, chat._id, messages);
     }
   }, [isLoading]);
   useLayoutEffect(() => { scrollToBottom(); }, [messages]);
@@ -242,7 +291,7 @@ export default function ChatPage() {
 
       {/* Messages */}
       <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto hide-scrollbar flex flex-col-reverse">
-        <div className="max-w-xl mx-auto px-4 py-4">
+        <div className="w-full max-w-xl mx-auto px-4 py-4">
 
           {messages.length === 0 && !isLoading && (
             <motion.div
@@ -279,9 +328,19 @@ export default function ChatPage() {
 
           <div className="space-y-3">
             <AnimatePresence initial={false}>
-              {messages.map((message) => (
-                <Message key={message._id || message.id} message={message} user={user} />
-              ))}
+              {messages.map((message, index) => {
+                const msgDate = message.createdAt ?? null;
+                const prevDate = index > 0 ? (messages[index - 1].createdAt ?? null) : null;
+                const msgLabel = getDateLabel(msgDate);
+                const prevLabel = getDateLabel(prevDate);
+                const showSeparator = msgLabel && msgLabel !== prevLabel;
+                return (
+                  <Fragment key={message._id || message.id}>
+                    {showSeparator && <DateSeparator label={msgLabel} />}
+                    <Message message={message} user={user} />
+                  </Fragment>
+                );
+              })}
             </AnimatePresence>
 
             <AnimatePresence>
@@ -431,6 +490,14 @@ const ListItem = ({ game, currentGame, setCurrentGame, setSideNavOpen }) => {
   );
 };
 
+const DateSeparator = ({ label }) => (
+  <div className="flex items-center justify-center my-3">
+    <span className="text-[11px] font-medium text-muted bg-surface-muted px-3 py-1 rounded-full border border-border-muted">
+      {label}
+    </span>
+  </div>
+);
+
 const Message = ({ message, user }) => {
   const { _id, id, role, content, rating, annotations } = message;
   const isUser = role === "user";
@@ -482,7 +549,7 @@ const Message = ({ message, user }) => {
                       href={ann.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[11px] font-medium px-2 py-0.5 rounded-full border border-border bg-surface text-subtle hover:border-primary hover:text-primary transition-colors">
+                      className="text-[12px] font-medium px-2 py-0.5 rounded-full border border-border bg-surface text-subtle hover:border-primary hover:text-primary transition-colors">
                       p.{ann.pageNumber}
                     </a>
                   ) : null

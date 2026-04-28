@@ -6,7 +6,7 @@ import User from "@/models/user";
 import connectToDB from "@/utils/database";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
-import { createDataStreamResponse, generateText, streamText } from "ai";
+import { createDataStreamResponse, streamText } from "ai";
 import { NextResponse } from "next/server";
 
 // Allow streaming responses up to 30 seconds
@@ -14,32 +14,6 @@ export const maxDuration = 30;
 const pinecone = new PineconeClient();
 const google = createGoogleGenerativeAI();
 
-async function rerankRetrievals(query, boardgame_title, retrievals) {
-  if (retrievals.length <= 6) return retrievals;
-  try {
-    const passages = retrievals
-      .map((r, i) => `[${i}] ${r.text.substring(0, 400)}`)
-      .join("\n\n---\n\n");
-    const { text } = await generateText({
-      model: google("gemini-2.5-flash"),
-      abortSignal: AbortSignal.timeout(8_000),
-      temperature: 0,
-      messages: [
-        {
-          role: "user",
-          content: `You are ranking passages from the "${boardgame_title}" rulebook by relevance to a player's question. Return a JSON array of the indices of the 6 most relevant passages, ordered best-first. Return ONLY the JSON array.\n\nQuestion: ${query}\n\nPassages:\n${passages}`,
-        },
-      ],
-    });
-    const match = text.match(/\[[\d,\s]+\]/);
-    if (!match) return retrievals.slice(0, 6);
-    const indices = JSON.parse(match[0]);
-    const reranked = indices.slice(0, 6).map((i) => retrievals[i]).filter(Boolean);
-    return reranked.length > 0 ? reranked : retrievals.slice(0, 6);
-  } catch {
-    return retrievals.slice(0, 6);
-  }
-}
 
 export async function POST(req) {
   const { messages, boardgame_id, boardgame_title } = await req.json();
@@ -68,11 +42,7 @@ export async function POST(req) {
     });
   }
 
-  const ranked = await rerankRetrievals(userQuestion, boardgame_title, retrievals);
-
-  const formattedContext = ranked
-    .map((item) => item.text)
-    .join("\n\n");
+  const formattedContext = retrievals.map((item) => item.text).join("\n\n");
 
   const system = `You are a board game rules assistant for ${boardgame_title}.
 

@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 import { IoChatbubbles } from "react-icons/io5";
-import { GUEST_CHAT_KEY_PREFIX } from "@/utils/constants";
+import { GUEST_CHAT_KEY_PREFIX, USER_CHAT_KEY_PREFIX } from "@/utils/constants";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
@@ -71,6 +71,7 @@ export default function ChatsPage() {
     const { message } = await res.json();
     if (!res.ok) return toast.error(message);
     toast.custom((t) => <CustomToast message={message} id={t.id} />);
+    try { localStorage.removeItem(`${USER_CHAT_KEY_PREFIX}${boardgame_id}`); } catch {}
     setChats((prev) => prev.filter((chat) => chat._id !== chat_id));
   };
 
@@ -199,6 +200,8 @@ export default function ChatsPage() {
 }
 
 function ChatCard({ title, thumbnail, href, preview, date, onDelete }) {
+  const [confirming, setConfirming] = useState(false);
+
   return (
     <motion.li
       layout
@@ -218,11 +221,27 @@ function ChatCard({ title, thumbnail, href, preview, date, onDelete }) {
           {preview && <p className="text-xs text-subtle truncate mt-0.5">{preview}</p>}
         </div>
       </Link>
-      <button
-        onClick={onDelete}
-        className="shrink-0 p-2 rounded-xl text-border hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400 transition-all">
-        <MdDelete size={18} />
-      </button>
+
+      {confirming ? (
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            onClick={() => setConfirming(false)}
+            className="text-xs font-medium px-2.5 py-1.5 rounded-lg text-muted hover:bg-surface-muted transition-colors">
+            Cancel
+          </button>
+          <button
+            onClick={() => { setConfirming(false); onDelete(); }}
+            className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors">
+            Delete
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => setConfirming(true)}
+          className="shrink-0 p-2 rounded-xl text-border hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400 transition-all">
+          <MdDelete size={18} />
+        </button>
+      )}
     </motion.li>
   );
 }
