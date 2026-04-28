@@ -132,7 +132,6 @@ export default function ChatPage() {
   const [showSignUpDrawer, setShowSignUpDrawer] = useState(false);
   const inputRef = useRef(null);
   const scrollContainerRef = useRef(null);
-  const didInitialScroll = useRef(false);
   const userScrolledUp = useRef(false);
 
   const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading, error, data } = useChat({
@@ -227,7 +226,7 @@ export default function ChatPage() {
 
   const handleScroll = (e) => {
     const el = e.target;
-    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    const atBottom = el.scrollTop <= 60;
     setIsAtBottom(atBottom);
     if (isLoading && !atBottom) userScrolledUp.current = true;
     if (atBottom) userScrolledUp.current = false;
@@ -235,7 +234,7 @@ export default function ChatPage() {
 
   const scrollToBottom = () => {
     const el = scrollContainerRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (el) el.scrollTop = 0;
   };
 
   // ─── Submit handler ───────────────────────────────────────────────────────
@@ -288,18 +287,9 @@ export default function ChatPage() {
       saveUserCache(currentGame._id, chat._id, messages);
     }
   }, [isLoading]);
-  // Reset initial-scroll flag when switching games
-  useEffect(() => { didInitialScroll.current = false; }, [currentGame?._id]);
-  // Scroll to bottom once when messages first load (cache, DB, or guest localStorage)
+  // Reset scroll-up flag when streaming starts
   useLayoutEffect(() => {
-    if (!didInitialScroll.current && messages.length > 0 && !isLoading) {
-      scrollToBottom();
-      didInitialScroll.current = true;
-    }
-  }, [messages.length, isLoading]);
-  // Scroll to bottom when streaming starts; reset scroll-up flag
-  useLayoutEffect(() => {
-    if (isLoading) { userScrolledUp.current = false; scrollToBottom(); }
+    if (isLoading) userScrolledUp.current = false;
     else userScrolledUp.current = false;
   }, [isLoading]);
   // Follow the stream — fires on every token; stops if user scrolled up
@@ -381,7 +371,7 @@ export default function ChatPage() {
       </AnimatePresence>
 
       {/* Messages */}
-      <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto hide-scrollbar">
+      <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto hide-scrollbar flex flex-col-reverse">
         <div className="w-full max-w-xl mx-auto px-4 pt-4 pb-8">
 
           {messages.length === 0 && !isLoading && (

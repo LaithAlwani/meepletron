@@ -11,10 +11,55 @@ export default function AddBoardgame() {
   const [isLoading, setIsLoading] = useState(false);
   const [tempFileUrl, setTempFileUrl] = useState(null);
   const [chunks, setChunks] = useState([]);
-  const [parseStep, setParseStep] = useState(null); // null | 'uploading' | 'parsing' | 'done' | 'error'
+  const [parseStep, setParseStep] = useState(null);
   const [showAllChunks, setShowAllChunks] = useState(false);
   const [isExpansion, setIsExpansion] = useState(false);
   const fileInputRef = useRef(null);
+
+  // BGG auto-fill
+  const [bggUrl, setBggUrl] = useState("");
+  const [bggFetching, setBggFetching] = useState(false);
+  const [fields, setFields] = useState({
+    title: "", image: "", minPlayers: "", maxPlayers: "", playTime: "", minAge: "", year: "",
+    bggId: "", parentId: "", designers: "", artists: "", publishers: "",
+    categories: "", gameMechanics: "", description: "",
+  });
+
+  const setField = (name) => (e) => setFields((f) => ({ ...f, [name]: e.target.value }));
+
+  const handleAutofill = async () => {
+    const match = bggUrl.match(/boardgame(?:expansion)?\/(\d+)/);
+    if (!match) return toast.error("Invalid BGG URL — expected boardgamegeek.com/boardgame/ID/…");
+    setBggFetching(true);
+    try {
+      const res = await fetch(`/api/boardgames/bgg-fetch?id=${match[1]}`);
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      setIsExpansion(json.is_expansion);
+      setFields({
+        title:        json.title ?? "",
+        image:        json.image ?? "",
+        minPlayers:   json.min_players != null ? String(json.min_players) : "",
+        maxPlayers:   json.max_players != null ? String(json.max_players) : "",
+        playTime:     json.play_time   != null ? String(json.play_time)   : "",
+        minAge:       json.min_age     != null ? String(json.min_age)     : "",
+        year:         json.year        != null ? String(json.year)        : "",
+        bggId:        json.bgg_id ?? "",
+        parentId:     json.parent_bgg_id ?? "",
+        designers:    (json.designers     ?? []).join("\n"),
+        artists:      (json.artists       ?? []).join("\n"),
+        publishers:   (json.publishers    ?? []).join("\n"),
+        categories:   (json.categories    ?? []).join("\n"),
+        gameMechanics:(json.game_mechanics ?? []).join("\n"),
+        description:  json.description ?? "",
+      });
+      toast.success(`"${json.title}" loaded from BGG`);
+    } catch (err) {
+      toast.error(err.message || "Failed to fetch from BGG");
+    } finally {
+      setBggFetching(false);
+    }
+  };
 
   const newlineStringToArray = (value = "") =>
     value.split(/[\n,]+/).map((v) => v.trim()).filter(Boolean);
@@ -71,22 +116,22 @@ export default function AddBoardgame() {
 
     const formData = new FormData(e.currentTarget);
     const boardgame = {
-      title: formData.get("title"),
-      image: formData.get("image"),
-      min_players: Number(formData.get("minPlayers")),
-      max_players: Number(formData.get("maxPlayers")),
-      play_time: Number(formData.get("playTime")),
-      min_age: Number(formData.get("minAge")),
-      year: Number(formData.get("year")),
-      is_expansion: formData.get("isExpansion") === "yes",
-      bgg_id: formData.get("bggId"),
-      parent_id: formData.get("parentId"),
-      designers: newlineStringToArray(formData.get("designers")),
-      artists: newlineStringToArray(formData.get("artists")),
-      publishers: newlineStringToArray(formData.get("publishers")),
-      categories: newlineStringToArray(formData.get("categories")),
-      game_mechanics: newlineStringToArray(formData.get("gameMechanics")),
-      description: formData.get("description"),
+      title:         formData.get("title"),
+      image:         formData.get("image"),
+      min_players:   Number(formData.get("minPlayers")),
+      max_players:   Number(formData.get("maxPlayers")),
+      play_time:     Number(formData.get("playTime")),
+      min_age:       Number(formData.get("minAge")),
+      year:          Number(formData.get("year")),
+      is_expansion:  formData.get("isExpansion") === "yes",
+      bgg_id:        formData.get("bggId"),
+      parent_id:     formData.get("parentId"),
+      designers:     newlineStringToArray(formData.get("designers")),
+      artists:       newlineStringToArray(formData.get("artists")),
+      publishers:    newlineStringToArray(formData.get("publishers")),
+      categories:    newlineStringToArray(formData.get("categories")),
+      game_mechanics:newlineStringToArray(formData.get("gameMechanics")),
+      description:   formData.get("description"),
     };
 
     setIsLoading(true);
@@ -111,8 +156,8 @@ export default function AddBoardgame() {
 
   const steps = [
     { key: "uploading", label: "Upload" },
-    { key: "parsing", label: "Parse" },
-    { key: "done", label: "Ready" },
+    { key: "parsing",   label: "Parse"  },
+    { key: "done",      label: "Ready"  },
   ];
   const stepIndex =
     parseStep === "uploading" ? 0 : parseStep === "parsing" ? 1 : parseStep === "done" ? 2 : -1;
@@ -128,24 +173,58 @@ export default function AddBoardgame() {
           <h1 className="text-2xl font-bold text-foreground">Add Board Game</h1>
         </div>
 
-        <p className="text-xs text-subtle -mt-2 mb-2">
+        {/* BGG Auto-fill */}
+        <div className="mb-4">
+          <p className="text-xs text-subtle mb-1.5">Paste a BoardGameGeek URL to auto-fill the form</p>
+          <div className="flex gap-2">
+            <Input
+              value={bggUrl}
+              onChange={(e) => setBggUrl(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAutofill(); } }}
+              placeholder="https://boardgamegeek.com/boardgame/13/catan"
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              onClick={handleAutofill}
+              isLoading={bggFetching}
+              disabled={!bggUrl.trim() || bggFetching}
+              styles="shrink-0 px-5">
+              Auto-fill
+            </Button>
+          </div>
+        </div>
+
+        <p className="text-xs text-subtle mb-2">
           <span className="text-red-500">*</span> Required field
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Card label="Game Info">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field label="Title" required><Input name="title" placeholder="e.g. Catan" /></Field>
-              <Field label="Image URL" required><Input name="image" placeholder="https://..." /></Field>
+              <Field label="Title" required>
+                <Input name="title" placeholder="e.g. Catan" value={fields.title} onChange={setField("title")} />
+              </Field>
+              <Field label="Image URL" required>
+                <Input name="image" placeholder="https://..." value={fields.image} onChange={setField("image")} />
+              </Field>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <Field label="Min Players" required><Input name="minPlayers" type="number" placeholder="2" /></Field>
-              <Field label="Max Players" required><Input name="maxPlayers" type="number" placeholder="4" /></Field>
-              <Field label="Play Time (min)" required><Input name="playTime" type="number" placeholder="60" /></Field>
-              <Field label="Min Age" required><Input name="minAge" type="number" placeholder="10" /></Field>
+              <Field label="Min Players" required>
+                <Input name="minPlayers" type="number" placeholder="2" value={fields.minPlayers} onChange={setField("minPlayers")} />
+              </Field>
+              <Field label="Max Players" required>
+                <Input name="maxPlayers" type="number" placeholder="4" value={fields.maxPlayers} onChange={setField("maxPlayers")} />
+              </Field>
+              <Field label="Play Time (min)" required>
+                <Input name="playTime" type="number" placeholder="60" value={fields.playTime} onChange={setField("playTime")} />
+              </Field>
+              <Field label="Min Age" required>
+                <Input name="minAge" type="number" placeholder="10" value={fields.minAge} onChange={setField("minAge")} />
+              </Field>
             </div>
             <Field label="Year Published" required>
-              <Input name="year" type="number" placeholder="2024" />
+              <Input name="year" type="number" placeholder="2024" value={fields.year} onChange={setField("year")} />
             </Field>
           </Card>
 
@@ -153,7 +232,7 @@ export default function AddBoardgame() {
             <Field label="Is Expansion?">
               <select
                 name="isExpansion"
-                defaultValue="no"
+                value={isExpansion ? "yes" : "no"}
                 onChange={(e) => setIsExpansion(e.target.value === "yes")}
                 className="w-full px-4 py-2 border border-border bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-lg">
                 <option value="no">No</option>
@@ -162,11 +241,11 @@ export default function AddBoardgame() {
             </Field>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Field label="BGG ID" required>
-                <Input name="bggId" placeholder="e.g. 13" />
+                <Input name="bggId" placeholder="e.g. 13" value={fields.bggId} onChange={setField("bggId")} />
               </Field>
               {isExpansion && (
                 <Field label="BGG Parent ID" required>
-                  <Input name="parentId" placeholder="e.g. 13" required />
+                  <Input name="parentId" placeholder="e.g. 13" required value={fields.parentId} onChange={setField("parentId")} />
                 </Field>
               )}
               {!isExpansion && (
@@ -178,19 +257,27 @@ export default function AddBoardgame() {
           <Card label="Credits">
             <p className="text-xs text-subtle">Separate entries with commas or new lines.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field label="Designers" required><Textarea name="designers" placeholder="e.g. Klaus Teuber, Bruno Faidutti" rows={3} /></Field>
-              <Field label="Artists" required><Textarea name="artists" placeholder="e.g. Franz Vohwinkel" rows={3} /></Field>
-              <Field label="Publishers" required><Textarea name="publishers" placeholder="e.g. Catan Studio, Asmodee" rows={3} /></Field>
-              <Field label="Categories" required><Textarea name="categories" placeholder="e.g. Strategy, Family" rows={3} /></Field>
+              <Field label="Designers" required>
+                <Textarea name="designers" placeholder="e.g. Klaus Teuber" rows={3} value={fields.designers} onChange={setField("designers")} />
+              </Field>
+              <Field label="Artists" required>
+                <Textarea name="artists" placeholder="e.g. Franz Vohwinkel" rows={3} value={fields.artists} onChange={setField("artists")} />
+              </Field>
+              <Field label="Publishers" required>
+                <Textarea name="publishers" placeholder="e.g. Catan Studio" rows={3} value={fields.publishers} onChange={setField("publishers")} />
+              </Field>
+              <Field label="Categories" required>
+                <Textarea name="categories" placeholder="e.g. Strategy, Family" rows={3} value={fields.categories} onChange={setField("categories")} />
+              </Field>
             </div>
             <Field label="Game Mechanics" required>
-              <Textarea name="gameMechanics" placeholder="e.g. Dice Rolling, Trading, Hand Management" rows={3} />
+              <Textarea name="gameMechanics" placeholder="e.g. Dice Rolling, Trading" rows={3} value={fields.gameMechanics} onChange={setField("gameMechanics")} />
             </Field>
           </Card>
 
           <Card label="Description">
             <Field label="Description" required>
-              <Textarea name="description" placeholder="Game description..." rows={5} />
+              <Textarea name="description" placeholder="Game description..." rows={5} value={fields.description} onChange={setField("description")} />
             </Field>
           </Card>
 
