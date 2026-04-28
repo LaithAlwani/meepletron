@@ -1,7 +1,7 @@
 "use client";
 import { useChat } from "ai/react";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { FaPaperPlane, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 import { BsLayers } from "react-icons/bs";
@@ -136,13 +136,12 @@ export default function ChatPage() {
   // ─── Scroll handling ──────────────────────────────────────────────────────
 
   const handleScroll = (e) => {
-    const { scrollHeight, scrollTop, clientHeight } = e.target;
-    setIsAtBottom(scrollHeight - scrollTop - 5 <= clientHeight);
+    setIsAtBottom(e.target.scrollTop <= 5);
   };
 
   const scrollToBottom = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+      scrollContainerRef.current.scrollTop = 0;
     }
   };
 
@@ -172,7 +171,7 @@ export default function ChatPage() {
       });
     }
   }, [isLoading]);
-  useEffect(() => { scrollToBottom(); }, [messages]);
+  useLayoutEffect(() => { scrollToBottom(); }, [messages]);
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
@@ -210,11 +209,16 @@ export default function ChatPage() {
 
         <button
           onClick={() => setSideNavOpen(true)}
-          className="relative p-2 rounded-xl hover:bg-surface-muted transition-colors text-muted shrink-0 flex flex-col items-center gap-0.5">
-          <BsLayers size={18} />
-          <span className="text-[10px] font-medium leading-none">
-            {expansionCount > 0 ? `${expansionCount}` : "EXP"}
-          </span>
+          className="p-2 rounded-xl hover:bg-surface-muted transition-colors text-muted shrink-0 flex flex-col items-center gap-0.5">
+          <div className="relative">
+            {expansionCount > 0 && (
+              <span className="absolute -top-1.5 -right-2 text-[10px] font-bold leading-none text-primary">
+                {expansionCount}
+              </span>
+            )}
+            <BsLayers size={18} />
+          </div>
+          <span className="text-[10px] font-medium leading-none">expansions</span>
         </button>
       </nav>
 
@@ -237,8 +241,8 @@ export default function ChatPage() {
       </AnimatePresence>
 
       {/* Messages */}
-      <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto hide-scrollbar py-4">
-        <div className="max-w-xl mx-auto px-4">
+      <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto hide-scrollbar flex flex-col-reverse">
+        <div className="max-w-xl mx-auto px-4 py-4">
 
           {messages.length === 0 && !isLoading && (
             <motion.div
