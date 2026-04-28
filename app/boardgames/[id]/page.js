@@ -171,7 +171,7 @@ export default async function BoardgamePage({ params }) {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-sm text-primary hover:underline underline-offset-2 transition-colors">
                   <MdMenuBook size={15} />
-                  {url.path.split(`https://meepletron-storage.s3.us-east-2.amazonaws.com/resources/${boardgame.title}`).slice(-1)[0]}
+                  {url.path.split("/").pop()}
                   <MdOpenInNew size={12} />
                 </a>
               </li>
