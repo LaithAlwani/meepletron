@@ -1,4 +1,5 @@
 import { queryPineconeVectorStore } from "@/lib/vector-store";
+import Boardgame from "@/models/boardgame"; //used for populating chat list with boardgame details, not used in the POST route
 import Chat from "@/models/chat";
 import Message from "@/models/message";
 import User from "@/models/user";
@@ -101,7 +102,7 @@ ${formattedContext}`;
           presencePenalty: 0,
           maxRetries: 3,
           onFinish() {
-            const top = ranked[0];
+            const top = retrievals[0];
             if (top?.pageNumber) {
               dataStream.writeMessageAnnotation({
                 pageNumber: top.pageNumber,
