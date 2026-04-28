@@ -66,10 +66,14 @@ export default function ChatPage() {
   const inputRef = useRef(null);
   const scrollContainerRef = useRef(null);
 
-  const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
     onFinish: (message) => {
       if (user) saveMessage(message.id, message.role, message.content, message.annotations);
+    },
+    onError: (err) => {
+      console.error("[chat] useChat error:", err);
+      toast.error(err.message || "Something went wrong. Please try again.");
     },
   });
 

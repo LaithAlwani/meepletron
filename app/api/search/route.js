@@ -51,11 +51,13 @@ export async function GET(req) {
         : Promise.resolve([]),
     ]);
 
-    const combined = [...boardgames, ...expansions].sort(
-      (a, b) => (b.score ?? 0) - (a.score ?? 0)
-    );
-
-    if (combined.length > 0) {
+    // Only trust Atlas results if base games are present — if Atlas returned
+    // expansions but 0 base games, the boardgames index may be misconfigured
+    // in this environment; fall through to regex so base games aren't lost.
+    if (boardgames.length > 0) {
+      const combined = [...boardgames, ...expansions].sort(
+        (a, b) => (b.score ?? 0) - (a.score ?? 0)
+      );
       return NextResponse.json(combined, { status: 200 });
     }
   } catch (_) {
