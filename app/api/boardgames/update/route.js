@@ -2,8 +2,14 @@ import Boardgame from "@/models/boardgame";
 import Expansion from "@/models/expansion";
 import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
 export async function POST(req) {
+  const { sessionClaims } = await auth();
+  if (sessionClaims?.metadata?.role !== "admin") {
+    return NextResponse.json({ message: "Forbidden: Admin access required" }, { status: 403 });
+  }
+
   const { boardgame_id, is_expansion, updateData } = await req.json();
   if (!boardgame_id || !updateData)
     return NextResponse.json({ data: `Please add game and file` }, { status: 500 });

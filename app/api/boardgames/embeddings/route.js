@@ -5,8 +5,14 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
 import Expansion from "@/models/expansion";
+import { auth } from "@clerk/nextjs/server";
 
 export async function POST(req) {
+  const { sessionClaims } = await auth();
+  if (sessionClaims?.metadata?.role !== "admin") {
+    return NextResponse.json({ message: "Forbidden: Admin access required" }, { status: 403 });
+  }
+
   const data = await req.json();
   const { fileText, boardgame, blob } = data;
   if (!fileText || !boardgame) {

@@ -20,7 +20,7 @@ export default clerkMiddleware(async (auth, req) => {
     const publicMetadata = sessionClaims?.metadata;
 
     // Check if the user's role is 'admin'
-    if (publicMetadata.role !== "admin") {
+    if (publicMetadata?.role !== "admin") {
       return new Response("Forbidden: Admin access required", { status: 403 });
     }
   }

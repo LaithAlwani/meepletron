@@ -13,6 +13,7 @@ import Expansion from "@/models/expansion";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
+import { auth } from "@clerk/nextjs/server";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -23,6 +24,11 @@ const s3Client = new S3Client({
 });
 
 export async function POST(req) {
+  const { sessionClaims } = await auth();
+  if (sessionClaims?.metadata?.role !== "admin") {
+    return NextResponse.json({ message: "Forbidden: Admin access required" }, { status: 403 });
+  }
+
   const { boardgame, chunks, tempFileUrl } = await req.json();
   await connectToDB();
 
