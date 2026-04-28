@@ -3,7 +3,7 @@ import { useState } from "react";
 import * as SignIn from "@clerk/elements/sign-in";
 import * as Clerk from "@clerk/elements/common";
 import Link from "next/link";
-import { FaGoogle, FaApple, FaFacebook } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import Loader from "@/components/Loader";
 
 const inputCls =
@@ -12,8 +12,6 @@ const inputCls =
 const submitCls =
   "w-full py-2.5 rounded-xl bg-primary text-primary-fg font-semibold text-sm hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center";
 
-const oauthCls =
-  "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-surface-muted transition-colors";
 
 export default function SignInPage() {
   const [ready, setReady] = useState(false);
@@ -31,17 +29,9 @@ export default function SignInPage() {
         <SignIn.Root>
           <SignIn.Step name="start" className="space-y-4">
             <span className="sr-only" ref={(el) => { if (el) setReady(true); }} />
-            <div className="flex gap-3">
-              <Clerk.Connection name="google" className={oauthCls}>
-                <FaGoogle size={15} /> Google
-              </Clerk.Connection>
-              <Clerk.Connection name="apple" className={oauthCls}>
-                <FaApple size={16} /> Apple
-              </Clerk.Connection>
-              <Clerk.Connection name="facebook" className={oauthCls}>
-                <FaFacebook size={15} /> Facebook
-              </Clerk.Connection>
-            </div>
+            <Clerk.Connection name="google" className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-surface-muted transition-colors">
+              <FaGoogle size={15} /> Continue with Google
+            </Clerk.Connection>
 
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-border" />
