@@ -5,6 +5,7 @@ import HowItWorks from "@/components/landingPage/HowItWorks";
 import Features from "@/components/landingPage/Features";
 import BoardgameScroller from "@/components/boardgame/BoardgameScroller";
 import ContactForm from "@/components/ContactForm";
+import PatchNotes from "@/components/landingPage/PatchNotes";
 
 export const metadata = {
   alternates: {
@@ -19,6 +20,7 @@ export default function Home() {
       <HowItWorks />
       <Features />
       <BoardgameScroller />
+      <PatchNotes />
       <ContactForm />
       <footer className="py-12 px-4 border-t border-gray-100 dark:border-slate-800">
         <div className="max-w-xl mx-auto text-center">
