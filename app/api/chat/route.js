@@ -8,16 +8,44 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { createDataStreamResponse, streamText } from "ai";
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 const pinecone = new PineconeClient();
 const google = createGoogleGenerativeAI();
+const DAILY_TOKEN_LIMIT = 50_000;
 
 
 export async function POST(req) {
   const { messages, boardgame_id, boardgame_title } = await req.json();
   await connectToDB();
+
+  const { userId } = await auth();
+  let dbUser = null;
+  let tokensUsedToday = 0;
+
+  if (userId) {
+    dbUser = await User.findOne({ clerk_id: userId });
+    if (dbUser) {
+      const todayMidnightUTC = new Date();
+      todayMidnightUTC.setUTCHours(0, 0, 0, 0);
+      const isNewDay = !dbUser.tokens_reset_at || dbUser.tokens_reset_at < todayMidnightUTC;
+      if (isNewDay) {
+        dbUser.tokens_used_today = 0;
+        dbUser.tokens_reset_at = todayMidnightUTC;
+        await dbUser.save();
+      }
+      tokensUsedToday = dbUser.tokens_used_today ?? 0;
+      if (tokensUsedToday >= DAILY_TOKEN_LIMIT) {
+        return NextResponse.json(
+          { error: "token_limit", message: "You've reached your daily limit. It resets at midnight UTC." },
+          { status: 429 }
+        );
+      }
+    }
+  }
+
   const userQuestion = messages[messages.length - 1].content;
   
   const retrievals = await queryPineconeVectorStore(
@@ -71,7 +99,7 @@ ${formattedContext}`;
           frequencyPenalty: 0,
           presencePenalty: 0,
           maxRetries: 3,
-          onFinish() {
+          onFinish({ usage }) {
             const top = retrievals[0];
             if (top?.pageNumber) {
               dataStream.writeMessageAnnotation({
@@ -80,6 +108,17 @@ ${formattedContext}`;
               });
             }
             dataStream.writeData("call completed");
+
+            if (dbUser) {
+              const used = usage?.totalTokens ?? 0;
+              const newUsed = tokensUsedToday + used;
+              const newRemaining = Math.max(0, DAILY_TOKEN_LIMIT - newUsed);
+              User.findByIdAndUpdate(dbUser._id, {
+                tokens_used_today: newUsed,
+                tokens_reset_at: dbUser.tokens_reset_at,
+              }).catch(console.error);
+              dataStream.writeData({ type: "tokens", remaining: newRemaining });
+            }
           },
         });
         result.mergeIntoDataStream(dataStream);

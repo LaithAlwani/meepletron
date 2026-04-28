@@ -1,36 +1,48 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
 
-const PHRASES = [
-  "Thinking…",
-  "Flipping through the manual…",
-  "Reading the rulebook…",
-  "Checking the rules…",
-  "Consulting the guide…",
-  "Looking it up…",
-  "Scanning the pages…",
-  "Finding the answer…",
-  "Cross-referencing…",
-  "Digging through the rules…",
-  "Parsing the fine print…",
-  "Almost there…",
-  "Searching the index…",
-  "Reviewing the sections…",
-];
+const PHASE_PHRASES = {
+  searching: [
+    "Searching the rulebook…",
+    "Looking it up…",
+    "Digging through the rules…",
+    "Scanning the pages…",
+    "Checking the index…",
+    "Flipping through the manual…",
+  ],
+  reading: [
+    "Found something…",
+    "Reading the relevant section…",
+    "Cross-referencing…",
+    "Reviewing the context…",
+    "Almost ready…",
+  ],
+  writing: [
+    "Writing the answer…",
+    "Putting it together…",
+    "Here it comes…",
+  ],
+};
 
-export default function TypingIndicator() {
-  const [phrase, setPhrase] = useState(() => PHRASES[Math.floor(Math.random() * PHRASES.length)]);
+function pickPhrase(phase, exclude = null) {
+  const options = PHASE_PHRASES[phase] ?? PHASE_PHRASES.searching;
+  const filtered = exclude ? options.filter((p) => p !== exclude) : options;
+  return filtered[Math.floor(Math.random() * filtered.length)];
+}
+
+export default function TypingIndicator({ phase = "searching" }) {
+  const [phrase, setPhrase] = useState(() => pickPhrase(phase));
 
   useEffect(() => {
-    const pick = () => {
-      setPhrase((prev) => {
-        const options = PHRASES.filter((p) => p !== prev);
-        return options[Math.floor(Math.random() * options.length)];
-      });
-    };
-    const id = setInterval(pick, 5000);
+    setPhrase(pickPhrase(phase));
+  }, [phase]);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setPhrase((prev) => pickPhrase(phase, prev));
+    }, 3000);
     return () => clearInterval(id);
-  }, []);
+  }, [phase]);
 
   return (
     <div className="flex flex-col items-start gap-1 pb-1">

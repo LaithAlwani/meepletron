@@ -3,7 +3,7 @@ import { useChat } from "ai/react";
 import { useParams } from "next/navigation";
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { FaPaperPlane, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { FaPaperPlane, FaThumbsUp, FaThumbsDown, FaCheck } from "react-icons/fa";
 import { BsLayers } from "react-icons/bs";
 import { IoArrowBack, IoClose } from "react-icons/io5";
 import { FaArrowDown } from "react-icons/fa";
@@ -19,6 +19,33 @@ import { generateId } from "ai";
 import { useRouter } from "next/navigation";
 import { GUEST_CHAT_KEY_PREFIX, USER_CHAT_KEY_PREFIX } from "@/utils/constants";
 import ReactMarkdown from "react-markdown";
+
+// ─── Guest token helpers ───────────────────────────────────────────────────────
+
+const GUEST_TOKEN_LIMIT = 10_000;
+const GUEST_TOKEN_KEY = "meepletron_guest_tokens";
+
+function loadGuestTokens() {
+  try {
+    const raw = localStorage.getItem(GUEST_TOKEN_KEY);
+    if (!raw) return GUEST_TOKEN_LIMIT;
+    const { used, date } = JSON.parse(raw);
+    const todayUTC = new Date().toISOString().slice(0, 10);
+    if (date !== todayUTC) return GUEST_TOKEN_LIMIT;
+    return Math.max(0, GUEST_TOKEN_LIMIT - used);
+  } catch { return GUEST_TOKEN_LIMIT; }
+}
+
+function saveGuestTokenUsage(tokensUsed) {
+  try {
+    const todayUTC = new Date().toISOString().slice(0, 10);
+    const raw = localStorage.getItem(GUEST_TOKEN_KEY);
+    const prev = raw ? JSON.parse(raw) : { used: 0, date: todayUTC };
+    const usedTotal = prev.date === todayUTC ? prev.used + tokensUsed : tokensUsed;
+    localStorage.setItem(GUEST_TOKEN_KEY, JSON.stringify({ used: usedTotal, date: todayUTC }));
+    return Math.max(0, GUEST_TOKEN_LIMIT - usedTotal);
+  } catch { return 0; }
+}
 
 // ─── Guest localStorage helpers ───────────────────────────────────────────────
 
@@ -101,17 +128,34 @@ export default function ChatPage() {
   const [currentGame, setCurrentGame] = useState(null);
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [tokensRemaining, setTokensRemaining] = useState(null);
+  const [showSignUpDrawer, setShowSignUpDrawer] = useState(false);
   const inputRef = useRef(null);
   const scrollContainerRef = useRef(null);
+  const didInitialScroll = useRef(false);
+  const userScrolledUp = useRef(false);
 
-  const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
+  const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading, error, data } = useChat({
     body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
     onFinish: (message) => {
-      if (user) saveMessage(message.id, message.role, message.content, message.annotations);
+      if (user) {
+        saveMessage(message.id, message.role, message.content, message.annotations);
+      } else {
+        const approxTokens = Math.ceil((message.content?.length ?? 0) / 4) + 1500;
+        const newRemaining = saveGuestTokenUsage(approxTokens);
+        setTokensRemaining(newRemaining);
+        if (newRemaining <= 0) setShowSignUpDrawer(true);
+      }
     },
     onError: (err) => {
       console.error("[chat] useChat error:", err);
-      toast.error(err.message || "Something went wrong. Please try again.");
+      if (err.message?.includes("token_limit") || err.status === 429) {
+        setTokensRemaining(0);
+        if (!user) setShowSignUpDrawer(true);
+        else toast.error("Daily token limit reached. Resets at midnight UTC.");
+      } else {
+        toast.error(err.message || "Something went wrong. Please try again.");
+      }
     },
   });
 
@@ -182,13 +226,16 @@ export default function ChatPage() {
   // ─── Scroll handling ──────────────────────────────────────────────────────
 
   const handleScroll = (e) => {
-    setIsAtBottom(e.target.scrollTop <= 5);
+    const el = e.target;
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    setIsAtBottom(atBottom);
+    if (isLoading && !atBottom) userScrolledUp.current = true;
+    if (atBottom) userScrolledUp.current = false;
   };
 
   const scrollToBottom = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = 0;
-    }
+    const el = scrollContainerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   };
 
   // ─── Submit handler ───────────────────────────────────────────────────────
@@ -196,6 +243,11 @@ export default function ChatPage() {
   const onSubmit = (e) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
+    if (tokensRemaining !== null && tokensRemaining <= 0) {
+      if (!user) setShowSignUpDrawer(true);
+      else toast.error("Daily token limit reached. Resets at midnight UTC.");
+      return;
+    }
     const id = generateId();
     const currentInput = input;
     if (user && currentGame && chat) saveMessage(id, "user", currentInput);
@@ -211,6 +263,22 @@ export default function ChatPage() {
     if (isLoaded && !user && currentGame) setMessages(loadGuestMessages(currentGame._id));
   }, [currentGame, isLoaded, user]);
   useEffect(() => {
+    if (!isLoaded) return;
+    if (user) {
+      fetch("/api/user/tokens")
+        .then((r) => r.json())
+        .then(({ remaining }) => setTokensRemaining(remaining))
+        .catch(() => {});
+    } else {
+      setTokensRemaining(loadGuestTokens());
+    }
+  }, [isLoaded, user]);
+  useEffect(() => {
+    if (!data?.length) return;
+    const latest = [...data].reverse().find((d) => d?.type === "tokens");
+    if (latest && user) setTokensRemaining(latest.remaining);
+  }, [data]);
+  useEffect(() => {
     if (!user && isLoaded && !isLoading && messages.length > 0 && currentGame) {
       saveGuestMessages(currentGame._id, messages, {
         _id: currentGame._id, title: currentGame.title, thumbnail: currentGame.thumbnail,
@@ -220,13 +288,36 @@ export default function ChatPage() {
       saveUserCache(currentGame._id, chat._id, messages);
     }
   }, [isLoading]);
-  useLayoutEffect(() => { scrollToBottom(); }, [messages]);
+  // Reset initial-scroll flag when switching games
+  useEffect(() => { didInitialScroll.current = false; }, [currentGame?._id]);
+  // Scroll to bottom once when messages first load (cache, DB, or guest localStorage)
+  useLayoutEffect(() => {
+    if (!didInitialScroll.current && messages.length > 0 && !isLoading) {
+      scrollToBottom();
+      didInitialScroll.current = true;
+    }
+  }, [messages.length, isLoading]);
+  // Scroll to bottom when streaming starts; reset scroll-up flag
+  useLayoutEffect(() => {
+    if (isLoading) { userScrolledUp.current = false; scrollToBottom(); }
+    else userScrolledUp.current = false;
+  }, [isLoading]);
+  // Follow the stream — fires on every token; stops if user scrolled up
+  useLayoutEffect(() => {
+    if (isLoading && !userScrolledUp.current) scrollToBottom();
+  }, [messages]);
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
   if (!boardgame) return <Loader height="h-screen" />;
 
   const expansionCount = boardgame.expansions?.length ?? 0;
+
+  // Typing indicator phase detection
+  const lastMsg = messages[messages.length - 1];
+  const hasInitialized = data?.some((d) => d === "initialized call");
+  const isStreaming = isLoading && lastMsg?.role === "assistant" && (lastMsg?.content?.length ?? 0) > 0;
+  const loadingPhase = !hasInitialized ? "searching" : "reading";
 
   return (
     <section className="h-[100svh] flex flex-col">
@@ -290,8 +381,8 @@ export default function ChatPage() {
       </AnimatePresence>
 
       {/* Messages */}
-      <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto hide-scrollbar flex flex-col-reverse">
-        <div className="w-full max-w-xl mx-auto px-4 py-4">
+      <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto hide-scrollbar">
+        <div className="w-full max-w-xl mx-auto px-4 pt-4 pb-8">
 
           {messages.length === 0 && !isLoading && (
             <motion.div
@@ -334,17 +425,18 @@ export default function ChatPage() {
                 const msgLabel = getDateLabel(msgDate);
                 const prevLabel = getDateLabel(prevDate);
                 const showSeparator = msgLabel && msgLabel !== prevLabel;
+                const isLastAssistant = index === messages.length - 1 && message.role === "assistant";
                 return (
                   <Fragment key={message._id || message.id}>
                     {showSeparator && <DateSeparator label={msgLabel} />}
-                    <Message message={message} user={user} />
+                    <Message message={message} user={user} isStreaming={isLoading && isLastAssistant} />
                   </Fragment>
                 );
               })}
             </AnimatePresence>
 
             <AnimatePresence>
-              {isLoading && (
+              {isLoading && !isStreaming && (
                 <motion.div
                   key="typing"
                   initial={{ opacity: 0, y: 6 }}
@@ -352,7 +444,7 @@ export default function ChatPage() {
                   exit={{ opacity: 0, y: 6 }}
                   className="flex items-end gap-2">
                   <img src="/logo.webp" alt="logo" className="w-7 h-7 object-contain rounded-full shrink-0 border border-border-muted" />
-                  <TypingIndicator />
+                  <TypingIndicator phase={loadingPhase} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -376,7 +468,12 @@ export default function ChatPage() {
       </AnimatePresence>
 
       {/* Input form */}
-      <div className="shrink-0 px-3 pb-4 pt-2 border-t border-border-muted bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm">
+      <div className="shrink-0 px-3 pb-4 pt-2 border-t border-border-muted bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm relative">
+        {tokensRemaining !== null && (
+          <span className={`absolute bottom-full right-3 mb-1 text-[10px] font-medium pointer-events-none ${tokensRemaining <= 5_000 ? "text-red-400" : "text-subtle/70"}`}>
+            {tokensRemaining.toLocaleString()} tokens left today
+          </span>
+        )}
         <form
           onSubmit={onSubmit}
           className="max-w-xl mx-auto flex items-end gap-2 bg-surface-muted rounded-2xl px-3 py-2 ring-1 ring-border focus-within:ring-primary transition-all">
@@ -405,6 +502,85 @@ export default function ChatPage() {
           </button>
         </form>
       </div>
+
+      {/* Sign-up drawer (guest token limit) */}
+      <AnimatePresence>
+        {showSignUpDrawer && (
+          <>
+            <motion.div
+              key="signup-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowSignUpDrawer(false)}
+              className="fixed inset-0 bg-black/40 z-30 backdrop-blur-[1px]"
+            />
+            <motion.aside
+              key="signup-drawer"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed top-0 left-0 w-72 h-full bg-bg z-40 shadow-2xl flex flex-col">
+
+              <div className="flex items-start justify-between px-5 py-4 border-b border-border-muted">
+                <div>
+                  <h3 className="font-semibold text-foreground text-sm">Daily limit reached</h3>
+                  <p className="text-xs text-muted mt-0.5">Sign up free to keep chatting</p>
+                </div>
+                <button
+                  onClick={() => setShowSignUpDrawer(false)}
+                  className="p-1.5 rounded-xl hover:bg-surface-muted transition-colors text-muted shrink-0 ml-2">
+                  <IoClose size={18} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-5">
+                <p className="text-sm text-muted leading-relaxed">
+                  Guest accounts include{" "}
+                  <span className="font-semibold text-foreground">10,000 tokens per day</span>.
+                  Create a free account and get more — no credit card needed.
+                </p>
+
+                <div className="flex flex-col gap-3">
+                  {[
+                    { label: "50,000 tokens per day", sub: "5× more than guest" },
+                    { label: "Permanent chat history", sub: "Never lose a conversation" },
+                    { label: "Sync across devices", sub: "Pick up where you left off" },
+                    { label: "Free forever", sub: "No payment required" },
+                  ].map(({ label, sub }) => (
+                    <div key={label} className="flex items-start gap-3">
+                      <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center">
+                        <FaCheck size={9} className="text-primary" />
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium text-foreground leading-tight">{label}</p>
+                        <p className="text-xs text-muted">{sub}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="px-5 pb-8 pt-4 flex flex-col gap-2 border-t border-border-muted">
+                <Link
+                  href="/sign-up"
+                  className="w-full py-2.5 bg-primary text-primary-fg rounded-xl font-semibold text-sm text-center hover:bg-primary-hover transition-colors">
+                  Create free account
+                </Link>
+                <Link
+                  href="/sign-in"
+                  className="w-full py-2.5 bg-surface-muted text-foreground rounded-xl font-medium text-sm text-center hover:bg-border-muted transition-colors border border-border-muted">
+                  Sign in
+                </Link>
+                <p className="text-[10px] text-center text-subtle mt-1">
+                  Guest tokens also reset daily at midnight UTC
+                </p>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Expansion side nav */}
       <AnimatePresence>
@@ -498,7 +674,7 @@ const DateSeparator = ({ label }) => (
   </div>
 );
 
-const Message = ({ message, user }) => {
+const Message = ({ message, user, isStreaming }) => {
   const { _id, id, role, content, rating, annotations } = message;
   const isUser = role === "user";
 
@@ -525,16 +701,21 @@ const Message = ({ message, user }) => {
           {isUser ? (
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
           ) : (
-            <ReactMarkdown
-              components={{
-                p:      ({ children }) => <p className="text-sm leading-relaxed mb-1 last:mb-0">{children}</p>,
-                ul:     ({ children }) => <ul className="text-sm list-disc pl-4 space-y-0.5 my-1">{children}</ul>,
-                ol:     ({ children }) => <ol className="text-sm list-decimal pl-4 space-y-0.5 my-1">{children}</ol>,
-                li:     ({ children }) => <li className="leading-relaxed">{children}</li>,
-                strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-              }}>
-              {content}
-            </ReactMarkdown>
+            <>
+              <ReactMarkdown
+                components={{
+                  p:      ({ children }) => <p className="text-sm leading-relaxed mb-1 last:mb-0">{children}</p>,
+                  ul:     ({ children }) => <ul className="text-sm list-disc pl-4 space-y-0.5 my-1">{children}</ul>,
+                  ol:     ({ children }) => <ol className="text-sm list-decimal pl-4 space-y-0.5 my-1">{children}</ol>,
+                  li:     ({ children }) => <li className="leading-relaxed">{children}</li>,
+                  strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                }}>
+                {content}
+              </ReactMarkdown>
+              {isStreaming && (
+                <span className="inline-block w-[2px] h-[14px] bg-foreground/50 ml-0.5 align-text-bottom animate-pulse" />
+              )}
+            </>
           )}
         </div>
 

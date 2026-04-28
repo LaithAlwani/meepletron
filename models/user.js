@@ -8,6 +8,8 @@ const UserSchema = new Schema(
     email_address: { type: String, required: true },
     clerk_id: { type: String, required: true },
     avatar: String,
+    tokens_used_today: { type: Number, default: 0 },
+    tokens_reset_at: { type: Date },
   },
   { timestamps: true }
 );
