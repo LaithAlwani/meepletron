@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 
-export const useSearch = ({ debounceDelay: debounceDelay = 300, limit }) => {
+export const useSearch = ({ debounceDelay = 300, limit, includeExpansions = false }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,8 @@ export const useSearch = ({ debounceDelay: debounceDelay = 300, limit }) => {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/search?query=${debouncedQuery}&limit=${limit}`);
+        const params = new URLSearchParams({ query: debouncedQuery, limit, includeExpansions });
+        const response = await fetch(`/api/search?${params}`);
         const boardgames = await response.json();
         setResults(boardgames);
       } catch (error) {
@@ -36,7 +37,7 @@ export const useSearch = ({ debounceDelay: debounceDelay = 300, limit }) => {
     };
 
     fetchResults();
-  }, [debouncedQuery, limit]);
+  }, [debouncedQuery, limit, includeExpansions]);
 
   return { query, setQuery, results, loading };
 };

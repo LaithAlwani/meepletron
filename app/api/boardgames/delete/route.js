@@ -1,10 +1,12 @@
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import Boardgame from "@/models/boardgame";
+import Expansion from "@/models/expansion";
+import Chat from "@/models/chat";
+import Message from "@/models/message";
 import connectToDB from "@/utils/database";
 import { DeleteObjectsCommand, S3Client } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import Expansion from "@/models/expansion";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -15,101 +17,89 @@ const s3Client = new S3Client({
 });
 
 export async function POST(req) {
-  //check if user is authorized to delete games.
   const { sessionClaims } = await auth();
-
-  // Access the public metadata
-  const publicMetadata = sessionClaims?.metadata;
-
-  // Check if the user's role is 'admin'
-  if (publicMetadata.role !== "admin") {
+  if (sessionClaims?.metadata?.role !== "admin") {
     return NextResponse.json({ message: "Forbidden: Admin access required" }, { status: 403 });
   }
 
   const { boardgame } = await req.json();
+  if (!boardgame) {
+    return NextResponse.json({ message: "Please provide a boardgame" }, { status: 400 });
+  }
 
-  //check if boardgame exits.
-  if (!boardgame)
-    return NextResponse.json({ message: `Please provide a boardgame` }, { status: 404 });
-  if (!boardgame.urls.length)
-    return NextResponse.json({ message: `No files to delete` }, { status: 404 });
   try {
-    //delet docs from pincone
-    await deletePinconeDocs(boardgame._id);
-    // delete fiels from s3 bucket
-    await deleteFiles(boardgame);
-
     await connectToDB();
-    let doc;
-    if (boardgame.parent_id) {
-      doc = await Expansion.findByIdAndUpdate({ _id: boardgame._id }, { urls: [] }, { new: true });
-    } else {
-      doc = await Boardgame.findByIdAndUpdate({ _id: boardgame._id }, { urls: [] }, { new: true });
+
+    const game = await Boardgame.findById(boardgame._id).lean();
+    if (!game) return NextResponse.json({ message: "Boardgame not found" }, { status: 404 });
+
+    const expansions = await Expansion.find({ parent_id: game._id }).lean();
+
+    // Delete Pinecone vectors for the game and all its expansions
+    const allGameIds = [game._id.toString(), ...expansions.map((e) => e._id.toString())];
+    await deletePineconeVectors(allGameIds);
+
+    // Collect all S3 keys: rulebook files + images + thumbnails
+    const s3Keys = [];
+    const collectS3Keys = (doc) => {
+      doc.urls?.forEach(({ path }) => {
+        if (path) s3Keys.push(path.split("amazonaws.com/").pop());
+      });
+      if (doc.thumbnail) s3Keys.push(doc.thumbnail.split("amazonaws.com/").pop());
+      if (doc.image) s3Keys.push(doc.image.split("amazonaws.com/").pop());
+    };
+    collectS3Keys(game);
+    expansions.forEach(collectS3Keys);
+
+    if (s3Keys.length) await deleteS3Objects(s3Keys);
+
+    // Delete chats + messages for the game and all its expansions
+    const allBoardgameIds = [game._id, ...expansions.map((e) => e._id)];
+    const chatIds = await Chat.find({ boardgame_id: { $in: allBoardgameIds } }).distinct("_id");
+    if (chatIds.length) {
+      await Message.deleteMany({ chat_id: { $in: chatIds } });
+      await Chat.deleteMany({ _id: { $in: chatIds } });
     }
-    if (!doc)
-      return NextResponse.json({ message: `The Board Game does not exist` }, { status: 404 });
-    return NextResponse.json(
-      { data: doc, message: `${doc.title} delete successfully` },
-      { status: 201 }
-    );
+
+    // Delete expansions and the game itself
+    await Expansion.deleteMany({ parent_id: game._id });
+    await Boardgame.findByIdAndDelete(game._id);
+
+    return NextResponse.json({ message: `${game.title} deleted successfully` }, { status: 200 });
   } catch (err) {
-    return NextResponse.json({ message: `Failed to Upload file` }, { status: 500 });
+    console.error(err);
+    return NextResponse.json({ message: "Failed to delete boardgame" }, { status: 500 });
   }
 }
 
-const deleteFiles = async (boardgame) => {
-  const filePathinS3 = [];
-  boardgame.urls.forEach(({ path }) => {
-    filePathinS3.push(path.split("amazonaws.com/").pop());
-  });
-
-  try {
-    const { Deleted } = await s3Client.send(
-      new DeleteObjectsCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Delete: {
-          Objects: filePathinS3.map((k) => ({ Key: k })),
-        },
-      })
-    );
-
-    return Deleted;
-  } catch (caught) {
-    if (caught.name === "NoSuchBucket") {
-      console.error(
-        `Error from S3 while deleting objects from ${process.env.AWS_BUCKET_NAME}. The bucket doesn't exist.`
-      );
-    } else if (caught) {
-      console.error(
-        `Error from S3 while deleting objects from ${process.env.AWS_BUCKET_NAME}.  ${caught.name}: ${caught.message}`
-      );
-    } else {
-      throw caught;
-    }
-    return null;
-  }
-};
-
-const deletePinconeDocs = async (id) => {
+const deletePineconeVectors = async (ids) => {
   const pinecone = new PineconeClient();
   const pineconeIndex = pinecone.index(process.env.PINECONE_INDEX_NAME);
-  try {
-    const results = await pineconeIndex.query({
-      vector: Array(3072).fill(0), // Dummy vector (not used because we filter)
-      topK: 1000, // Retrieve as many matches as possible
-      includeMetadata: true,
-      filter: { bg_id: id }, // Filter by bg_id
-    });
-    if (!results.matches.length) {
-      return NextResponse.json(
-        { message: "No documents found for the given boardgame id" },
-        { status: 404 }
-      );
-    }
 
-    const idsToDelete = results.matches.map((match) => match.id);
-    await pineconeIndex.deleteMany(idsToDelete);
+  await Promise.all(
+    ids.map(async (id) => {
+      const results = await pineconeIndex.query({
+        vector: Array(3072).fill(0),
+        topK: 1000,
+        includeMetadata: false,
+        filter: { bg_id: id },
+      });
+      if (results.matches.length > 0) {
+        await pineconeIndex.deleteMany(results.matches.map((m) => m.id));
+      }
+    })
+  );
+};
+
+const deleteS3Objects = async (keys) => {
+  try {
+    await s3Client.send(
+      new DeleteObjectsCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Delete: { Objects: keys.map((k) => ({ Key: k })) },
+      })
+    );
   } catch (err) {
-    return NextResponse.json({ message: `failed to delete docs from Pincode DB` }, { status: 500 });
+    console.error("S3 deletion error:", err.message);
   }
 };

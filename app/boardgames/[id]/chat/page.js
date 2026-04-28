@@ -18,6 +18,7 @@ import ThemeSwitch from "@/components/ThemeSwitch";
 import { generateId } from "ai";
 import { useRouter } from "next/navigation";
 import { GUEST_CHAT_KEY_PREFIX } from "@/utils/constants";
+import ReactMarkdown from "react-markdown";
 
 // ─── Guest localStorage helpers ───────────────────────────────────────────────
 
@@ -326,7 +327,8 @@ export default function ChatPage() {
               e.target.style.height = "auto";
               e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
             }}
-            className="flex-1 bg-transparent border-none focus:ring-0 outline-none resize-none text-sm text-foreground placeholder:text-subtle"
+            //make the focus outline none
+            className="flex-1 bg-transparent border-none text-foreground placeholder:text-subtle focus:ring-0 focus-visible:ring-0"
           />
           <button
             type="submit"
@@ -440,24 +442,44 @@ const Message = ({ message, user }) => {
 
       <div className={`max-w-[80%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-1.5`}>
         <div
-          className={`px-4 py-2.5 rounded-2xl leading-relaxed whitespace-pre-wrap ${
+          className={`px-4 py-2.5 rounded-2xl ${
             isUser
               ? "bg-primary text-primary-fg rounded-br-md shadow-sm"
               : "bg-surface-muted text-foreground rounded-bl-md shadow-sm ring-1 ring-border-muted"
           }`}>
-          {content}
+          {isUser ? (
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
+          ) : (
+            <ReactMarkdown
+              components={{
+                p:      ({ children }) => <p className="text-sm leading-relaxed mb-1 last:mb-0">{children}</p>,
+                ul:     ({ children }) => <ul className="text-sm list-disc pl-4 space-y-0.5 my-1">{children}</ul>,
+                ol:     ({ children }) => <ol className="text-sm list-decimal pl-4 space-y-0.5 my-1">{children}</ol>,
+                li:     ({ children }) => <li className="leading-relaxed">{children}</li>,
+                strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+              }}>
+              {content}
+            </ReactMarkdown>
+          )}
         </div>
 
         {!isUser && (
-          <div className="flex items-center gap-2.5 px-1">
-            {annotations?.[0]?.url && (
-              <a
-                href={annotations[0].url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs bg-primary/10 hover:bg-primary/20 text-primary px-2.5 py-1 rounded-full transition-colors border border-primary/20">
-                📄 Source
-              </a>
+          <div className="flex items-center gap-2.5 px-1 flex-wrap">
+            {annotations?.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {annotations.map((ann, i) =>
+                  ann.url ? (
+                    <a
+                      key={i}
+                      href={ann.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-medium px-2 py-0.5 rounded-full border border-border bg-surface text-subtle hover:border-primary hover:text-primary transition-colors">
+                      p.{ann.pageNumber}
+                    </a>
+                  ) : null
+                )}
+              </div>
             )}
             <RateMessage id={_id || id} existingRating={rating} user={user} />
           </div>

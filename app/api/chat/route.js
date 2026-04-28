@@ -42,46 +42,21 @@ export async function POST(req) {
   }
 
   const formattedContext = retrievals
-    .map((item) => `${item.text} (Page ${item.pageNumber}) [Source](${item.source})`)
+    .map((item) => item.text)
     .join("\n\n");
 
-  const system = `You are a board game expert AI. Your primary role is to explain and clarify board game rules in [Game Title], your response should maintain a natural, human-like tone. 
-Avoid using verbose words, flowery words, fluffy, words, exaggerated terms, unneccessary and/or superlative adjectives or qualifiers
-(e.g, comprehensive, robust, extensive).  
+  const system = `You are a board game rules assistant for ${boardgame_title}.
 
-**Rules and Variants:**  
-- Focus on explaining base game rules in a simple and clear way.  
-- Mention variants only if the user specifically asks about them.  
-- You may use bullet points if they help clarify or organize the response.
+- Always give the complete answer — never omit numbers, card counts, point values, player limits, or any table data. If the question is about quantities or a breakdown, list every value.
+- Use as few words as possible while keeping the answer complete. Cut filler prose, not facts.
+- Use bullet points or a compact list when presenting multiple values or steps. Use plain prose for single-fact answers.
+- When the information includes a table (e.g. points per card, cards per player count), reproduce it as a compact list.
+- No filler: no "Great question!", no "Certainly!", no "Based on the rulebook…".
+- Never mention page numbers or sources.
+- Never tell the user to consult the rulebook, the manual, or any external resource. Always extract and present the relevant data directly from the context.
 
-**Answering Questions:**  
-- Base all answers strictly on the [Context] provided. 
-- ensure the use of quotes from the cotext
-- Reference the page number at the end of the answer formatted like this: "[Page X]" where "X" is the page number.
-
-
-**Handling Insufficient Context:**
-- If the answer is not found in the provided context, explicitly state that rather than speculating, and ask the user to use in-game terms when asking questions
-
-Example Interaction:  
-
-_Backend: Board game title: "Catan"_  
-
-_User: "Hi there!"_  
-"Hey! How can I help you today? Need clarification on rules or strategies?"  
-
-_User: "How do you win in this game?"_  
-"You win by collecting 10 points. You earn points from building settlements, cities, or through bonuses like the longest road or largest army."  
-
-_Backend: Board game title: "Catan"_  
-_User: "What are the rules for Monopoly Deal?"_  
-"I cannot help you with that question."  
-
----
-
-**Game Title:** ${boardgame_title}  
-**Question:** ${userQuestion}  
-**Context:** ${formattedContext}`;
+Context:
+${formattedContext}`;
 
   try {
     return createDataStreamResponse({
@@ -98,13 +73,13 @@ _User: "What are the rules for Monopoly Deal?"_
           presencePenalty: 0,
           maxRetries: 3,
           onFinish() {
-            // message annotation:
-            dataStream.writeMessageAnnotation({
-              pageNumber: retrievals[0].pageNumber,
-              url: `${retrievals[0].source}#page=${retrievals[0].pageNumber}`,
-            });
-
-            // call annotation:
+            const top = retrievals[0];
+            if (top?.pageNumber) {
+              dataStream.writeMessageAnnotation({
+                pageNumber: top.pageNumber,
+                url: `${top.source}#page=${top.pageNumber}`,
+              });
+            }
             dataStream.writeData("call completed");
           },
         });

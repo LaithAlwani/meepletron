@@ -3,117 +3,76 @@ import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
 import Expansion from "@/models/expansion";
 
-
-
 export async function GET(req) {
-  try {
-    const url = new URL(req.url);
-    const searchParams = new URLSearchParams(url.searchParams);
-    const query = searchParams.get("query");
-    let limit = parseInt(searchParams.get("limit"), 10); // Convert to number
+  const url = new URL(req.url);
+  const params = new URLSearchParams(url.searchParams);
+  const query = params.get("query")?.trim();
+  const limit = parseInt(params.get("limit"), 10) || 10;
+  const includeExpansions = params.get("includeExpansions") === "true";
 
-    if (!query) {
-      return NextResponse.json({ message: "Query parameter is required" }, { status: 400 });
-    }
-
-    await connectToDB();
-
-    const normalizeText = (text) =>
-      text
-        .normalize("NFD") // Decomposes accents
-        .replace(/[\u0300-\u036f]/g, "") // Removes diacritics
-        .toLowerCase();
-
-    const normalizedQuery = normalizeText(query);
-    const searchWords = normalizedQuery.split(/\s+/).filter(Boolean);
-
-    if (!searchWords.length) {
-      return NextResponse.json({ message: "Invalid search query" }, { status: 400 });
-    }
-
-    // Create an array of regex conditions for each search word
-    const regexConditions = searchWords.map((word) => ({
-      title: { $regex: word, $options: "i" }, // Case-insensitive search
-    }));
-    let boardgames;
-    let expansions;
-
-    boardgames = await Boardgame.find({ title: new RegExp(`^${query}$`, "i") });
-    
-    if (boardgames.length > 0) {
-      return NextResponse.json( boardgames , {status: 200});
-    }
-    
-    boardgames = await Boardgame.find(
-      { $and: regexConditions }, // Ensures all words appear somewhere in the title
-      { title: 1, thumbnail: 1, urls: 1, is_expansion: 1, parent_id: 1 }
-    )
-      .limit(limit)
-      .lean();
-    expansions = await Expansion.find(
-      { $and: regexConditions }, // Ensures all words appear somewhere in the title
-      { title: 1, thumbnail: 1, urls: 1, is_expansion: 1, parent_id: 1 }
-    )
-      .limit(limit)
-      .lean();
-    
-      const options = [
-        {
-          $search: {
-            index: "title_designer", // Your Atlas Search index name
-            text: {
-              query: query,
-              path: ["title","designers" ,"publishers"],
-              fuzzy: {
-                maxEdits: 2, // Allows up to 2 typo corrections
-              }
-            }
-          }
-        },
-        {
-          $project: {
-            title: 1,
-            image:1,
-            thumbnail: 1,
-            urls: 1,
-            is_expansion: 1,
-            parent_id: 1,
-            description: 1,
-            designers: 1,
-            score: { $meta: "searchScore" },
-          }
-        },
-        { $sort: { score: -1 } }
-      ]
-      
-
-    if (boardgames.length === 0) {
-      options[0]['$search'].index="title_designer"
-      
-      let dbQuery = Boardgame.aggregate(options);
-      if (!isNaN(limit) && limit > 0) {
-        dbQuery = dbQuery.limit(limit);
-      }
-      boardgames = await dbQuery.exec(); // Use `.exec()` for consistency
-    }
-    if (expansions.length === 0) {
-      options[0]['$search'].index="expansion-search"
-      let dbQuery = Expansion.aggregate(options);
-      if (!isNaN(limit) && limit > 0) {
-        dbQuery = dbQuery.limit(limit);
-      }
-      expansions = await dbQuery.exec(); // Use `.exec()` for consistency
-    }
-    boardgames.push(...expansions)
-
-    return NextResponse.json(boardgames, { status: 200 });
-  } catch (error) {
-    console.error("Error fetching board games:", error);
-    return NextResponse.json(
-      { message: "Internal Server Error", error: error.message },
-      { status: 500 }
-    );
+  if (!query) {
+    return NextResponse.json({ message: "Query parameter is required" }, { status: 400 });
   }
+
+  await connectToDB();
+
+  // Atlas Search — better fuzzy/relevance matching
+  try {
+    const atlasStages = (indexName) => [
+      {
+        $search: {
+          index: indexName,
+          text: {
+            query,
+            path: ["title", "designers", "publishers"],
+            fuzzy: { maxEdits: 1 },
+          },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          thumbnail: 1,
+          image: 1,
+          urls: 1,
+          is_expansion: 1,
+          parent_id: 1,
+          bgg_id: 1,
+          score: { $meta: "searchScore" },
+        },
+      },
+      { $limit: limit },
+    ];
+
+    const [boardgames, expansions] = await Promise.all([
+      Boardgame.aggregate(atlasStages("title_designer")).exec(),
+      includeExpansions
+        ? Expansion.aggregate(atlasStages("expansion-search")).exec()
+        : Promise.resolve([]),
+    ]);
+
+    const combined = [...boardgames, ...expansions].sort(
+      (a, b) => (b.score ?? 0) - (a.score ?? 0)
+    );
+
+    if (combined.length > 0) {
+      return NextResponse.json(combined, { status: 200 });
+    }
+  } catch (_) {
+    // Atlas Search unavailable — fall through to regex
+  }
+
+  // Regex fallback — guaranteed to work as long as DB is reachable
+  const words = query.split(/\s+/).filter(Boolean);
+  const regexConditions = words.map((w) => ({ title: { $regex: w, $options: "i" } }));
+  const fields = { title: 1, thumbnail: 1, image: 1, urls: 1, is_expansion: 1, parent_id: 1, bgg_id: 1 };
+
+  const [boardgames, expansions] = await Promise.all([
+    Boardgame.find({ $and: regexConditions }, fields).limit(limit).lean(),
+    includeExpansions
+      ? Expansion.find({ $and: regexConditions }, fields).limit(limit).lean()
+      : Promise.resolve([]),
+  ]);
+
+  return NextResponse.json([...boardgames, ...expansions], { status: 200 });
 }
-
-

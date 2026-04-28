@@ -5,24 +5,49 @@ import Loader from "@/components/Loader";
 import { useSearch } from "@/utils/hooks";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
-import { MdCloudUpload, MdOutlineDoneAll } from "react-icons/md";
+import { MdCloudUpload, MdOutlineDoneAll, MdDeleteOutline } from "react-icons/md";
 import { Button, Input, Card } from "@/components/ui";
 import ChunkCard from "@/components/admin/ChunkCard";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function BoardgameEditPage() {
-  const { query, setQuery, results, loading } = useSearch({ limit: 5 });
+  const { query, setQuery, results, loading } = useSearch({ limit: 5, includeExpansions: true });
   const [boardgame, setBoardgame] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [fileText, setFileText] = useState([]);
   const [file, setFile] = useState(null);
   const [showAllChunks, setShowAllChunks] = useState(false);
+  const [deletingFile, setDeletingFile] = useState(null);
 
   const resetSelection = () => {
     setBoardgame(null);
     setIsLoading(false);
     setFileText([]);
     setFile(null);
+    setDeletingFile(null);
+  };
+
+  const deleteFile = async (filePath) => {
+    setDeletingFile(filePath);
+    if (file?.path === filePath) setFile(null);
+    setFileText([]);
+    try {
+      const res = await fetch("/api/boardgames/delete-file", {
+        method: "POST",
+        body: JSON.stringify({ boardgame, filePath }),
+      });
+      const { data, message } = await res.json();
+      if (res.ok) {
+        setBoardgame(data);
+        toast.custom((t) => <CustomToast message={message} id={t.id} />);
+      } else {
+        toast.error(message || "Failed to delete file");
+      }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setDeletingFile(null);
+    }
   };
 
   const extractText = async () => {
@@ -76,14 +101,10 @@ export default function BoardgameEditPage() {
         method: "POST",
         body: JSON.stringify({ boardgame }),
       });
-      if (!res.ok) {
-        const { message } = await res.json();
-        return toast.error(message);
-      }
-      const { data, message } = await res.json();
-      setBoardgame(data);
-      setQuery("");
+      const { message } = await res.json();
+      if (!res.ok) return toast.error(message);
       toast.custom((t) => <CustomToast message={message} id={t.id} />);
+      resetSelection();
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -141,17 +162,12 @@ export default function BoardgameEditPage() {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <Button type="button" variant="reject" isLoading={isLoading} onClick={deleteBoardgame} styles="text-xs px-3 py-1.5">
-                  Delete
-                </Button>
-                <button
-                  type="button"
-                  onClick={resetSelection}
-                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-muted text-muted transition-colors text-sm">
-                  ✕
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={resetSelection}
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-muted text-muted transition-colors text-sm shrink-0">
+                ✕
+              </button>
             </div>
           )}
         </Card>
@@ -165,10 +181,11 @@ export default function BoardgameEditPage() {
               {boardgame.urls.map((url) => {
                 const filename = url.path.substring(url.path.lastIndexOf("/") + 1);
                 const isSelected = file?.path === url.path;
+                const isDeleting = deletingFile === url.path;
                 return (
                   <li
                     key={url.path}
-                    onClick={() => !url.isTextExtracted && setFile(url)}
+                    onClick={() => !url.isTextExtracted && !isDeleting && setFile(url)}
                     className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
                       url.isTextExtracted
                         ? "border-border opacity-60 cursor-default"
@@ -184,17 +201,26 @@ export default function BoardgameEditPage() {
                       </div>
                       <span className="text-sm text-foreground truncate">{filename}</span>
                     </div>
-                    {url.isTextExtracted ? (
-                      <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 font-medium shrink-0 ml-2">
-                        <MdOutlineDoneAll size={14} /> Indexed
-                      </span>
-                    ) : (
-                      <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ml-2 ${
-                        isSelected ? "bg-primary/10 text-primary" : "bg-surface-muted text-muted"
-                      }`}>
-                        {isSelected ? "Selected" : "Not indexed"}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2 shrink-0 ml-2">
+                      {url.isTextExtracted ? (
+                        <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 font-medium">
+                          <MdOutlineDoneAll size={14} /> Indexed
+                        </span>
+                      ) : (
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          isSelected ? "bg-primary/10 text-primary" : "bg-surface-muted text-muted"
+                        }`}>
+                          {isSelected ? "Selected" : "Not indexed"}
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); deleteFile(url.path); }}
+                        disabled={!!deletingFile || isLoading}
+                        className="w-7 h-7 rounded-lg flex items-center justify-center text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                        {isDeleting ? <Loader width="0.8rem" /> : <MdDeleteOutline size={16} />}
+                      </button>
+                    </div>
                   </li>
                 );
               })}
@@ -206,6 +232,14 @@ export default function BoardgameEditPage() {
           <Button type="button" onClick={extractText} isLoading={isLoading} styles="w-full py-3 rounded-xl">
             Extract Text
           </Button>
+        )}
+
+        {boardgame && !fileText.length && (
+          <div className="pt-4 border-t border-border">
+            <Button type="button" variant="reject" isLoading={isLoading} onClick={deleteBoardgame} styles="w-full py-2.5">
+              Delete Game, Files & All Data
+            </Button>
+          </div>
         )}
 
         {fileText.length > 0 && (
