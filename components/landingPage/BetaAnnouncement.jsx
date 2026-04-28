@@ -73,7 +73,7 @@ export default function BetaAnnouncement() {
         )}
       </motion.div>
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce text-subtle">
+      <div className="absolute bottom-6 -translate-x-1/2 animate-bounce text-subtle">
         <IoChevronDownOutline size={24} />
       </div>
     </section>
