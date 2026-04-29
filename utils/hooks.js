@@ -42,7 +42,9 @@ export const useSearch = ({ debounceDelay = 300, limit, includeExpansions = fals
   return { query, setQuery, results, loading };
 };
 
-export const useGetBoardgames = ({ limit }) => {
+export const useGetBoardgames = ({ limit, filters = {} }) => {
+  const { players = null, time = null, hasExpansions = false, hasRulebook = false } = filters;
+
   const [boardgames, setBoardgames] = useState([]);
   const [totalGames, setTotalGames] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +52,7 @@ export const useGetBoardgames = ({ limit }) => {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState(false);
   const pageRef = useRef(1);
-  const busyRef = useRef(false); // prevents concurrent fetches
+  const busyRef = useRef(false);
 
   const fetchBoardgames = useCallback(async () => {
     if (busyRef.current) return;
@@ -59,9 +61,16 @@ export const useGetBoardgames = ({ limit }) => {
     else setIsLoadingMore(true);
 
     try {
-      const res = await fetch(`/api/boardgames?limit=${limit}&page=${pageRef.current}`);
+      const params = new URLSearchParams({ limit, page: pageRef.current });
+      if (players) params.set("players", players);
+      if (time) params.set("time", time);
+      if (hasExpansions) params.set("hasExpansions", "true");
+      if (hasRulebook) params.set("hasRulebook", "true");
+
+      const res = await fetch(`/api/boardgames?${params}`);
       const { data } = await res.json();
       if (!res.ok) { setError(data?.message ?? "Failed to load"); return; }
+
       setBoardgames((prev) => {
         const next = [...prev, ...data.boardgames];
         setHasMore(next.length < data.totalGames);
@@ -76,9 +85,15 @@ export const useGetBoardgames = ({ limit }) => {
       setIsLoadingMore(false);
       busyRef.current = false;
     }
-  }, [limit]);
+  }, [limit, players, time, hasExpansions, hasRulebook]);
 
+  // Resets state and fetches from page 1 whenever fetchBoardgames changes (filter/limit change)
   useEffect(() => {
+    setBoardgames([]);
+    setTotalGames(0);
+    setHasMore(true);
+    pageRef.current = 1;
+    busyRef.current = false;
     fetchBoardgames();
   }, [fetchBoardgames]);
 
