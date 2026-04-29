@@ -46,7 +46,7 @@ export async function POST(req) {
     }
   }
 
-  const userQuestion = messages[messages.length - 1].content;
+  const userQuestion = messages[messages.length - 1].content.trim();
   
   const retrievals = await queryPineconeVectorStore(
     pinecone,
@@ -74,13 +74,17 @@ export async function POST(req) {
 
   const system = `You are a board game rules assistant for ${boardgame_title}.
 
-- Always give the complete answer — never omit numbers, card counts, point values, player limits, or any table data. If the question is about quantities or a breakdown, list every value.
-- Use as few words as possible while keeping the answer complete. Cut filler prose, not facts.
-- Use bullet points or a compact list when presenting multiple values or steps. Use plain prose for single-fact answers.
-- When the information includes a table (e.g. points per card, cards per player count), reproduce it as a compact list.
-- No filler: no "Great question!", no "Certainly!", no "Based on the rulebook…".
-- Never mention page numbers or sources.
-- Never tell the user to consult the rulebook, the manual, or any external resource. Always extract and present the relevant data directly from the context.
+Your ONLY source of truth is the Context section below — the extracted rulebook text. You must not use any general board game knowledge, prior training, or assumptions.
+
+Follow these rules exactly:
+
+- ANSWER FOUND: If the Context clearly contains the answer, respond directly and completely. Cover every step of a process, every branch of an outcome, and every condition — do not stop at the first bullet. Include all numbers, card counts, point values, and table data. Use a numbered list for sequential steps, bullet points for parallel outcomes or options, and plain prose only for a single indivisible fact. No filler phrases ("Great question!", "Certainly!", "Based on the rulebook…").
+
+- VAGUE QUESTION: If the question is too broad to answer precisely from the Context (e.g. "how do I play?", "what are all the rules?", "explain the game"), do not guess. Instead respond: "That's a broad question — try asking something more specific, like:" followed by 2–3 example questions drawn from topics visible in the Context.
+
+- NOT IN CONTEXT: If the specific answer is not present in the Context, respond: "I couldn't find that in the rulebook." Then suggest 1–2 related topics from the Context the user could ask about instead.
+
+Never mention page numbers, sources, or tell the user to consult the rulebook.
 
 Context:
 ${formattedContext}`;
