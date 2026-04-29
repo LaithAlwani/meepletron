@@ -2,28 +2,50 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import Loader from "@/components/Loader";
-import { MdPerson } from "react-icons/md";
+import { MdPerson, MdArrowDropUp, MdArrowDropDown } from "react-icons/md";
+
+const DEFAULT_DIRECTIONS = {
+  name: "asc",
+  updatedAt: "desc",
+  chatCount: "desc",
+  aiMessageCount: "desc",
+};
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [primarySort, setPrimarySort] = useState("updatedAt");
+  const [directions, setDirections] = useState(DEFAULT_DIRECTIONS);
+
   const pageRef = useRef(1);
   const loadingRef = useRef(false);
+  const generationRef = useRef(0);
   const sentinelRef = useRef(null);
+  const primarySortRef = useRef("updatedAt");
+  const directionsRef = useRef(DEFAULT_DIRECTIONS);
 
   const fetchPage = useCallback(async (page) => {
     if (loadingRef.current) return;
     loadingRef.current = true;
+    const gen = generationRef.current;
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/users?page=${page}`);
+      const by = primarySortRef.current;
+      const dir = directionsRef.current[by];
+      const nameDir = directionsRef.current.name;
+      const res = await fetch(
+        `/api/admin/users?page=${page}&sortBy=${by}&sortDir=${dir}&nameDir=${nameDir}`
+      );
       const { data, hasMore: more } = await res.json();
+      if (gen !== generationRef.current) return;
       setUsers((prev) => (page === 1 ? data : [...prev, ...data]));
       setHasMore(more);
     } finally {
-      loadingRef.current = false;
-      setLoading(false);
+      if (gen === generationRef.current) {
+        loadingRef.current = false;
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -31,6 +53,7 @@ export default function AdminUsersPage() {
     fetchPage(1);
   }, [fetchPage]);
 
+  // Re-run when users.length changes so the observer attaches after the initial load
   useEffect(() => {
     if (!hasMore) return;
     const sentinel = sentinelRef.current;
@@ -46,7 +69,24 @@ export default function AdminUsersPage() {
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [hasMore, fetchPage]);
+  }, [hasMore, fetchPage, users.length]);
+
+  const handleSort = (field) => {
+    const newDir = directionsRef.current[field] === "asc" ? "desc" : "asc";
+    const newDirections = { ...directionsRef.current, [field]: newDir };
+
+    directionsRef.current = newDirections;
+    primarySortRef.current = field;
+    generationRef.current += 1;
+
+    setDirections(newDirections);
+    setPrimarySort(field);
+    setUsers([]);
+    setHasMore(true);
+    pageRef.current = 1;
+    loadingRef.current = false;
+    fetchPage(1);
+  };
 
   const isInitialLoad = loading && users.length === 0;
 
@@ -66,31 +106,39 @@ export default function AdminUsersPage() {
           <div className="flex justify-center py-16">
             <Loader width="1.5rem" />
           </div>
-        ) : users.length === 0 ? (
-          <p className="text-center text-subtle py-16">No users yet.</p>
         ) : (
           <>
-            {/* Header row */}
-            <div className="flex items-center gap-4 pb-2 mb-1 border-b border-border">
-              <div className="w-10 shrink-0" />
+            {/* Header */}
+            <div className="flex items-center gap-2 pb-2 mb-1 border-b border-border">
+              <div className="w-12 shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-subtle font-medium uppercase tracking-wide">User</p>
+                <SortBtn field="name" label="User" primary={primarySort} dirs={directions} onSort={handleSort} />
               </div>
-              <div className="flex items-center gap-5 shrink-0 text-right">
-                <p className="text-xs text-subtle font-medium uppercase tracking-wide w-20">Last Active</p>
-                <p className="text-xs text-subtle font-medium uppercase tracking-wide w-10">Chats</p>
-                <p className="text-xs text-subtle font-medium uppercase tracking-wide w-16">Messages</p>
+              <div className="flex items-center gap-5 shrink-0">
+                <div className="w-20 flex justify-end">
+                  <SortBtn field="updatedAt" label="Last Active" primary={primarySort} dirs={directions} onSort={handleSort} />
+                </div>
+                <div className="w-10 flex justify-end">
+                  <SortBtn field="chatCount" label="Chats" primary={primarySort} dirs={directions} onSort={handleSort} />
+                </div>
+                <div className="w-16 flex justify-end">
+                  <SortBtn field="aiMessageCount" label="Messages" primary={primarySort} dirs={directions} onSort={handleSort} />
+                </div>
               </div>
             </div>
 
-            <div className="divide-y divide-border-muted">
-              {users.map((user) => (
-                <UserRow key={user._id} user={user} />
-              ))}
-            </div>
+            {users.length === 0 && !loading ? (
+              <p className="text-center text-subtle py-16">No users yet.</p>
+            ) : (
+              <div className="divide-y divide-border-muted">
+                {users.map((user) => (
+                  <UserRow key={user._id} user={user} />
+                ))}
+              </div>
+            )}
 
             {hasMore && <div ref={sentinelRef} className="h-8" />}
-            {loading && (
+            {loading && users.length > 0 && (
               <div className="flex justify-center py-6">
                 <Loader width="1.2rem" />
               </div>
@@ -100,6 +148,24 @@ export default function AdminUsersPage() {
 
       </div>
     </div>
+  );
+}
+
+function SortBtn({ field, label, primary, dirs, onSort, className = "" }) {
+  const isActive = primary === field;
+  const isAsc = dirs[field] === "asc";
+  return (
+    <button
+      onClick={() => onSort(field)}
+      className={`flex items-center whitespace-nowrap text-xs font-medium uppercase tracking-wide transition-colors ${
+        isActive ? "text-primary" : "text-subtle hover:text-foreground"
+      } ${className}`}
+    >
+      {label}
+      {isActive && (
+        isAsc ? <MdArrowDropUp size={16} /> : <MdArrowDropDown size={16} />
+      )}
+    </button>
   );
 }
 
@@ -132,7 +198,7 @@ function UserRow({ user }) {
       </div>
 
       <div className="flex items-center gap-5 shrink-0 text-right">
-        <div className="w-20 flex flex-col items-center justify-center">
+        <div className="w-20 flex flex-col items-center">
           <p className="text-xs text-foreground tabular-nums">{lastActive}</p>
           <p className="text-[10px] text-muted tabular-nums">{joined}</p>
         </div>
