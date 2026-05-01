@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectToDB from "@/utils/database";
 import Boardgame from "@/models/boardgame";
 import Expansion from "@/models/expansion";
+import Search from "@/models/search";
 
 export async function GET(req) {
   const url = new URL(req.url);
@@ -15,6 +16,16 @@ export async function GET(req) {
   }
 
   await connectToDB();
+
+  // Track the search (fire-and-forget). Skip very short prefixes to reduce noise.
+  if (query.length >= 3) {
+    const normalized = query.toLowerCase();
+    Search.findOneAndUpdate(
+      { query: normalized },
+      { $inc: { count: 1 }, $setOnInsert: { query: normalized } },
+      { upsert: true }
+    ).catch((err) => console.error("Search tracking failed:", err));
+  }
 
   // Atlas Search — better fuzzy/relevance matching
   try {

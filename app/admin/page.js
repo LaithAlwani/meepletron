@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { MdOutlineMessage, MdSmartToy, MdThumbUp, MdMenuBook, MdStorage, MdOutlineHelpOutline, MdPeople } from "react-icons/md";
+import { MdOutlineMessage, MdSmartToy, MdThumbUp, MdMenuBook, MdStorage, MdOutlineHelpOutline, MdPeople, MdSearch } from "react-icons/md";
 import { StatCard } from "@/components/ui";
 
 export default function AdminPage() {
@@ -76,6 +76,17 @@ export default function AdminPage() {
             <div>
               <p className="font-semibold text-foreground text-sm">Users</p>
               <p className="text-xs text-subtle mt-0.5">View users and their activity</p>
+            </div>
+          </Link>
+          <Link
+            href="/admin/searches"
+            className="group flex items-center gap-4 p-5 rounded-2xl bg-surface border border-border-muted shadow-sm hover:shadow-md hover:border-primary/40 transition-all">
+            <div className="w-11 h-11 rounded-xl bg-primary/15 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
+              <MdSearch size={22} />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground text-sm">Searches</p>
+              <p className="text-xs text-subtle mt-0.5">See what users are searching for</p>
             </div>
           </Link>
         </div>

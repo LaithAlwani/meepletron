@@ -13,7 +13,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (isAdminRoute(req)) {
     // Check if the user is authenticated
     if (!userId) {
-      return new Response("Unauthorized", { status: 401 });
+      return NextResponse.redirect(new URL("/unauthorized?reason=signin", req.url));
     }
 
     // Access the public metadata
@@ -21,7 +21,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     // Check if the user's role is 'admin'
     if (publicMetadata?.role !== "admin") {
-      return new Response("Forbidden: Admin access required", { status: 403 });
+      return NextResponse.redirect(new URL("/unauthorized?reason=role", req.url));
     }
   }
   // If the user is authenticated and has the 'admin' role, proceed
