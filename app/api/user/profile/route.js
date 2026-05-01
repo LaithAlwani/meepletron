@@ -2,8 +2,62 @@ import User from "@/models/user";
 import Chat from "@/models/chat";
 import Message from "@/models/message";
 import connectToDB from "@/utils/database";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+
+export async function PATCH(req) {
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ message: "Invalid JSON" }, { status: 400 });
+  }
+
+  const clean = (v) => {
+    if (typeof v !== "string") return null;
+    const trimmed = v.trim();
+    return trimmed.length === 0 ? null : trimmed.slice(0, 100);
+  };
+
+  const username = clean(body.username);
+  const first_name = clean(body.first_name);
+  const last_name = clean(body.last_name);
+
+  if (!username) {
+    return NextResponse.json({ message: "Username is required" }, { status: 400 });
+  }
+
+  // Update Clerk first — it owns username uniqueness and sign-in identity.
+  // If Clerk rejects (taken, invalid format), bail before touching Mongo so they stay in sync.
+  try {
+    const client = await clerkClient();
+    await client.users.updateUser(userId, { username });
+  } catch (err) {
+    const msg =
+      err?.errors?.[0]?.longMessage ||
+      err?.errors?.[0]?.message ||
+      "Failed to update username in Clerk";
+    return NextResponse.json({ message: msg }, { status: 400 });
+  }
+
+  try {
+    await connectToDB();
+    const updated = await User.findOneAndUpdate(
+      { clerk_id: userId },
+      { $set: { first_name, last_name, username } },
+      { new: true }
+    ).lean();
+
+    if (!updated) return NextResponse.json({ message: "User not found" }, { status: 404 });
+    return NextResponse.json({ data: updated });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ message: "Error updating profile" }, { status: 500 });
+  }
+}
 
 export async function GET() {
   const { userId } = await auth();

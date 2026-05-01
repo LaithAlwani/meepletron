@@ -101,7 +101,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInFallbackRedirectUrl="/"
+      signUpFallbackRedirectUrl="/"
+    >
       <html lang="en" suppressHydrationWarning>
         <body
           className={`min-h-svh mx-auto bg-bg text-foreground ${geistSans.variable} ${geistMono.variable} ${poppins.variable} font-sans antialiased`}>
