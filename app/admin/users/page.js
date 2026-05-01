@@ -181,7 +181,10 @@ function UserRow({ user }) {
   });
 
   return (
-    <div className="flex items-center gap-4 py-3.5">
+    <Link
+      href={`/admin/users/${user._id}`}
+      className="flex items-center gap-4 py-3.5 hover:bg-surface-muted/40 -mx-2 px-2 rounded-lg transition-colors"
+    >
       <div className="shrink-0">
         {user.avatar ? (
           <img src={user.avatar} alt={name} className="w-10 h-10 rounded-full object-cover" />
@@ -214,6 +217,6 @@ function UserRow({ user }) {
           </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
