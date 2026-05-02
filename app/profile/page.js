@@ -4,6 +4,7 @@ import { useUser, useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Loader from "@/components/Loader";
+import ProfileSkeleton from "@/components/ProfileSkeleton";
 import { motion } from "motion/react";
 import {
   MdOutlineMessage, MdSmartToy, MdThumbUp, MdOutlineChat,
@@ -51,6 +52,8 @@ export default function ProfilePage() {
       </div>
     );
   }
+
+  if (!isLoaded || loading || !stats) return <ProfileSkeleton />;
 
   return (
     <div className="min-h-screen bg-bg pt-24 pb-16 px-4">

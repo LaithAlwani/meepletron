@@ -1,6 +1,6 @@
 "use client";
 import CustomToast from "@/components/CustomeToast";
-import Loader from "@/components/Loader";
+import ChatsListSkeleton from "@/components/ChatsListSkeleton";
 import { Input } from "@/components/ui";
 import { useUser } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "motion/react";
@@ -98,7 +98,7 @@ export default function ChatsPage() {
   }, [displayChats, searchTerm, user]);
 
   if (!isLoaded || (user && isLoading)) {
-    return <div className="pt-24"><Loader width="6rem" /></div>;
+    return <ChatsListSkeleton />;
   }
 
   return (

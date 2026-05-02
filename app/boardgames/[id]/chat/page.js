@@ -8,6 +8,7 @@ import { BsLayers } from "react-icons/bs";
 import { IoArrowBack, IoClose } from "react-icons/io5";
 import { FaArrowDown } from "react-icons/fa";
 import Loader from "@/components/Loader";
+import ChatSkeleton from "@/components/ChatSkeleton";
 import TypingIndicator from "@/components/TypingDots";
 import Link from "next/link";
 import { Textarea } from "@/components/ui";
@@ -126,6 +127,7 @@ export default function ChatPage() {
   const [chat, setChat] = useState(null);
   const [boardgame, setBoardgame] = useState(null);
   const [currentGame, setCurrentGame] = useState(null);
+  const [messagesLoaded, setMessagesLoaded] = useState(false);
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [tokensRemaining, setTokensRemaining] = useState(null);
@@ -176,10 +178,12 @@ export default function ChatPage() {
   };
 
   const getChat = async (game) => {
+    setMessagesLoaded(false);
     const cached = loadUserCache(game._id);
     if (cached) {
       setChat({ _id: cached.chatId });
       setMessages(cached.messages);
+      setMessagesLoaded(true);
       return;
     }
 
@@ -205,6 +209,8 @@ export default function ChatPage() {
       }
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setMessagesLoaded(true);
     }
   };
 
@@ -259,7 +265,10 @@ export default function ChatPage() {
   useEffect(() => { getBoardgame(); }, []);
   useEffect(() => { if (user && currentGame) getChat(currentGame); }, [currentGame, user]);
   useEffect(() => {
-    if (isLoaded && !user && currentGame) setMessages(loadGuestMessages(currentGame._id));
+    if (isLoaded && !user && currentGame) {
+      setMessages(loadGuestMessages(currentGame._id));
+      setMessagesLoaded(true);
+    }
   }, [currentGame, isLoaded, user]);
   useEffect(() => {
     if (!isLoaded) return;
@@ -299,7 +308,7 @@ export default function ChatPage() {
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
-  if (!boardgame) return <Loader height="h-screen" />;
+  if (!boardgame || !messagesLoaded) return <ChatSkeleton />;
 
   const expansionCount = boardgame.expansions?.length ?? 0;
 
