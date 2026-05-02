@@ -6,7 +6,7 @@ import User from "@/models/user";
 import connectToDB from "@/utils/database";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
-import { createDataStreamResponse, streamText } from "ai";
+import { createDataStreamResponse, smoothStream, streamText } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
@@ -105,6 +105,10 @@ ${formattedContext}`;
           frequencyPenalty: 0,
           presencePenalty: 0,
           maxRetries: 3,
+          experimental_transform: smoothStream({
+            delayInMs: 25,
+            chunking: "word",
+          }),
           onFinish({ usage }) {
             const top = retrievals[0];
             if (top?.pageNumber) {
