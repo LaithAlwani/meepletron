@@ -17,7 +17,7 @@ export default function Loader({ width, height = "auto", fullScreen = false }) {
   const reduced = useReducedMotion();
 
   const isFullScreen = fullScreen || height === "h-screen";
-  const sizeValue = width || (isFullScreen ? "3rem" : "1.5rem");
+  const sizeValue = width || (isFullScreen ? "6rem" : "1.5rem");
   const sizePx = parseSizePx(sizeValue);
 
   const showHalo = sizePx >= 22; // ~1.4rem cutoff — skip on button-sized loaders

@@ -30,7 +30,7 @@ export default function AdminUserDetailPage({ params }) {
   if (loading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <Loader width="2rem" />
+        <Loader width="4rem" />
       </div>
     );
   }

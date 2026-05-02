@@ -167,7 +167,7 @@ export default function AdminSearchesPage() {
 
         {isInitialLoad ? (
           <div className="flex justify-center py-16">
-            <Loader width="1.5rem" />
+            <Loader width="4rem" />
           </div>
         ) : (
           <>

@@ -104,7 +104,7 @@ export default function AdminUsersPage() {
 
         {isInitialLoad ? (
           <div className="flex justify-center py-16">
-            <Loader width="1.5rem" />
+            <Loader width="4rem" />
           </div>
         ) : (
           <>
