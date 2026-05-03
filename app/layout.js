@@ -2,6 +2,7 @@ import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Providers from "./providers";
+import ThemeColorMeta from "@/components/ThemeColorMeta";
 import { ClerkProvider } from "@clerk/nextjs";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -27,11 +28,12 @@ const poppins = Poppins({
 });
 
 export const viewport = {
-  // maximumScale: 1,
-  // userScalable:false,
   viewport:
     "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
-  themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#fff" }],
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f7f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
 };
 
 export const metadata = {
@@ -44,6 +46,11 @@ export const metadata = {
   No more wasting time searching manuals`,
   generator: "Next.js",
   manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Meepletron",
+  },
   keywords: [
     "board games",
     "board game rules",
@@ -109,6 +116,7 @@ export default function RootLayout({ children }) {
         <body
           className={`min-h-svh mx-auto bg-bg text-foreground ${geistSans.variable} ${geistMono.variable} ${poppins.variable} font-sans antialiased`}>
           <Providers>
+            <ThemeColorMeta />
             <Toaster position="top-right" containerClassName="relative" />
             <Navbar />
             <Suspense fallback={<Loading />}>

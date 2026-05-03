@@ -12,6 +12,15 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Safe-area insets for iOS PWA edge-to-edge layout.
+     Use on fixed elements to push them out from under the status bar / home indicator. */
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pl-safe { padding-left: env(safe-area-inset-left); }
+  .pr-safe { padding-right: env(safe-area-inset-right); }
+  .pt-safe-or-3 { padding-top: max(env(safe-area-inset-top), 0.75rem); }
+  .pb-safe-or-4 { padding-bottom: max(env(safe-area-inset-bottom), 1rem); }
 }
 
 /* ── Design tokens ────────────────────────────────────────────────────────────

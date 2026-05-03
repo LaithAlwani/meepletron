@@ -30,7 +30,7 @@ export default function Navbar() {
   const bgClass = isBoardgamePage && !scrolled ? "bg-transparent" : "bg-bg";
 
   return (
-    <nav className={`fixed top-0 left-0 w-full text-lg p-3 ${bgClass} ${hidden} shadow-sm z-50 transition-colors duration-300`}>
+    <nav className={`fixed top-0 left-0 w-full text-lg px-3 pb-3 pt-safe-or-3 ${bgClass} ${hidden} shadow-sm z-50 transition-colors duration-300`}>
       <div className="flex justify-end items-center max-w-4xl mx-auto">
         <Link href="/" className="flex items-center gap-1 mr-auto" aria-label="Meepletron logo">
           <div className="relative w-[2rem] h-[2rem]">
