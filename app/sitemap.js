@@ -27,6 +27,12 @@ export default async function sitemap() {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/tuckbox`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/sign-in`,
       lastModified: "2025-02-15",
       changeFrequency: "yearly",

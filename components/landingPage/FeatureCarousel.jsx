@@ -98,9 +98,9 @@ export default function FeatureCarousel() {
                 <span className="inline-block text-primary text-[11px] font-bold uppercase tracking-[0.18em] mb-4">
                   {slide.badge}
                 </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight">
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight">
                   {slide.title}
-                </h2>
+                </h1>
                 <p className="text-muted text-base md:text-lg leading-relaxed mb-7 max-w-md mx-auto md:mx-0">
                   {slide.description}
                 </p>
@@ -186,7 +186,7 @@ function TuckboxVisual() {
 function LibraryVisual() {
   return (
     <img
-      src="/games-removebg-preview.png"
+      src="/games.png"
       alt="Board games library"
       className="max-h-64 w-auto object-contain drop-shadow-xl"
     />
