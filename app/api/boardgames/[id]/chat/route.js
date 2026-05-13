@@ -56,13 +56,15 @@ export async function POST(req) {
   await connectToDB();
 
   const user = await User.findOne({ clerk_id: user_id }).lean();
-  if (!user) return "user not found";
-
-  const chat = await Chat.create({ user_id: user?._id, boardgame_id, parent_id });
+  if (!user) {
+    return NextResponse.json({ message: "user not found" }, { status: 404 });
+  }
 
   try {
+    const chat = await Chat.create({ user_id: user?._id, boardgame_id, parent_id });
     return NextResponse.json({ data: chat, message: "Chat Created" }, { status: 201 });
   } catch (err) {
+    console.error(err);
     return NextResponse.json({ message: "Failed to create Chat" }, { status: 500 });
   }
 }
