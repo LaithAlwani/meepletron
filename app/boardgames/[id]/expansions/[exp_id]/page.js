@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { MdGroups, MdOutlineAccessTimeFilled, MdMenuBook, MdOpenInNew } from "react-icons/md";
 import { FaChild } from "react-icons/fa";
 import { ImBubbles } from "react-icons/im";
+import { GiCardboardBox } from "react-icons/gi";
 import ExpandableText from "@/components/ExpandableText";
 import StatBadge from "@/components/boardgame/StatBadge";
 import { InfoSection, ChipList } from "@/components/ui";
@@ -205,6 +206,12 @@ export default async function ExpansionPage({ params }) {
                   Rulebook
                 </a>
               )}
+              <Link
+                href={`/tuckbox?gameId=${expSlug}`}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-surface text-muted font-semibold text-sm hover:bg-surface-muted transition-colors">
+                <GiCardboardBox size={16} />
+                Make a tuckbox
+              </Link>
             </div>
           </div>
         </div>

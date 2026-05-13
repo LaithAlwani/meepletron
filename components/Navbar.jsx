@@ -7,7 +7,7 @@ import ThemeSwitch from "./ThemeSwitch";
 import { useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { ImBubbles } from "react-icons/im";
-import { GiOpenBook } from "react-icons/gi";
+import { GiOpenBook, GiCardboardBox } from "react-icons/gi";
 import { FiMenu, FiX } from "react-icons/fi";
 
 export default function Navbar() {
@@ -46,6 +46,9 @@ export default function Navbar() {
           </Link>
           <Link href="/chats" aria-label="chats" className="flex flex-col items-center gap-1">
             <ImBubbles size={24} /> <span className="text-sm">Chats</span>
+          </Link>
+          <Link href="/tuckbox" aria-label="tuckbox" className="flex flex-col items-center gap-1">
+            <GiCardboardBox size={24} /> <span className="text-sm">Tuckbox</span>
           </Link>
           <span className="flex flex-col items-center gap-1">
             <ThemeSwitch />
@@ -99,6 +102,9 @@ export default function Navbar() {
           </Link>
           <Link href="/chats" aria-label="chats" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
             <ImBubbles size={24} /> <span className="text-sm">Chats</span>
+          </Link>
+          <Link href="/tuckbox" aria-label="tuckbox" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
+            <GiCardboardBox size={24} /> <span className="text-sm">Tuckbox</span>
           </Link>
           <span className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
             <ThemeSwitch />
