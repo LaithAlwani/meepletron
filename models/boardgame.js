@@ -1,10 +1,17 @@
 import { model, models, Schema } from "mongoose";
+import { makeSlugHook } from "@/utils/slugify";
 
 const boardgameSchema = new Schema(
   {
     title: {
       type: String,
       required: true,
+    },
+    slug: {
+      type: String,
+      unique: true,
+      sparse: true,
+      index: true,
     },
     thumbnail: {
       type: String,
@@ -45,6 +52,8 @@ const boardgameSchema = new Schema(
   },
   { timestamps: true }
 );
+
+boardgameSchema.pre("save", makeSlugHook((doc) => doc.title));
 
 const Boardgame = models.Boardgame || model("Boardgame", boardgameSchema);
 

@@ -1,9 +1,22 @@
+import Boardgame from "@/models/boardgame";
+import Expansion from "@/models/expansion";
 import Chat from "@/models/chat";
 import Message from "@/models/message";
 import User from "@/models/user";
 import connectToDB from "@/utils/database";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
+
+// Resolve a slug-or-ObjectId param to a real ObjectId (checks both Boardgame and Expansion).
+async function resolveBoardgameId(idOrSlug) {
+  if (mongoose.isValidObjectId(idOrSlug)) return idOrSlug;
+  const bg = await Boardgame.findOne({ slug: idOrSlug }).select("_id").lean();
+  if (bg) return bg._id;
+  const exp = await Expansion.findOne({ slug: idOrSlug }).select("_id").lean();
+  if (exp) return exp._id;
+  return null;
+}
 
 export async function GET(req, { params }) {
   const { id } = await params;
@@ -13,8 +26,12 @@ export async function GET(req, { params }) {
     await connectToDB();
     const user = await User.findOne({ clerk_id: userId }).lean();
     if (!user) return NextResponse.json({ message: "user not found" }, { status: 404 });
-    const chat = await Chat.findOne({ boardgame_id: id, user_id: user?._id }).lean();
-    
+
+    const boardgameId = await resolveBoardgameId(id);
+    if (!boardgameId) return NextResponse.json({ message: "boardgame not found" }, { status: 404 });
+
+    const chat = await Chat.findOne({ boardgame_id: boardgameId, user_id: user?._id }).lean();
+
     if (!chat)
       return NextResponse.json(
         { data: { chat: {}, messages: [] }, message: "create a new chat" },

@@ -1,19 +1,9 @@
 import BackgroundImage from "@/components/boardgame/BackgroundImage";
-import { siteUrl } from "@/utils/siteUrl";
-
-async function fetchBoardgame(id) {
-  const res = await fetch(
-    `${siteUrl}/api/boardgames/${id}`,
-    { next: { revalidate: 86400 } }
-  );
-  if (!res.ok) return null;
-  const { data } = await res.json();
-  return data;
-}
+import { loadBoardgame } from "@/lib/server/boardgame-loader";
 
 export default async function BoardGameLayout({ children, params }) {
   const { id } = await params;
-  const boardgame = await fetchBoardgame(id);
+  const boardgame = await loadBoardgame(id);
 
   return (
     <>

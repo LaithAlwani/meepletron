@@ -173,7 +173,7 @@ export async function GET(req) {
   if (!user) return NextResponse.json({ message: "user not found" }, { status: 404 });
 
   const chats = await Chat.find({ user_id: user._id })
-    .populate({ path: "boardgame_id", select: "title thumbnail is_expansion" })
+    .populate({ path: "boardgame_id", select: "title thumbnail is_expansion slug" })
     .sort({ last_message_at: -1 })
     .lean();
 

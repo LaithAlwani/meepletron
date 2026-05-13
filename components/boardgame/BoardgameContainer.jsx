@@ -1,11 +1,12 @@
 import Link from "next/link";
 
 export default function BoardgameContainer({ boardgame }) {
-  const { _id, thumbnail, title } = boardgame;
+  const { _id, slug, thumbnail, title } = boardgame;
+  const href = `/boardgames/${slug || _id}`;
 
   return (
     <div className="group relative flex flex-col">
-      <Link href={`/boardgames/${_id}`} aria-label={title} className="block relative aspect-square overflow-hidden rounded-xl shadow-sm">
+      <Link href={href} aria-label={title} className="block relative aspect-square overflow-hidden rounded-xl shadow-sm">
         <img
           src={thumbnail}
           alt={`${title} board game`}

@@ -54,11 +54,15 @@ export const metadata = {
   keywords: [
     "board games",
     "board game rules",
+    "board game rules explained",
+    "how to play board games",
+    "AI rulebook assistant",
     "board game meeple",
     "board game assistant",
     "meeple",
-    "tapletop games",
-    "moedern board games",
+    "tabletop games",
+    "modern board games",
+    "board game rules lookup",
   ],
   authors: [
     {

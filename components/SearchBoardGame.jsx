@@ -69,7 +69,7 @@ const SearchBoardGame = () => {
                 onClick={() => setIsSearchOpen(false)}>
                 <Link
                   href={`/boardgames/${boardgame.parent_id ? boardgame.parent_id : (boardgame.slug || boardgame._id)}${
-                    boardgame.parent_id ? `/expansions/${boardgame._id}` : ""
+                    boardgame.parent_id ? `/expansions/${boardgame.slug || boardgame._id}` : ""
                   }`}
                   className="flex items-center gap-3 w-full">
                   <img

@@ -149,7 +149,7 @@ export default function ChatsPage() {
                       key={_id}
                       title={boardgame_id.title}
                       thumbnail={boardgame_id.thumbnail}
-                      href={`/boardgames/${boardgame_id._id}/chat`}
+                      href={`/boardgames/${boardgame_id.slug || boardgame_id._id}/chat`}
                       preview={last_message}
                       date={formatDate(last_message_at || updatedAt)}
                       onDelete={() => deleteChat(_id, boardgame_id._id)}
@@ -163,7 +163,7 @@ export default function ChatsPage() {
                       key={key}
                       title={game.title}
                       thumbnail={game.thumbnail}
-                      href={`/boardgames/${game._id}/chat`}
+                      href={`/boardgames/${game.slug || game._id}/chat`}
                       preview={lastMsg?.content}
                       date={formatDate(lastMsg?.createdAt)}
                       onDelete={() => deleteGuestChat(key)}

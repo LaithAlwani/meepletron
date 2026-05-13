@@ -329,9 +329,11 @@ export default function ChatPage() {
         </button>
 
         <Link
-          href={`/boardgames/${currentGame?.parent_id ?? currentGame?._id}${
-            currentGame?.parent_id ? `/expansions/${currentGame._id}` : ""
-          }`}
+          href={
+            currentGame?.parent_id
+              ? `/boardgames/${boardgame?.slug || boardgame?._id || currentGame?.parent_id}/expansions/${currentGame.slug || currentGame._id}`
+              : `/boardgames/${currentGame?.slug || currentGame?._id}`
+          }
           className="flex items-center gap-2.5 flex-1 min-w-0 group">
           <img src={currentGame?.thumbnail} alt={currentGame?.title} className="h-9 w-9 rounded-xl object-cover shrink-0 shadow-sm" />
           <div className="min-w-0">

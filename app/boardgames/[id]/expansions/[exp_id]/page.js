@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
+import mongoose from "mongoose";
 import { MdGroups, MdOutlineAccessTimeFilled, MdMenuBook, MdOpenInNew } from "react-icons/md";
 import { FaChild } from "react-icons/fa";
 import { ImBubbles } from "react-icons/im";
@@ -7,34 +8,126 @@ import ExpandableText from "@/components/ExpandableText";
 import StatBadge from "@/components/boardgame/StatBadge";
 import { InfoSection, ChipList } from "@/components/ui";
 import { siteUrl } from "@/utils/siteUrl";
+import { minutesToISO8601 } from "@/utils/iso-duration";
+import { loadExpansion } from "@/lib/server/boardgame-loader";
 
-async function getExpansion(id) {
-  try {
-    const res = await fetch(
-      `${siteUrl}/api/expansions/${id}`,
-      { next: { revalidate: 86400 } },
-    );
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
+const getExpansion = loadExpansion;
 
 export async function generateMetadata({ params }) {
-  const { exp_id } = await params;
+  const { id, exp_id } = await params;
   const expansion = await getExpansion(exp_id);
+
+  if (!expansion) return { title: "Expansion | Meepletron" };
+
+  const { title, description, image, year, min_players, max_players, play_time, slug, parent_id, designers } = expansion;
+  const parentSlug = parent_id?.slug || parent_id?._id || id;
+  const expSlug = slug || exp_id;
+
+  const playerRange =
+    min_players && max_players
+      ? min_players === max_players ? `${min_players} players` : `${min_players}–${max_players} players`
+      : null;
+  const snippetPrefix = [playerRange, play_time ? `${play_time} min` : null, year]
+    .filter(Boolean)
+    .join(" · ");
+  const baseDesc = description?.replace(/\s+/g, " ").trim() ?? "";
+  const description160 = snippetPrefix
+    ? `${snippetPrefix}. ${baseDesc}`.slice(0, 158)
+    : baseDesc.slice(0, 158);
+
+  const keywords = [
+    title,
+    `${title} expansion`,
+    `${title} rules`,
+    `how to play ${title}`,
+    ...(parent_id?.title ? [`${parent_id.title} ${title}`, `${parent_id.title} expansion`] : []),
+    ...(designers || []).slice(0, 3).map((d) => `${title} ${d}`),
+  ];
+
   return {
-    title: expansion ? `${expansion.title} | Meepletron` : "Expansion | Meepletron",
-    description: expansion?.description?.slice(0, 160),
-    openGraph: { images: [expansion?.image] },
+    title: `${title} — Expansion Rules & How to Play`,
+    description: description160,
+    keywords,
+    alternates: { canonical: `/boardgames/${parentSlug}/expansions/${expSlug}` },
+    openGraph: {
+      title: `${title} | Meepletron`,
+      description: description160,
+      url: `/boardgames/${parentSlug}/expansions/${expSlug}`,
+      type: "article",
+      images: image ? [{ url: image, alt: `${title} cover image` }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} — Expansion Rules`,
+      description: description160,
+      images: image ? [image] : undefined,
+    },
   };
 }
 
+function buildJsonLd(expansion, parentSlug, expSlug) {
+  const {
+    title, description, image, year, designers, publishers,
+    min_players, max_players, min_age, play_time, categories, game_mechanics, bgg_id,
+    parent_id, createdAt, updatedAt,
+  } = expansion;
+
+  const sameAs = bgg_id ? [`https://boardgamegeek.com/boardgame/${bgg_id}`] : undefined;
+
+  const game = {
+    "@context": "https://schema.org",
+    "@type": "Game",
+    name: title,
+    description,
+    image,
+    url: `${siteUrl}/boardgames/${parentSlug}/expansions/${expSlug}`,
+    ...(year && { datePublished: String(year) }),
+    ...(designers?.length && { author: designers.map((d) => ({ "@type": "Person", name: d })) }),
+    ...(publishers?.length && { publisher: publishers.map((p) => ({ "@type": "Organization", name: p })) }),
+    ...(min_players && max_players && {
+      numberOfPlayers: { "@type": "QuantitativeValue", minValue: min_players, maxValue: max_players },
+    }),
+    ...(play_time && { playTime: minutesToISO8601(play_time) }),
+    ...(min_age && { typicalAgeRange: `${min_age}+` }),
+    ...(categories?.length && { genre: categories }),
+    ...(game_mechanics?.length && { gamePlatform: game_mechanics }),
+    ...(sameAs && { sameAs }),
+    ...(parent_id && { isPartOf: { "@type": "Game", name: parent_id.title, url: `${siteUrl}/boardgames/${parentSlug}` } }),
+    ...(createdAt && { dateCreated: createdAt }),
+    ...(updatedAt && { dateModified: updatedAt }),
+  };
+
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Board Games", item: `${siteUrl}/boardgames` },
+      ...(parent_id ? [{ "@type": "ListItem", position: 3, name: parent_id.title, item: `${siteUrl}/boardgames/${parentSlug}` }] : []),
+      { "@type": "ListItem", position: parent_id ? 4 : 3, name: title, item: `${siteUrl}/boardgames/${parentSlug}/expansions/${expSlug}` },
+    ],
+  };
+
+  return [game, breadcrumb];
+}
+
 export default async function ExpansionPage({ params }) {
-  const { exp_id } = await params;
+  const { id, exp_id } = await params;
   const expansion = await getExpansion(exp_id);
   if (!expansion) notFound();
+
+  const parentSlug = expansion.parent_id?.slug || expansion.parent_id?._id;
+  const expSlug = expansion.slug || expansion._id;
+
+  // 308-redirect to canonical slug URL if either segment came in as ObjectId
+  const parentIsObjId = mongoose.isValidObjectId(id);
+  const expIsObjId = mongoose.isValidObjectId(exp_id);
+  const wantsRedirect =
+    (parentIsObjId && expansion.parent_id?.slug && id !== expansion.parent_id.slug) ||
+    (expIsObjId && expansion.slug && exp_id !== expansion.slug);
+  if (wantsRedirect) {
+    permanentRedirect(`/boardgames/${parentSlug}/expansions/${expSlug}`);
+  }
 
   const {
     title, year, thumbnail,
@@ -43,13 +136,21 @@ export default async function ExpansionPage({ params }) {
     description, urls, parent_id,
   } = expansion;
 
-  const parentSlug = parent_id?.slug || parent_id?._id;
+  const jsonLd = buildJsonLd(expansion, parentSlug, expSlug);
 
   return (
     <main className="min-h-screen pt-20 pb-16 px-4">
+      {jsonLd.map((obj, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }}
+        />
+      ))}
+
       <div className="max-w-5xl mx-auto">
 
-        <nav className="flex items-center gap-1.5 text-sm text-muted mb-8 flex-wrap">
+        <nav className="flex items-center gap-1.5 text-sm text-muted mb-8 flex-wrap" aria-label="Breadcrumb">
           <Link href="/boardgames" className="hover:text-primary transition-colors">Board Games</Link>
           <span>/</span>
           <Link

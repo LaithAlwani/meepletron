@@ -1,10 +1,17 @@
 import { model, models, Schema } from "mongoose";
+import { makeSlugHook } from "@/utils/slugify";
 
 const expansionSchema = new Schema(
   {
     title: {
       type: String,
       required: true,
+    },
+    slug: {
+      type: String,
+      unique: true,
+      sparse: true,
+      index: true,
     },
     thumbnail: {
       type: String,
@@ -45,6 +52,8 @@ const expansionSchema = new Schema(
   },
   { timestamps: true }
 );
+
+expansionSchema.pre("save", makeSlugHook((doc) => doc.title));
 
 const Expansion = models.Expansion || model("Expansion", expansionSchema);
 

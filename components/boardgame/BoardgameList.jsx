@@ -63,7 +63,7 @@ function SkeletonList({ count = 8 }) {
 }
 
 function BoardgameListItem({ boardgame }) {
-  const { _id, thumbnail, title, min_players, max_players, play_time, year } = boardgame;
+  const { _id, slug, thumbnail, title, min_players, max_players, play_time, year } = boardgame;
   const players =
     min_players && max_players
       ? min_players === max_players
@@ -75,7 +75,7 @@ function BoardgameListItem({ boardgame }) {
     .join(" · ");
 
   return (
-    <a href={`/boardgames/${_id}`} className="flex items-center gap-3 py-3 group">
+    <a href={`/boardgames/${slug || _id}`} className="flex items-center gap-3 py-3 group">
       <img
         src={thumbnail}
         alt={title}

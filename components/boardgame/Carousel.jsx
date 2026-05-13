@@ -36,12 +36,12 @@ export default function Carousel({ items }) {
         </p>
         <div className=" text-left md:px-0 [&>*]:mr-2">
           <Link
-            href={`/boardgames/${boardgames[index]._id}`}
+            href={`/boardgames/${boardgames[index].slug || boardgames[index]._id}`}
             className="text-center inline-block p-3 border-2 border-foreground text-foreground font-semibold min-w-32">
             More
           </Link>
           <Link
-            href={`/boardgames/${boardgames[index]._id}/chat`}
+            href={`/boardgames/${boardgames[index].slug || boardgames[index]._id}/chat`}
             className="text-center inline-block p-3 bg-surface-muted border-2 border-border text-foreground font-semibold min-w-32">
             Chat
           </Link>

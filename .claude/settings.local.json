@@ -3,7 +3,11 @@
     "allow": [
       "Bash(npm install *)",
       "Bash(node -e \"const p=require\\('./node_modules/@langchain/core/package.json'\\); const exp=p.exports; const key='./utils/function_calling'; console.log\\('export exists:', !!exp[key], '\\\\nvalue:', JSON.stringify\\(exp[key]\\)\\)\")",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(cd \"C:\\\\Users\\\\laith\\\\Documents\\\\projects\\\\meepletron\\\\website\" && grep -l \"structure\\\\|Schema\\\\|Game\\\\|Thing\" app/boardgames/[id]/page.js 2>nul)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\laith\\Documents\\projects\\meepletron\\website"
     ]
   }
 }
