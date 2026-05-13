@@ -118,9 +118,7 @@ export function TuckboxDesigner({
   const [wrapAsset, setWrapAsset] = useState<FaceImageData | undefined>(
     undefined,
   );
-  const [previewTab, setPreviewTab] = useState<"assembled" | "flat">(
-    "assembled",
-  );
+  const [previewTab, setPreviewTab] = useState<"assembled" | "flat">("flat");
   const [selectedFace, setSelectedFace] = useState<FaceKey | "wrap" | null>(
     null,
   );
@@ -336,7 +334,7 @@ export function TuckboxDesigner({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[440px_1fr] gap-6 max-w-7xl mx-auto p-4 sm:p-6">
+    <div className="grid grid-cols-1 lg:grid-cols-[440px_1fr] gap-6 max-w-7xl mx-auto p-4 sm:p-6 overflow-x-hidden">
       <div className="space-y-6">
         <header>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -645,9 +643,9 @@ function Row({
   children: React.ReactNode;
 }) {
   return (
-    <label className="grid grid-cols-[140px_1fr] items-center gap-3 text-sm text-foreground">
+    <label className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-start sm:items-center gap-1.5 sm:gap-3 text-sm text-foreground">
       <span className="text-muted">{label}</span>
-      <div>{children}</div>
+      <div className="min-w-0">{children}</div>
     </label>
   );
 }

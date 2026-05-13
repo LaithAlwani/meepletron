@@ -148,7 +148,7 @@ export function AssembledBoxPreview({
       style={{ minHeight: 360 }}
     >
       <div
-        className="relative flex-1 w-full flex items-center justify-center"
+        className="relative flex-1 w-full flex items-center justify-center touch-none"
         style={{ perspective: "1100px" }}
         onPointerDown={(event) => {
           (event.target as Element).setPointerCapture?.(event.pointerId);

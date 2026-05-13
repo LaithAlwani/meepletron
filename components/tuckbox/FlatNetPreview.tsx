@@ -124,7 +124,7 @@ export function FlatNetPreview({
     <div className="w-full h-full flex items-center justify-center bg-surface-muted rounded-lg p-4">
       <svg
         viewBox={`0 0 ${pageWidth} ${pageHeight}`}
-        className="max-w-full max-h-full"
+        className="max-w-full max-h-full touch-none"
         style={{ aspectRatio: `${pageWidth} / ${pageHeight}` }}
         onClick={(event) => {
           if (event.target === event.currentTarget) onSelectFace(null);
