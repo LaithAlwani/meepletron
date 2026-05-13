@@ -129,7 +129,7 @@ export default function RootLayout({ children }) {
             <Toaster position="top-right" containerClassName="relative" />
             <Navbar />
             <Suspense fallback={<Loading />}>
-              <main className="w-screen mx-auto min-h-svh">{children}</main>
+              <main className="w-full mx-auto min-h-svh">{children}</main>
             </Suspense>
           </Providers>
           <SpeedInsights />
