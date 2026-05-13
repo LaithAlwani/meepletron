@@ -183,15 +183,16 @@ export default function BoardgameList() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* View toggle — mobile only */}
+          {/* View toggle */}
           <button
             onClick={() => setView((v) => {
               const next = v === "grid" ? "list" : "grid";
               localStorage.setItem("boardgames-view", next);
               return next;
             })}
-            className="sm:hidden flex items-center justify-center w-9 h-9 rounded-xl border border-border bg-surface text-muted hover:text-foreground hover:border-primary/50 transition-all shrink-0"
-            aria-label="Toggle view"
+            className="flex items-center justify-center w-9 h-9 rounded-xl border border-border bg-surface text-muted hover:text-foreground hover:border-primary/50 transition-all shrink-0"
+            aria-label={view === "grid" ? "Switch to list view" : "Switch to grid view"}
+            title={view === "grid" ? "Switch to list view" : "Switch to grid view"}
           >
             {view === "grid" ? <MdViewList size={18} /> : <MdGridView size={18} />}
           </button>

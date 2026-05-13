@@ -1,6 +1,6 @@
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import BetaAnnouncement from "@/components/landingPage/BetaAnnouncement";
+import FeatureCarousel from "@/components/landingPage/FeatureCarousel";
 import HowItWorks from "@/components/landingPage/HowItWorks";
 import Features from "@/components/landingPage/Features";
 import BoardgameScroller from "@/components/boardgame/BoardgameScroller";
@@ -16,7 +16,7 @@ export const metadata = {
 export default function Home() {
   return (
     <>
-      <BetaAnnouncement />
+      <FeatureCarousel />
       <HowItWorks />
       <Features />
       <BoardgameScroller />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { computeLayout, getPanel } from "@/lib/tuckbox/geometry";
 import { renderTuckboxPdf, triggerDownload } from "@/lib/tuckbox/pdf";
 import {
@@ -712,14 +712,42 @@ function NumberInput({
   step: number;
   onChange: (value: number) => void;
 }) {
+  // Keep a local string so the user can clear the field while typing
+  // (an empty input no longer snaps back to the last numeric value).
+  const [text, setText] = useState<string>(() => String(value));
+  const focusedRef = useRef(false);
+
+  // Sync from parent when the value changes externally (e.g. unit conversion)
+  // — but only when the input isn't focused, to avoid overwriting the user's
+  // in-progress text.
+  useEffect(() => {
+    if (focusedRef.current) return;
+    setText(String(value));
+  }, [value]);
+
   return (
     <input
       type="number"
-      value={value}
+      value={text}
       step={step}
+      onFocus={() => {
+        focusedRef.current = true;
+      }}
       onChange={(event) => {
-        const parsed = parseFloat(event.target.value);
+        const next = event.target.value;
+        setText(next);
+        const parsed = parseFloat(next);
         if (!Number.isNaN(parsed)) onChange(parsed);
+      }}
+      onBlur={() => {
+        focusedRef.current = false;
+        const parsed = parseFloat(text);
+        if (Number.isNaN(parsed)) {
+          // Invalid / empty on blur — restore the last valid parent value.
+          setText(String(value));
+        } else if (parsed !== value) {
+          onChange(parsed);
+        }
       }}
       className="w-full rounded-md border border-border bg-surface text-foreground px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
     />
