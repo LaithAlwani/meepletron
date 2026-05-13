@@ -46,6 +46,11 @@ export const metadata = {
   No more wasting time searching manuals`,
   generator: "Next.js",
   manifest: "/manifest.json",
+  verification: {
+    other: {
+      "msvalidate.01": "5E9AD6AD346457303D0A540C7A8949D7",
+    },
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
