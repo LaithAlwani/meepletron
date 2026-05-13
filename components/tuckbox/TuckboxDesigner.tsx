@@ -347,9 +347,9 @@ export function TuckboxDesigner({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[440px_1fr] gap-6 max-w-7xl mx-auto p-4 sm:p-6 overflow-x-hidden">
-      <div className="space-y-6">
-        <header>
+    <div className="grid grid-cols-1 lg:grid-cols-[440px_1fr] gap-4 lg:gap-6 max-w-7xl mx-auto p-4 sm:p-6 overflow-x-hidden">
+      <div className="space-y-4 lg:space-y-6 order-2 lg:order-1">
+        <header className="hidden lg:block">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Tuckbox Generator
           </h1>
@@ -359,7 +359,7 @@ export function TuckboxDesigner({
           </p>
         </header>
 
-        <Section title="Units & Paper">
+        <Section title="Units & Paper" defaultOpen={false}>
           <Row label="Units">
             <SegmentedControl
               value={config.unit}
@@ -397,20 +397,22 @@ export function TuckboxDesigner({
         </Section>
 
         <Section title="Card dimensions">
-          <Row label={`Card width (${unitLabel})`}>
-            <NumberInput
-              value={config.cardWidth}
-              step={config.unit === "mm" ? 0.5 : 0.05}
-              onChange={(value) => updateConfig("cardWidth", value)}
-            />
-          </Row>
-          <Row label={`Card height (${unitLabel})`}>
-            <NumberInput
-              value={config.cardHeight}
-              step={config.unit === "mm" ? 0.5 : 0.05}
-              onChange={(value) => updateConfig("cardHeight", value)}
-            />
-          </Row>
+          <PairRow>
+            <MiniField label={`Width (${unitLabel})`}>
+              <NumberInput
+                value={config.cardWidth}
+                step={config.unit === "mm" ? 0.5 : 0.05}
+                onChange={(value) => updateConfig("cardWidth", value)}
+              />
+            </MiniField>
+            <MiniField label={`Height (${unitLabel})`}>
+              <NumberInput
+                value={config.cardHeight}
+                step={config.unit === "mm" ? 0.5 : 0.05}
+                onChange={(value) => updateConfig("cardHeight", value)}
+              />
+            </MiniField>
+          </PairRow>
           <Row label="Stack input">
             <SegmentedControl
               value={useCardCount ? "count" : "thickness"}
@@ -423,23 +425,25 @@ export function TuckboxDesigner({
           </Row>
           {useCardCount ? (
             <>
-              <Row label="Number of cards">
-                <NumberInput
-                  value={cardCount}
-                  step={1}
-                  onChange={(value) =>
-                    setCardCount(Math.max(1, Math.round(value)))
-                  }
-                />
-              </Row>
-              <Row label={`Thickness/card (${unitLabel})`}>
-                <NumberInput
-                  value={cardThickness}
-                  step={config.unit === "mm" ? 0.01 : 0.001}
-                  onChange={setCardThickness}
-                />
-              </Row>
-              <div className="text-xs text-muted -mt-2">
+              <PairRow>
+                <MiniField label="# of cards">
+                  <NumberInput
+                    value={cardCount}
+                    step={1}
+                    onChange={(value) =>
+                      setCardCount(Math.max(1, Math.round(value)))
+                    }
+                  />
+                </MiniField>
+                <MiniField label={`Thickness/card (${unitLabel})`}>
+                  <NumberInput
+                    value={cardThickness}
+                    step={config.unit === "mm" ? 0.01 : 0.001}
+                    onChange={setCardThickness}
+                  />
+                </MiniField>
+              </PairRow>
+              <div className="text-xs text-muted -mt-1">
                 Stack:{" "}
                 <strong>
                   {(cardCount * cardThickness).toFixed(2)} {unitLabel}
@@ -547,7 +551,12 @@ export function TuckboxDesigner({
         </Section>
       </div>
 
-      <div className="space-y-4 lg:sticky lg:top-4 self-start">
+      <div className="space-y-4 lg:sticky lg:top-4 self-start order-1 lg:order-2">
+        <header className="lg:hidden">
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">
+            Tuckbox Generator
+          </h1>
+        </header>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -634,17 +643,29 @@ export function TuckboxDesigner({
 function Section({
   title,
   children,
+  defaultOpen = true,
 }: {
   title: string;
   children: React.ReactNode;
+  defaultOpen?: boolean;
 }) {
   return (
-    <section className="space-y-3">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">
-        {title}
-      </h2>
-      <div className="space-y-3">{children}</div>
-    </section>
+    <details
+      open={defaultOpen}
+      className="group rounded-lg border border-border-muted bg-surface/40 lg:border-0 lg:bg-transparent lg:rounded-none"
+    >
+      <summary className="flex items-center justify-between cursor-pointer list-none px-3 py-2 lg:px-0 lg:py-0">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">
+          {title}
+        </h2>
+        <span className="text-muted text-lg leading-none group-open:rotate-90 transition-transform">
+          ›
+        </span>
+      </summary>
+      <div className="space-y-3 px-3 pb-3 pt-1 lg:px-0 lg:pb-0 lg:pt-3">
+        {children}
+      </div>
+    </details>
   );
 }
 
@@ -658,6 +679,25 @@ function Row({
   return (
     <label className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-start sm:items-center gap-1.5 sm:gap-3 text-sm text-foreground">
       <span className="text-muted">{label}</span>
+      <div className="min-w-0">{children}</div>
+    </label>
+  );
+}
+
+function PairRow({ children }: { children: React.ReactNode }) {
+  return <div className="grid grid-cols-2 gap-3">{children}</div>;
+}
+
+function MiniField({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="flex flex-col gap-1 text-sm text-foreground min-w-0">
+      <span className="text-xs text-muted">{label}</span>
       <div className="min-w-0">{children}</div>
     </label>
   );
@@ -738,29 +778,40 @@ function WrapEditor({
       data.naturalHeight < idealPx.height * 0.6);
 
   return (
-    <div
+    <details
+      open
       onPointerDown={onSelect}
-      className={`rounded-lg border p-3 space-y-3 transition-colors ${
+      className={`group rounded-lg border transition-colors ${
         isSelected
           ? "border-primary ring-2 ring-primary/30"
           : "border-border"
       }`}
     >
-      <div className="flex items-center justify-between">
+      <summary className="flex items-center justify-between cursor-pointer list-none p-3">
         <span className="text-sm font-medium text-foreground">
           Body wrap (front + back + sides)
         </span>
-        {data && (
-          <button
-            type="button"
-            onClick={() => onImage(undefined)}
-            className="text-xs text-muted hover:text-red-600"
-          >
-            Remove image
-          </button>
-        )}
-      </div>
+        <div className="flex items-center gap-3">
+          {data && (
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onImage(undefined);
+              }}
+              className="text-xs text-muted hover:text-red-600"
+            >
+              Remove
+            </button>
+          )}
+          <span className="text-muted text-lg leading-none group-open:rotate-90 transition-transform">
+            ›
+          </span>
+        </div>
+      </summary>
 
+      <div className="px-3 pb-3 space-y-3">
       <div className="text-[11px] text-muted">
         Recommended image:{" "}
         <strong>
@@ -821,7 +872,8 @@ function WrapEditor({
           </label>
         </div>
       )}
-    </div>
+      </div>
+    </details>
   );
 }
 
@@ -859,29 +911,40 @@ function FaceEditor({
       data.naturalHeight < idealPx.height * 0.6);
 
   return (
-    <div
+    <details
+      open
       onPointerDown={onSelect}
-      className={`rounded-lg border p-3 space-y-3 transition-colors ${
+      className={`group rounded-lg border transition-colors ${
         isSelected
           ? "border-primary ring-2 ring-primary/30"
           : "border-border"
       }`}
     >
-      <div className="flex items-center justify-between">
+      <summary className="flex items-center justify-between cursor-pointer list-none p-3">
         <span className="text-sm font-medium text-foreground">
           {displayName}
         </span>
-        {data && (
-          <button
-            type="button"
-            onClick={() => onImage(undefined)}
-            className="text-xs text-muted hover:text-red-600"
-          >
-            Remove image
-          </button>
-        )}
-      </div>
+        <div className="flex items-center gap-3">
+          {data && (
+            <button
+              type="button"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onImage(undefined);
+              }}
+              className="text-xs text-muted hover:text-red-600"
+            >
+              Remove
+            </button>
+          )}
+          <span className="text-muted text-lg leading-none group-open:rotate-90 transition-transform">
+            ›
+          </span>
+        </div>
+      </summary>
 
+      <div className="px-3 pb-3 space-y-3">
       <div className="text-[11px] text-muted">
         Recommended image:{" "}
         <strong>
@@ -1017,6 +1080,7 @@ function FaceEditor({
           </>
         )}
       </div>
-    </div>
+      </div>
+    </details>
   );
 }
