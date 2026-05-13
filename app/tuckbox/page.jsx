@@ -15,9 +15,15 @@ export default async function TuckboxPage({ searchParams }) {
     let game = await loadBoardgame(gameId);
     if (!game) game = await loadExpansion(gameId);
     if (game) {
+      const rawImage = game.image || game.thumbnail;
+      // Route the image through our same-origin proxy so the client fetch
+      // for CORS-restricted S3 assets succeeds. See app/api/images/proxy/route.js.
+      const proxied = rawImage
+        ? `/api/images/proxy?url=${encodeURIComponent(rawImage)}`
+        : undefined;
       initialBoardgame = {
         title: game.title,
-        imageUrl: game.image || game.thumbnail,
+        imageUrl: proxied,
       };
     }
   }

@@ -177,6 +177,19 @@ export function TuckboxDesigner({
             }
             return changed ? next : previousAssets;
           });
+
+          // Also prefill the "wrap around" slot — same image, single asset that
+          // spans back→leftSide→front→rightSide if the user switches modes.
+          setWrapAsset((previousWrap) =>
+            previousWrap
+              ? previousWrap
+              : {
+                  url: dataUrl,
+                  naturalWidth: dimensions.width,
+                  naturalHeight: dimensions.height,
+                  transform: { ...DEFAULT_IMAGE_TRANSFORM },
+                },
+          );
         } catch {
           // CORS blocked or fetch failed — leave the front face empty.
         }
