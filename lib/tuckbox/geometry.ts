@@ -55,6 +55,14 @@ export function computeLayout(config: TuckboxConfig): TuckboxLayout {
   const dustFlapWidth = Math.max(0, dustFlapWidthRaw);
   const tuckFlapXOffset = (outerWidth - tuckFlapInnerWidth) / 2;
   const dustFlapXOffset = (outerDepth - dustFlapWidth) / 2;
+  // Dust-flap taper: dust flaps narrow toward their free edge so they slide
+  // into the box cavity smoothly during assembly. ~3mm per side (in the
+  // layout's unit), capped so very small flaps can never invert.
+  const dustFlapTaperBase = config.unit === "mm" ? 3 : 3 / 25.4;
+  const dustFlapTaper = Math.max(
+    0,
+    Math.min(dustFlapTaperBase, dustFlapWidth * 0.15),
+  );
 
   const netWidth = glueTabWidth + 2 * outerWidth + 2 * outerDepth;
   const netHeight = tuckFlapHeight + outerDepth + outerHeight + outerDepth;
@@ -218,10 +226,10 @@ export function computeLayout(config: TuckboxConfig): TuckboxLayout {
   const cutLines: Line[] = [
     // Top edge of body row from glue tab to start of left dust flap
     makeLine(glueTabX, bodyTopY, leftDustFlapX, bodyTopY),
-    // Left dust flap silhouette
-    makeLine(leftDustFlapX, bodyTopY, leftDustFlapX, topRowY),
-    makeLine(leftDustFlapX, topRowY, leftDustFlapEndX, topRowY),
-    makeLine(leftDustFlapEndX, topRowY, leftDustFlapEndX, bodyTopY),
+    // Left dust flap silhouette (tapered: narrower at free edge)
+    makeLine(leftDustFlapX, bodyTopY, leftDustFlapX + dustFlapTaper, topRowY),
+    makeLine(leftDustFlapX + dustFlapTaper, topRowY, leftDustFlapEndX - dustFlapTaper, topRowY),
+    makeLine(leftDustFlapEndX - dustFlapTaper, topRowY, leftDustFlapEndX, bodyTopY),
     // Gap between left dust flap and top panel
     makeLine(leftDustFlapEndX, bodyTopY, frontPanelX, bodyTopY),
     // Top panel + tuck flap silhouette
@@ -234,19 +242,20 @@ export function computeLayout(config: TuckboxConfig): TuckboxLayout {
     makeLine(frontPanelX + outerWidth, topRowY, frontPanelX + outerWidth, bodyTopY),
     // Gap between top panel and right dust flap
     makeLine(frontPanelX + outerWidth, bodyTopY, rightDustFlapX, bodyTopY),
-    // Right dust flap silhouette
-    makeLine(rightDustFlapX, bodyTopY, rightDustFlapX, topRowY),
-    makeLine(rightDustFlapX, topRowY, rightDustFlapEndX, topRowY),
-    makeLine(rightDustFlapEndX, topRowY, rightDustFlapEndX, bodyTopY),
+    // Right dust flap silhouette (tapered: narrower at free edge)
+    makeLine(rightDustFlapX, bodyTopY, rightDustFlapX + dustFlapTaper, topRowY),
+    makeLine(rightDustFlapX + dustFlapTaper, topRowY, rightDustFlapEndX - dustFlapTaper, topRowY),
+    makeLine(rightDustFlapEndX - dustFlapTaper, topRowY, rightDustFlapEndX, bodyTopY),
     // Gap to right edge of body
     makeLine(rightDustFlapEndX, bodyTopY, rightSidePanelEndX, bodyTopY),
     // Right edge of body
     makeLine(rightSidePanelEndX, bodyTopY, rightSidePanelEndX, bottomRowY),
     // Mirror: bottom edge of body row to start of right bottom dust flap
     makeLine(rightSidePanelEndX, bottomRowY, rightDustFlapEndX, bottomRowY),
-    makeLine(rightDustFlapEndX, bottomRowY, rightDustFlapEndX, bottomEndY),
-    makeLine(rightDustFlapEndX, bottomEndY, rightDustFlapX, bottomEndY),
-    makeLine(rightDustFlapX, bottomEndY, rightDustFlapX, bottomRowY),
+    makeLine(rightDustFlapEndX, bottomRowY, rightDustFlapEndX - dustFlapTaper, bottomEndY),
+    makeLine(rightDustFlapEndX - dustFlapTaper, bottomEndY, rightDustFlapX + dustFlapTaper, bottomEndY),
+    makeLine(rightDustFlapX + dustFlapTaper, bottomEndY, rightDustFlapX, bottomRowY),
+    // (continues to gap line between right dust flap fold and front panel)
     makeLine(rightDustFlapX, bottomRowY, frontPanelX + outerWidth, bottomRowY),
     makeLine(
       frontPanelX + outerWidth,
@@ -257,9 +266,9 @@ export function computeLayout(config: TuckboxConfig): TuckboxLayout {
     makeLine(frontPanelX + outerWidth, bottomEndY, frontPanelX, bottomEndY),
     makeLine(frontPanelX, bottomEndY, frontPanelX, bottomRowY),
     makeLine(frontPanelX, bottomRowY, leftDustFlapEndX, bottomRowY),
-    makeLine(leftDustFlapEndX, bottomRowY, leftDustFlapEndX, bottomEndY),
-    makeLine(leftDustFlapEndX, bottomEndY, leftDustFlapX, bottomEndY),
-    makeLine(leftDustFlapX, bottomEndY, leftDustFlapX, bottomRowY),
+    makeLine(leftDustFlapEndX, bottomRowY, leftDustFlapEndX - dustFlapTaper, bottomEndY),
+    makeLine(leftDustFlapEndX - dustFlapTaper, bottomEndY, leftDustFlapX + dustFlapTaper, bottomEndY),
+    makeLine(leftDustFlapX + dustFlapTaper, bottomEndY, leftDustFlapX, bottomRowY),
     makeLine(leftDustFlapX, bottomRowY, glueTabX, bottomRowY),
     // Left edge of glue tab closing the silhouette
     makeLine(glueTabX, bottomRowY, glueTabX, bodyTopY),

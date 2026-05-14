@@ -80,6 +80,16 @@ export function FlatNetPreview({
   const wrapMode = !!wrapAsset;
   const { pageWidth, pageHeight, panels, foldLines, cutLines } = layout;
   const unitToPt = layout.unit === "mm" ? 2.83465 : 72;
+
+  // Line styles mirror the PDF renderer (lib/tuckbox/pdf.ts) so the on-screen
+  // preview matches the printed output exactly. Values are in the layout's unit
+  // (mm or in) — the SVG viewBox is in those same units, so a raw value of
+  // 0.35 renders as 0.35mm/in.
+  const isMm = layout.unit === "mm";
+  const cutStroke = isMm ? 0.35 : 0.35 / 25.4;
+  const foldStroke = isMm ? 0.2 : 0.2 / 25.4;
+  const foldDashOn = isMm ? 2 : 2 / 25.4;
+  const foldDashOff = isMm ? 1.5 : 1.5 / 25.4;
   const imageDragRef = useRef<ImageDragState | null>(null);
   const labelDragRef = useRef<LabelDragState | null>(null);
 
@@ -502,8 +512,8 @@ export function FlatNetPreview({
             x2={line.endX}
             y2={line.endY}
             stroke="rgb(141 147 157)"
-            strokeWidth={pageWidth * 0.0008}
-            strokeDasharray={`${pageWidth * 0.005} ${pageWidth * 0.003}`}
+            strokeWidth={foldStroke}
+            strokeDasharray={`${foldDashOn} ${foldDashOff}`}
             style={{ pointerEvents: "none" }}
           />
         ))}
@@ -516,7 +526,7 @@ export function FlatNetPreview({
             x2={line.endX}
             y2={line.endY}
             stroke="rgb(17 24 39)"
-            strokeWidth={pageWidth * 0.0012}
+            strokeWidth={cutStroke}
             style={{ pointerEvents: "none" }}
           />
         ))}
