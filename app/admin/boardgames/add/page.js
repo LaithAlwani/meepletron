@@ -4,15 +4,12 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
 import { Button, Input, Textarea, Card, Field } from "@/components/ui";
-import ChunkCard from "@/components/admin/ChunkCard";
-import { motion, AnimatePresence } from "motion/react";
 
 export default function AddBoardgame() {
   const [isLoading, setIsLoading] = useState(false);
   const [tempFileUrl, setTempFileUrl] = useState(null);
-  const [chunks, setChunks] = useState([]);
+  const [uploadedFileName, setUploadedFileName] = useState(null);
   const [parseStep, setParseStep] = useState(null);
-  const [showAllChunks, setShowAllChunks] = useState(false);
   const [isExpansion, setIsExpansion] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -68,8 +65,8 @@ export default function AddBoardgame() {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
-    setChunks([]);
     setTempFileUrl(null);
+    setUploadedFileName(null);
     setParseStep("uploading");
 
     try {
@@ -92,21 +89,11 @@ export default function AddBoardgame() {
       if (!s3Res.ok) throw new Error("Failed to upload file");
 
       setTempFileUrl(urlData.objectUrl);
-      setParseStep("parsing");
-
-      const extractRes = await fetch("/api/boardgames/extract", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: urlData.objectUrl, contentType: selectedFile.type }),
-      });
-      if (!extractRes.ok) throw new Error("Failed to parse file");
-      const { data } = await extractRes.json();
-
-      setChunks(data);
+      setUploadedFileName(selectedFile.name);
       setParseStep("done");
     } catch (err) {
       setParseStep("error");
-      toast.error(err.message || "Failed to process file");
+      toast.error(err.message || "Failed to upload file");
     }
   };
 
@@ -139,11 +126,16 @@ export default function AddBoardgame() {
       const res = await fetch("/api/boardgames/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ boardgame, chunks, tempFileUrl }),
+        body: JSON.stringify({ boardgame, tempFileUrl }),
       });
       const { data } = await res.json();
       if (res.ok) {
-        toast.custom((t) => <CustomToast message={`${data} added successfully`} id={t.id} />);
+        toast.custom((t) => (
+          <CustomToast
+            message={`${data} added. Now migrate its rulebook from the Migrate tab.`}
+            id={t.id}
+          />
+        ));
       } else {
         toast.error(data);
       }
@@ -156,11 +148,9 @@ export default function AddBoardgame() {
 
   const steps = [
     { key: "uploading", label: "Upload" },
-    { key: "parsing",   label: "Parse"  },
     { key: "done",      label: "Ready"  },
   ];
-  const stepIndex =
-    parseStep === "uploading" ? 0 : parseStep === "parsing" ? 1 : parseStep === "done" ? 2 : -1;
+  const stepIndex = parseStep === "uploading" ? 0 : parseStep === "done" ? 1 : -1;
 
   return (
     <div className="min-h-screen bg-bg pt-24 pb-16 px-4">
@@ -325,30 +315,21 @@ export default function AddBoardgame() {
             )}
 
             {parseStep === "error" && (
-              <p className="text-sm text-red-500 text-center py-2">Failed to process file. Please try a different file.</p>
+              <p className="text-sm text-red-500 text-center py-2">Failed to upload file. Please try a different file.</p>
             )}
 
-            {parseStep === "done" && chunks.length > 0 && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-subtle">Extracted Content</span>
-                  <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded-full">
-                    {chunks.length} chunks
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {chunks.slice(0, 3).map((chunk, i) => (
-                    <ChunkCard key={i} chunk={chunk} index={i} />
-                  ))}
-                </div>
-                {chunks.length > 3 && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllChunks(true)}
-                    className="w-full py-2.5 text-sm text-primary font-medium border border-border rounded-xl hover:bg-surface-muted transition-all">
-                    View all {chunks.length} chunks →
-                  </button>
-                )}
+            {parseStep === "done" && (
+              <div className="rounded-xl border border-border bg-surface-muted/40 p-3 text-xs text-muted space-y-1">
+                <p className="font-medium text-foreground truncate">
+                  {uploadedFileName || "Rulebook uploaded"}
+                </p>
+                <p>
+                  After submitting, open the{" "}
+                  <Link href="/admin/boardgames/migrate" className="text-primary hover:underline">
+                    Migrate to v2
+                  </Link>{" "}
+                  tab to parse, review and commit the rulebook chunks before chat is enabled.
+                </p>
               </div>
             )}
           </Card>
@@ -358,48 +339,6 @@ export default function AddBoardgame() {
           </Button>
         </form>
       </div>
-
-      <AnimatePresence>
-        {showAllChunks && (
-          <ChunksModal chunks={chunks} onClose={() => setShowAllChunks(false)} />
-        )}
-      </AnimatePresence>
     </div>
-  );
-}
-
-function ChunksModal({ chunks, onClose }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-      onClick={onClose}>
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
-        onClick={(e) => e.stopPropagation()}
-        className="bg-surface rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[80vh]">
-        <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
-          <h3 className="font-semibold text-foreground">
-            Extracted Content{" "}
-            <span className="text-subtle font-normal text-sm">({chunks.length} chunks)</span>
-          </h3>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-muted text-muted transition-colors text-sm">
-            ✕
-          </button>
-        </div>
-        <div className="overflow-y-auto flex-1 p-4 space-y-2">
-          {chunks.map((chunk, i) => (
-            <ChunkCard key={i} chunk={chunk} index={i} />
-          ))}
-        </div>
-      </motion.div>
-    </motion.div>
   );
 }

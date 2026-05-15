@@ -20,6 +20,9 @@ import { generateId } from "ai";
 import { useRouter } from "next/navigation";
 import { GUEST_CHAT_KEY_PREFIX, USER_CHAT_KEY_PREFIX } from "@/utils/constants";
 import ReactMarkdown from "react-markdown";
+import CitationPill from "@/components/chat/CitationPill";
+import SourcePanel from "@/components/chat/SourcePanel";
+import { IoBookOutline } from "react-icons/io5";
 
 // ─── Guest token helpers ───────────────────────────────────────────────────────
 
@@ -129,6 +132,12 @@ export default function ChatPage() {
   const [currentGame, setCurrentGame] = useState(null);
   const [messagesLoaded, setMessagesLoaded] = useState(false);
   const [sideNavOpen, setSideNavOpen] = useState(false);
+  const [sourcePanelOpen, setSourcePanelOpen] = useState(false);
+  const [sourceFocusChunkId, setSourceFocusChunkId] = useState(null);
+  // Stage 10 multi-source: which expansion IDs are checked on in addition to the
+  // base game. The base game's _id is always included on top of this — see
+  // `activeSourceIds`. Persisted in localStorage per base-game.
+  const [extraSourceIds, setExtraSourceIds] = useState([]);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [tokensRemaining, setTokensRemaining] = useState(null);
   const [showSignUpDrawer, setShowSignUpDrawer] = useState(false);
@@ -136,8 +145,25 @@ export default function ChatPage() {
   const scrollContainerRef = useRef(null);
   const userScrolledUp = useRef(false);
 
+  // Base game id is always first; selected expansions follow.
+  const activeSourceIds = boardgame?._id
+    ? [boardgame._id, ...extraSourceIds.filter((id) => id !== boardgame._id)]
+    : [];
+
+  // Expansions that exist for the base game but the user has chosen NOT to
+  // load — sent to the chat API so the system prompt can name them and tell
+  // the model to refuse questions about them instead of leaking training
+  // knowledge.
+  const unloadedSourceTitles = (boardgame?.expansions || [])
+    .filter((e) => !extraSourceIds.includes(e._id))
+    .map((e) => e.title);
+
   const { messages, setMessages, input, handleInputChange, handleSubmit, isLoading, error, data } = useChat({
-    body: { boardgame_id: currentGame?._id, boardgame_title: currentGame?.title },
+    body: {
+      boardgame_ids: activeSourceIds,
+      boardgame_title: boardgame?.title,
+      unloaded_source_titles: unloadedSourceTitles,
+    },
     onFinish: (message) => {
       if (user) {
         saveMessage(message.id, message.role, message.content, message.annotations);
@@ -263,6 +289,38 @@ export default function ChatPage() {
   // ─── Effects ──────────────────────────────────────────────────────────────
 
   useEffect(() => { getBoardgame(); }, []);
+
+  // Load active expansion sources from localStorage when base game resolves
+  useEffect(() => {
+    if (!boardgame?._id) return;
+    try {
+      const raw = localStorage.getItem(`meepletron_active_sources_${boardgame._id}`);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          // Only keep ids that correspond to actual expansions of this game
+          const expansionIds = new Set((boardgame.expansions || []).map((e) => e._id));
+          setExtraSourceIds(parsed.filter((id) => expansionIds.has(id)));
+        }
+      }
+    } catch {}
+  }, [boardgame?._id]);
+
+  // Persist on change
+  useEffect(() => {
+    if (!boardgame?._id) return;
+    try {
+      localStorage.setItem(
+        `meepletron_active_sources_${boardgame._id}`,
+        JSON.stringify(extraSourceIds),
+      );
+    } catch {}
+  }, [extraSourceIds, boardgame?._id]);
+
+  const toggleExtraSource = (id) =>
+    setExtraSourceIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
   useEffect(() => { if (user && currentGame) getChat(currentGame); }, [currentGame, user]);
   useEffect(() => {
     if (isLoaded && !user && currentGame) {
@@ -348,6 +406,17 @@ export default function ChatPage() {
           <ThemeSwitch />
         </div>
 
+        {/* Rulebook button — always visible. Panel reads fresh state from
+            /toc and degrades gracefully for games not yet migrated to v2. */}
+        <button
+          type="button"
+          onClick={() => { setSourceFocusChunkId(null); setSourcePanelOpen(true); }}
+          className="p-2 rounded-xl hover:bg-surface-muted transition-colors text-muted shrink-0 flex flex-col items-center gap-0.5"
+          aria-label="Open rulebook">
+          <IoBookOutline size={18} />
+          <span className="text-[10px] font-medium leading-none">rulebook</span>
+        </button>
+
         <button
           onClick={() => setSideNavOpen(true)}
           className="p-2 rounded-xl hover:bg-surface-muted transition-colors text-muted shrink-0 flex flex-col items-center gap-0.5">
@@ -380,6 +449,34 @@ export default function ChatPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Active sources pill row — shown when expansions are selected */}
+      {extraSourceIds.length > 0 && boardgame && (
+        <div className="shrink-0 px-3 py-2 border-b border-border-muted bg-surface-muted/40 flex items-center gap-2 overflow-x-auto hide-scrollbar">
+          <span className="text-[11px] uppercase tracking-wide text-subtle font-semibold shrink-0">
+            Sources:
+          </span>
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface border border-border text-xs font-medium text-foreground shrink-0">
+            {boardgame.title}
+          </span>
+          {boardgame.expansions
+            ?.filter((e) => extraSourceIds.includes(e._id))
+            .map((exp) => (
+              <span
+                key={exp._id}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/15 text-primary text-xs font-medium shrink-0">
+                {exp.title}
+                <button
+                  type="button"
+                  onClick={() => toggleExtraSource(exp._id)}
+                  className="hover:opacity-70 transition-opacity"
+                  aria-label={`Remove ${exp.title} from sources`}>
+                  <IoClose size={12} />
+                </button>
+              </span>
+            ))}
+        </div>
+      )}
 
       {/* Messages */}
       <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto hide-scrollbar flex flex-col-reverse">
@@ -430,7 +527,16 @@ export default function ChatPage() {
                 return (
                   <Fragment key={message._id || message.id}>
                     {showSeparator && <DateSeparator label={msgLabel} />}
-                    <Message message={message} user={user} isStreaming={isLoading && isLastAssistant} />
+                    <Message
+                      message={message}
+                      user={user}
+                      isStreaming={isLoading && isLastAssistant}
+                      baseGameId={boardgame?._id}
+                      onJumpToChunk={(chunk) => {
+                        setSourceFocusChunkId(chunk?.chunkId || `${chunk?.bg_id}-c${String(chunk?.id - 1).padStart(4, "0")}`);
+                        setSourcePanelOpen(true);
+                      }}
+                    />
                   </Fragment>
                 );
               })}
@@ -583,6 +689,14 @@ export default function ChatPage() {
         )}
       </AnimatePresence>
 
+      {/* Rulebook navigator (Stage 7) — opens from the chat header or via citation click */}
+      <SourcePanel
+        open={sourcePanelOpen}
+        onClose={() => setSourcePanelOpen(false)}
+        gameIds={activeSourceIds}
+        focusChunkId={sourceFocusChunkId}
+      />
+
       {/* Expansion side nav */}
       <AnimatePresence>
         {sideNavOpen && (
@@ -605,8 +719,10 @@ export default function ChatPage() {
 
               <div className="flex items-center justify-between px-4 py-4 border-b border-border-muted">
                 <div>
-                  <h3 className="font-semibold text-sm text-foreground">Game Selector</h3>
-                  <p className="text-xs text-subtle mt-0.5">Switch between base game &amp; expansions</p>
+                  <h3 className="font-semibold text-sm text-foreground">Active sources</h3>
+                  <p className="text-xs text-subtle mt-0.5">
+                    The AI uses every checked source when answering. Base game is always on.
+                  </p>
                 </div>
                 <button
                   onClick={() => setSideNavOpen(false)}
@@ -619,7 +735,7 @@ export default function ChatPage() {
                 <p className="px-4 pt-4 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-subtle">
                   Base Game
                 </p>
-                <ListItem game={boardgame} currentGame={currentGame} setCurrentGame={setCurrentGame} setSideNavOpen={setSideNavOpen} />
+                <SourceRow game={boardgame} checked locked />
 
                 <p className="px-4 pt-4 pb-1.5 text-[10px] font-semibold uppercase tracking-widest text-subtle border-t border-border-muted mt-2">
                   Expansions
@@ -632,7 +748,12 @@ export default function ChatPage() {
 
                 {expansionCount > 0 ? (
                   boardgame.expansions.map((exp) => (
-                    <ListItem key={exp._id} game={exp} currentGame={currentGame} setCurrentGame={setCurrentGame} setSideNavOpen={setSideNavOpen} />
+                    <SourceRow
+                      key={exp._id}
+                      game={exp}
+                      checked={extraSourceIds.includes(exp._id)}
+                      onToggle={() => toggleExtraSource(exp._id)}
+                    />
                   ))
                 ) : (
                   <div className="flex flex-col items-center gap-2 py-8 px-4 text-center">
@@ -652,18 +773,27 @@ export default function ChatPage() {
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-const ListItem = ({ game, currentGame, setCurrentGame, setSideNavOpen }) => {
-  const isActive = currentGame?._id === game?._id;
+const SourceRow = ({ game, checked, locked = false, onToggle }) => {
   return (
-    <li
-      onClick={() => { setCurrentGame(game); setSideNavOpen(false); }}
-      className={`flex items-center gap-3 mx-2 mb-0.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all capitalize text-sm font-medium list-none ${
-        isActive ? "bg-primary text-primary-fg shadow-sm" : "text-foreground hover:bg-surface-muted"
-      }`}>
+    <label
+      className={`flex items-center gap-3 mx-2 mb-0.5 px-3 py-2.5 rounded-xl transition-all capitalize text-sm font-medium ${
+        locked ? "cursor-default" : "cursor-pointer hover:bg-surface-muted"
+      } ${checked && !locked ? "bg-primary/10" : ""}`}>
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={locked}
+        onChange={onToggle}
+        className="w-4 h-4 accent-primary disabled:opacity-60 shrink-0"
+      />
       <img src={game?.thumbnail} alt={game?.title} className="w-9 h-9 rounded-lg object-cover shrink-0 shadow-sm" />
-      <span className="truncate">{game?.title}</span>
-      {isActive && <span className="ml-auto text-[10px] font-semibold opacity-80 shrink-0">Active</span>}
-    </li>
+      <span className="truncate flex-1 text-foreground">{game?.title}</span>
+      {locked && (
+        <span className="text-[10px] font-semibold text-subtle uppercase tracking-wide shrink-0">
+          Base
+        </span>
+      )}
+    </label>
   );
 };
 
@@ -675,11 +805,61 @@ const DateSeparator = ({ label }) => (
   </div>
 );
 
-const Message = ({ message, user, isStreaming }) => {
+// Recursively walks ReactMarkdown's `children` and replaces inline `[N]`
+// markers with <CitationPill /> components. Only matches numbers that have
+// a corresponding chunk in the annotation — other bracketed numbers
+// (e.g. "[1] turn 1") are left as plain text.
+function renderCitationsInChildren(children, chunkMap, baseGameId, onJump, keyPrefix = "c") {
+  if (!chunkMap || chunkMap.size === 0) return children;
+
+  const transform = (node, idx) => {
+    if (typeof node !== "string") return node;
+    const parts = [];
+    const regex = /\[(\d+)\]/g;
+    let lastIndex = 0;
+    let match;
+    let partIdx = 0;
+    while ((match = regex.exec(node)) !== null) {
+      const id = parseInt(match[1], 10);
+      const chunk = chunkMap.get(id);
+      if (!chunk) continue;
+      if (match.index > lastIndex) parts.push(node.slice(lastIndex, match.index));
+      parts.push(
+        <CitationPill
+          key={`${keyPrefix}-${idx}-${partIdx++}`}
+          chunk={chunk}
+          baseGameId={baseGameId}
+          onJump={onJump}
+        />
+      );
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex === 0) return node; // no citations in this string
+    if (lastIndex < node.length) parts.push(node.slice(lastIndex));
+    return parts;
+  };
+
+  if (Array.isArray(children)) {
+    return children.flatMap((child, i) => {
+      const transformed = transform(child, i);
+      return Array.isArray(transformed) ? transformed : [transformed];
+    });
+  }
+  return transform(children, 0);
+}
+
+const Message = ({ message, user, isStreaming, baseGameId, onJumpToChunk }) => {
   const { _id, id, role, content, rating, annotations } = message;
   const isUser = role === "user";
 
   if (!isUser && !content) return null;
+
+  // Pull the chunks annotation written by app/api/chat/route.js. It arrives
+  // in onFinish so it's only present after the response completes — fine.
+  const chunksAnnotation = annotations?.find((a) => a?.type === "chunks");
+  const chunkMap = chunksAnnotation
+    ? new Map(chunksAnnotation.chunks.map((c) => [c.id, c]))
+    : null;
 
   return (
     <motion.div
@@ -705,10 +885,10 @@ const Message = ({ message, user, isStreaming }) => {
             <>
               <ReactMarkdown
                 components={{
-                  p:      ({ children }) => <p className="text-sm leading-relaxed mb-1 last:mb-0">{children}</p>,
+                  p:      ({ children }) => <p className="text-sm leading-relaxed mb-1 last:mb-0">{renderCitationsInChildren(children, chunkMap, baseGameId, onJumpToChunk)}</p>,
                   ul:     ({ children }) => <ul className="text-sm list-disc pl-4 space-y-0.5 my-1">{children}</ul>,
                   ol:     ({ children }) => <ol className="text-sm list-decimal pl-4 space-y-0.5 my-1">{children}</ol>,
-                  li:     ({ children }) => <li className="leading-relaxed">{children}</li>,
+                  li:     ({ children }) => <li className="leading-relaxed">{renderCitationsInChildren(children, chunkMap, baseGameId, onJumpToChunk)}</li>,
                   strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
                 }}>
                 {content}

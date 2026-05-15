@@ -49,6 +49,9 @@ const expansionSchema = new Schema(
     urls: [],
     parent_id: { type: Schema.Types.ObjectId, ref: "Boardgame" },
     counter: { type: Number, default: 0 },
+    // Which RAG pipeline version the chunks for this expansion are stored under.
+    // 1 = legacy, 2 = new (Gemini parsing + small embeddings in v2 Pinecone index).
+    embed_version: { type: Number, default: 1, index: true },
   },
   { timestamps: true }
 );

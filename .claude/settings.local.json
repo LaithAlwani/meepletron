@@ -7,7 +7,9 @@
       "Bash(cd \"C:\\\\Users\\\\laith\\\\Documents\\\\projects\\\\meepletron\\\\website\" && grep -l \"structure\\\\|Schema\\\\|Game\\\\|Thing\" app/boardgames/[id]/page.js 2>nul)",
       "Bash(Get-ChildItem -Recurse -Path \"C:\\\\Users\\\\laith\\\\Documents\\\\projects\\\\meepletron\\\\website\" -Include \"*tuckbox*\" -Exclude \".next\", \"node_modules\")",
       "Bash(Select-Object FullName)",
-      "Bash(Format-List)"
+      "Bash(Format-List)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\laith\\\\Documents\\\\projects\\\\meepletron\\\\website\\\\lib\" -File)",
+      "Bash(git -C \"c:/Users/laith/Documents/projects/meepletron/website\" log --oneline -20)"
     ],
     "additionalDirectories": [
       "C:\\Users\\laith\\Documents\\projects\\meepletron\\website"

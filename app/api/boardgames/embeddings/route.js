@@ -1,70 +1,21 @@
-import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
-import { PineconeStore } from "@langchain/pinecone";
+// Deprecated: legacy v1 ingestion endpoint.
+// Rulebook chunking + embedding now lives behind the admin migration UI
+// (Stage 11 review-before-commit). Hitting this endpoint just signals callers
+// to use the new flow under /admin/boardgames/migrate.
+
 import { NextResponse } from "next/server";
-import { OpenAIEmbeddings } from "@langchain/openai";
-import connectToDB from "@/utils/database";
-import Boardgame from "@/models/boardgame";
-import Expansion from "@/models/expansion";
 import { auth } from "@clerk/nextjs/server";
 
-export async function POST(req) {
+export async function POST() {
   const { sessionClaims } = await auth();
   if (sessionClaims?.metadata?.role !== "admin") {
     return NextResponse.json({ message: "Forbidden: Admin access required" }, { status: 403 });
   }
-
-  const data = await req.json();
-  const { fileText, boardgame, blob } = data;
-  if (!fileText || !boardgame) {
-    return NextResponse.json({ data: "no text or boardgame found!" });
-  }
-  try {
-    await connectToDB();
-    if (!fileText.length) {
-      return NextResponse.json({ data: "File has no text" }, { status: 500 });
-    }
-    
-    
-    for (const chunk in fileText) {
-      fileText[chunk].metadata.bg_id = boardgame._id.toString();
-      fileText[chunk].metadata.parent_id = boardgame.is_expansion
-        ? boardgame.parent_id?.toString()
-        : boardgame._id.toString();
-      fileText[chunk].metadata.bg_title = boardgame.title.toLowerCase();
-      fileText[chunk].metadata.bg_refrence_url = blob.path;
-    }
-    // const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-small" });
-    const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-large" });
-
-    const pinecone = new PineconeClient();
-    const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
-    const vectorStore = new PineconeStore(embeddings, {
-      pineconeIndex,
-      maxConcurrency: 5,
-    });
-    await vectorStore.addDocuments(fileText);
-    let doc;
-    if (!boardgame.is_expansion) {
-      doc = await Boardgame.findOneAndUpdate(
-        { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
-        { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
-        { new: true } // Return the updated document
-      );
-    } else {
-      doc = await Expansion.findOneAndUpdate(
-        { _id: boardgame._id, "urls.path": blob.path }, // Find the board game and specific URL entry
-        { $set: { "urls.$.isTextExtracted": true } }, // Update the matched element
-        { new: true } // Return the updated document
-      );
-    }
-
-    if (!doc) return NextResponse.json({ data: "Boardgame not found" }, { status: 500 });
-    return NextResponse.json(
-      { data: doc, message: `${boardgame.title} Data Embedded` },
-      { status: 200 }
-    );
-  } catch (err) {
-    console.log(err);
-    return NextResponse.json({ message: "Failed to Embed data" }, { status: 500 });
-  }
+  return NextResponse.json(
+    {
+      message:
+        "This endpoint has been retired. Use /admin/boardgames/migrate to parse, review and commit rulebook chunks for any game.",
+    },
+    { status: 410 },
+  );
 }

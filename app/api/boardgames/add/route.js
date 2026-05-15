@@ -10,9 +10,6 @@ import {
 import sharp from "sharp";
 import he from "he";
 import Expansion from "@/models/expansion";
-import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
-import { PineconeStore } from "@langchain/pinecone";
-import { OpenAIEmbeddings } from "@langchain/openai";
 import { auth } from "@clerk/nextjs/server";
 
 const s3Client = new S3Client({
@@ -29,7 +26,7 @@ export async function POST(req) {
     return NextResponse.json({ message: "Forbidden: Admin access required" }, { status: 403 });
   }
 
-  const { boardgame, chunks, tempFileUrl } = await req.json();
+  const { boardgame, tempFileUrl } = await req.json();
   await connectToDB();
 
   boardgame.description = cleanText(boardgame.description);
@@ -37,7 +34,6 @@ export async function POST(req) {
   const safeTitle = boardgame.title.replace(/\s+/g, "-").toLowerCase();
   const isExpansion = boardgame.parent_id !== "null";
 
-  // Pre-check: does game already exist?
   if (!isExpansion) {
     const boardgameExist = await Boardgame.findOne({ bgg_id: boardgame.bgg_id });
     if (boardgameExist)
@@ -51,15 +47,12 @@ export async function POST(req) {
   let game = null;
   let parentBoardgame = null;
   let permanentKey = null;
-  let pineconeStored = false;
 
   try {
-    // 1. Upload image to S3
     const { orginalURL, thumbnailURL } = await covertAndUpload(safeTitle, boardgame.image);
     boardgame.image = orginalURL;
     boardgame.thumbnail = thumbnailURL;
 
-    // 2. Create game in MongoDB
     if (!isExpansion) {
       game = await Boardgame.create(boardgame);
     } else {
@@ -73,8 +66,14 @@ export async function POST(req) {
       });
     }
 
-    // 3. Handle rulebook file + embeddings
-    if (chunks?.length && tempFileUrl) {
+    // Rename the uploaded rulebook from its placeholder UUID key (issued by
+    // /api/boardgames/upload?temp=true before the game existed) to a stable
+    // title-keyed key, and attach the URL to the game. Both keys live under
+    // the same env-appropriate S3 prefix (`_temp_boardgames/resources/` in
+    // dev, `resources/` in production) — see upload/route.js. Embedding/
+    // chunking is handled by the admin migration UI (Stage 11), so no
+    // vectors are written here.
+    if (tempFileUrl) {
       const ext = tempFileUrl.split(".").pop();
       permanentKey =
         process.env.NODE_ENV !== "production"
@@ -83,7 +82,6 @@ export async function POST(req) {
 
       const tempKey = tempFileUrl.split("amazonaws.com/").pop();
 
-      // Copy from temp S3 path to permanent path
       await s3Client.send(
         new CopyObjectCommand({
           Bucket: process.env.AWS_BUCKET_NAME,
@@ -100,51 +98,15 @@ export async function POST(req) {
 
       const permanentUrl = `https://meepletron-storage.s3.us-east-2.amazonaws.com/${permanentKey}`;
 
-      // Enrich chunks with game metadata
-      for (const chunk of chunks) {
-        chunk.metadata.bg_id = game._id.toString();
-        chunk.metadata.parent_id = isExpansion
-          ? parentBoardgame._id.toString()
-          : game._id.toString();
-        chunk.metadata.bg_title = boardgame.title.toLowerCase();
-        chunk.metadata.bg_refrence_url = permanentUrl;
-      }
-
-      // Create embeddings and store in Pinecone
-      const embeddings = new OpenAIEmbeddings({ model: "text-embedding-3-large" });
-      const pinecone = new PineconeClient();
-      const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
-      const vectorStore = new PineconeStore(embeddings, { pineconeIndex, maxConcurrency: 5 });
-      await vectorStore.addDocuments(chunks);
-      pineconeStored = true;
-
-      // Update game document with file URL
       const Model = isExpansion ? Expansion : Boardgame;
       await Model.findByIdAndUpdate(game._id, {
-        $push: { urls: { path: permanentUrl, isTextExtracted: true } },
+        $push: { urls: { path: permanentUrl, isTextExtracted: false } },
       });
     }
 
     return NextResponse.json({ data: boardgame.title }, { status: 201 });
   } catch (err) {
     console.log(err);
-
-    // Rollback in reverse order of what succeeded
-    if (pineconeStored && game) {
-      try {
-        const pinecone = new PineconeClient();
-        const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX_NAME);
-        const results = await pineconeIndex.query({
-          vector: Array(3072).fill(0),
-          topK: 1000,
-          includeMetadata: false,
-          filter: { bg_id: game._id.toString() },
-        });
-        if (results.matches.length) {
-          await pineconeIndex.deleteMany(results.matches.map((m) => m.id));
-        }
-      } catch {}
-    }
 
     if (permanentKey) {
       await s3Client
@@ -162,7 +124,6 @@ export async function POST(req) {
       await Model.findByIdAndDelete(game._id).catch(() => {});
     }
 
-    // Always clean up temp file
     if (tempFileUrl) {
       const tempKey = tempFileUrl.split("amazonaws.com/").pop();
       await s3Client

@@ -30,6 +30,16 @@ export default function BoardgamePage() {
             title="Edit Games"
             description="Search existing games, upload additional rulebook files, and manage AI embeddings."
           />
+          <ActionCard
+            href="/admin/boardgames/migrate"
+            icon={
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            }
+            title="Migrate to v2"
+            description="Re-parse rulebooks with the new semantic chunker. Review chunks before committing to Pinecone."
+          />
         </div>
       </div>
     </div>

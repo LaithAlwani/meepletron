@@ -49,6 +49,11 @@ const boardgameSchema = new Schema(
     game_mechanics: [],
     urls: [],
     counter: { type: Number, default: 0 },
+    // Which RAG pipeline version the chunks for this game are stored under.
+    // 1 = legacy (text-embedding-3-large in PINECONE_INDEX_NAME)
+    // 2 = new (text-embedding-3-small + semantic chunks in PINECONE_INDEX_NAME_V2)
+    // Set to 2 by the migration commit endpoint after re-embedding.
+    embed_version: { type: Number, default: 1, index: true },
   },
   { timestamps: true }
 );

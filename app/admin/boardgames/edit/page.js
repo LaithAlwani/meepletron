@@ -5,32 +5,23 @@ import Loader from "@/components/Loader";
 import { useSearch } from "@/utils/hooks";
 import toast from "react-hot-toast";
 import CustomToast from "@/components/CustomeToast";
-import { MdCloudUpload, MdOutlineDoneAll, MdDeleteOutline } from "react-icons/md";
+import { MdCloudUpload, MdOutlineDoneAll, MdDeleteOutline, MdAutoFixHigh } from "react-icons/md";
 import { Button, Input, Card } from "@/components/ui";
-import ChunkCard from "@/components/admin/ChunkCard";
-import { motion, AnimatePresence } from "motion/react";
 
 export default function BoardgameEditPage() {
   const { query, setQuery, results, loading } = useSearch({ limit: 5, includeExpansions: true });
   const [boardgame, setBoardgame] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [fileText, setFileText] = useState([]);
-  const [file, setFile] = useState(null);
-  const [showAllChunks, setShowAllChunks] = useState(false);
   const [deletingFile, setDeletingFile] = useState(null);
 
   const resetSelection = () => {
     setBoardgame(null);
     setIsLoading(false);
-    setFileText([]);
-    setFile(null);
     setDeletingFile(null);
   };
 
   const deleteFile = async (filePath) => {
     setDeletingFile(filePath);
-    if (file?.path === filePath) setFile(null);
-    setFileText([]);
     try {
       const res = await fetch("/api/boardgames/delete-file", {
         method: "POST",
@@ -47,50 +38,6 @@ export default function BoardgameEditPage() {
       toast.error(err.message);
     } finally {
       setDeletingFile(null);
-    }
-  };
-
-  const extractText = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/boardgames/extract", {
-        method: "POST",
-        body: JSON.stringify({ url: file.path }),
-      });
-      if (res.ok) {
-        const { data } = await res.json();
-        setFileText(data);
-      } else {
-        toast.error("URL or path missing");
-      }
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleEmbed = async () => {
-    if (!boardgame || !fileText.length) return toast.error("Please add game and rules");
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/boardgames/embeddings", {
-        method: "POST",
-        body: JSON.stringify({ fileText, boardgame, blob: file }),
-      });
-      const { data, message } = await res.json();
-      if (res.ok) {
-        toast.custom((t) => <CustomToast message={`${message} updated successfully!`} id={t.id} />);
-        setBoardgame(data);
-        setFileText([]);
-        setFile(null);
-      } else {
-        toast.error(message || "Something went wrong");
-      }
-    } catch (err) {
-      toast.error(err.message || "Server error");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -180,19 +127,11 @@ export default function BoardgameEditPage() {
             <ul className="space-y-2">
               {boardgame.urls.map((url) => {
                 const filename = url.path.substring(url.path.lastIndexOf("/") + 1);
-                const isSelected = file?.path === url.path;
                 const isDeleting = deletingFile === url.path;
                 return (
                   <li
                     key={url.path}
-                    onClick={() => !url.isTextExtracted && !isDeleting && setFile(url)}
-                    className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
-                      url.isTextExtracted
-                        ? "border-border opacity-60 cursor-default"
-                        : isSelected
-                        ? "border-primary bg-primary/5 cursor-pointer"
-                        : "border-border hover:bg-surface-muted cursor-pointer"
-                    }`}>
+                    className="flex items-center justify-between p-3 rounded-xl border border-border">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-8 h-8 rounded-lg bg-surface-muted flex items-center justify-center shrink-0">
                         <span className="text-xs font-bold text-subtle">
@@ -207,15 +146,13 @@ export default function BoardgameEditPage() {
                           <MdOutlineDoneAll size={14} /> Indexed
                         </span>
                       ) : (
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          isSelected ? "bg-primary/10 text-primary" : "bg-surface-muted text-muted"
-                        }`}>
-                          {isSelected ? "Selected" : "Not indexed"}
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-surface-muted text-muted">
+                          Not indexed
                         </span>
                       )}
                       <button
                         type="button"
-                        onClick={(e) => { e.stopPropagation(); deleteFile(url.path); }}
+                        onClick={() => deleteFile(url.path)}
                         disabled={!!deletingFile || isLoading}
                         className="w-7 h-7 rounded-lg flex items-center justify-center text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                         {isDeleting ? <Loader width="0.8rem" /> : <MdDeleteOutline size={16} />}
@@ -228,87 +165,28 @@ export default function BoardgameEditPage() {
           </Card>
         )}
 
-        {boardgame && file && !fileText.length && (
-          <Button type="button" onClick={extractText} isLoading={isLoading} styles="w-full py-3 rounded-xl">
-            Extract Text
-          </Button>
+        {boardgame && (
+          <Card label="Rulebook Indexing">
+            <p className="text-xs text-muted">
+              Chunking, review and embedding happen in the migration tool. Open it to parse the
+              uploaded rulebook, review the chunks, and commit to Pinecone.
+            </p>
+            <Link
+              href={`/admin/boardgames/migrate/${boardgame._id}`}
+              className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-primary text-primary-fg hover:bg-primary/90 transition-colors text-sm font-medium">
+              <MdAutoFixHigh size={16} /> Open in migration tool
+            </Link>
+          </Card>
         )}
 
-        {boardgame && !fileText.length && (
+        {boardgame && (
           <div className="pt-4 border-t border-border">
             <Button type="button" variant="reject" isLoading={isLoading} onClick={deleteBoardgame} styles="w-full py-2.5">
               Delete Game, Files & All Data
             </Button>
           </div>
         )}
-
-        {fileText.length > 0 && (
-          <Card label="Extracted Content">
-            <div className="flex items-center justify-between -mt-1 mb-1">
-              <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded-full">
-                {fileText.length} chunks
-              </span>
-            </div>
-            <div className="space-y-2">
-              {fileText.slice(0, 3).map((text, i) => (
-                <ChunkCard key={i} chunk={text} index={i} />
-              ))}
-            </div>
-            {fileText.length > 3 && (
-              <button
-                type="button"
-                onClick={() => setShowAllChunks(true)}
-                className="w-full py-2.5 text-sm text-primary font-medium border border-border rounded-xl hover:bg-surface-muted transition-all">
-                View all {fileText.length} chunks →
-              </button>
-            )}
-            <div className="flex gap-2 pt-1">
-              <Button type="button" variant="accept" onClick={handleEmbed} isLoading={isLoading} styles="flex-1 py-2.5">
-                Accept & Embed
-              </Button>
-              <Button type="button" variant="reject" onClick={() => { setFileText([]); setFile(null); }} disabled={isLoading} styles="flex-1 py-2.5">
-                Reject
-              </Button>
-            </div>
-          </Card>
-        )}
       </div>
-
-      <AnimatePresence>
-        {showAllChunks && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-            onClick={() => setShowAllChunks(false)}>
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-surface rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[80vh]">
-              <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
-                <h3 className="font-semibold text-foreground">
-                  Extracted Content{" "}
-                  <span className="text-subtle font-normal text-sm">({fileText.length} chunks)</span>
-                </h3>
-                <button
-                  onClick={() => setShowAllChunks(false)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-muted text-muted transition-colors text-sm">
-                  ✕
-                </button>
-              </div>
-              <div className="overflow-y-auto flex-1 p-4 space-y-2">
-                {fileText.map((text, i) => (
-                  <ChunkCard key={i} chunk={text} index={i} />
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

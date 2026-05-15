@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import BoardgameContainer from "./BoardgameContainer";
+import VersionPill from "./VersionPill";
 import { useGetBoardgames, useSearch } from "@/utils/hooks";
 import { IoSearchOutline } from "react-icons/io5";
 import { MdGridView, MdViewList } from "react-icons/md";
@@ -63,7 +64,7 @@ function SkeletonList({ count = 8 }) {
 }
 
 function BoardgameListItem({ boardgame }) {
-  const { _id, slug, thumbnail, title, min_players, max_players, play_time, year } = boardgame;
+  const { _id, slug, thumbnail, title, min_players, max_players, play_time, year, embed_version } = boardgame;
   const players =
     min_players && max_players
       ? min_players === max_players
@@ -82,9 +83,12 @@ function BoardgameListItem({ boardgame }) {
         className="w-12 h-12 rounded-xl object-cover object-top shrink-0 shadow-sm"
       />
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground capitalize truncate group-hover:text-primary transition-colors">
-          {title}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium text-foreground capitalize truncate group-hover:text-primary transition-colors">
+            {title}
+          </p>
+          <VersionPill embedVersion={embed_version} className="shrink-0" />
+        </div>
         {stats && <p className="text-xs text-muted mt-0.5">{stats}</p>}
       </div>
     </a>

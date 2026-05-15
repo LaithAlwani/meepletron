@@ -1,7 +1,8 @@
 import Link from "next/link";
+import VersionPill from "./VersionPill";
 
 export default function BoardgameContainer({ boardgame }) {
-  const { _id, slug, thumbnail, title } = boardgame;
+  const { _id, slug, thumbnail, title, embed_version } = boardgame;
   const href = `/boardgames/${slug || _id}`;
 
   return (
@@ -13,6 +14,7 @@ export default function BoardgameContainer({ boardgame }) {
           title={`${title} board game`}
           className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
         />
+        <VersionPill embedVersion={embed_version} className="absolute top-1.5 right-1.5 shadow-sm" />
       </Link>
       <p className="mt-1.5 text-xs font-medium text-foreground capitalize truncate leading-tight px-0.5">
         {title}
