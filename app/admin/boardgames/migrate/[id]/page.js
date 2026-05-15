@@ -283,6 +283,25 @@ export default function MigrateReviewPage({ params }) {
     }
   }
 
+  // One-click "re-migrate from a possibly-updated PDF". Wipes the current
+  // committed draft, then kicks the parse loop from scratch. Skipped the
+  // confirm() because the user has to push a deliberate button to get here.
+  async function reParseFromScratch() {
+    if (!confirm("Re-parse this rulebook from scratch? The current committed chunks remain in Pinecone until you commit the new ones.")) return;
+    setDiscarding(true);
+    try {
+      await fetch(`/api/admin/migrate-game/draft?id=${id}`, { method: "DELETE" });
+      setDraft(null);
+      setChunks([]);
+    } catch (err) {
+      toast.error("Failed to clear previous draft");
+      setDiscarding(false);
+      return;
+    }
+    setDiscarding(false);
+    await runParseLoop(0);
+  }
+
   // ─── render ───────────────────────────────────────────────────────────────
   if (loading) {
     return (
@@ -356,6 +375,29 @@ export default function MigrateReviewPage({ params }) {
             )}
           </div>
         </div>
+
+        {/* "Already committed" banner — surfaces the re-migrate path when the
+            game has been live on v2 and the user wants to re-process an
+            updated PDF or re-run the parser against tightened prompts. */}
+        {draft.status === "committed" && (
+          <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-emerald-300 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 px-4 py-3">
+            <div className="text-sm">
+              <p className="font-semibold text-emerald-900 dark:text-emerald-200 inline-flex items-center gap-1.5">
+                <MdCheckCircle size={16} /> This rulebook is already live on v2.
+              </p>
+              <p className="text-xs text-emerald-800/80 dark:text-emerald-300/80 mt-0.5">
+                Committed {draft.committedAt ? new Date(draft.committedAt).toLocaleDateString() : "previously"} — {chunks.length} chunks. Re-parse if the PDF was updated or you want to re-run with the latest prompt.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={reParseFromScratch}
+              disabled={discarding || parsing}
+              className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white disabled:opacity-50 transition-colors">
+              <MdRefresh size={14} /> Re-parse from scratch
+            </button>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 text-center">

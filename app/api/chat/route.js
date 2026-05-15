@@ -15,7 +15,7 @@ import mongoose from "mongoose";
 const pinecone = new PineconeClient();
 const google = createGoogleGenerativeAI();
 const DAILY_TOKEN_LIMIT = 50_000;
-const RERANK_TOP_N = 5;
+const RERANK_TOP_N = 3;
 
 // Resolve the set of source IDs the chat should retrieve from. Accepts the
 // new `boardgame_ids` array OR the legacy single `boardgame_id` string for
