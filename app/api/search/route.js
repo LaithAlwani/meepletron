@@ -50,6 +50,7 @@ export async function GET(req) {
           is_expansion: 1,
           parent_id: 1,
           bgg_id: 1,
+          embed_version: 1,
           score: { $meta: "searchScore" },
         },
       },
@@ -79,7 +80,7 @@ export async function GET(req) {
   // Regex fallback — guaranteed to work as long as DB is reachable
   const words = query.split(/\s+/).filter(Boolean);
   const regexConditions = words.map((w) => ({ title: { $regex: w, $options: "i" } }));
-  const fields = { title: 1, slug: 1, thumbnail: 1, image: 1, urls: 1, is_expansion: 1, parent_id: 1, bgg_id: 1 };
+  const fields = { title: 1, slug: 1, thumbnail: 1, image: 1, urls: 1, is_expansion: 1, parent_id: 1, bgg_id: 1, embed_version: 1 };
 
   const [boardgames, expansions] = await Promise.all([
     Boardgame.find({ $and: regexConditions }, fields).limit(limit).lean(),

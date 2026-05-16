@@ -28,6 +28,7 @@ import {
   planBatches,
 } from "@/lib/pdf-splitter";
 import { chunkMarkdown } from "@/lib/chunker";
+import { recordUsage } from "@/lib/usage-tracker";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
@@ -237,7 +238,8 @@ export async function POST(req) {
   let extracted;
   try {
     extracted = await extractMarkdownFromBuffer(slicedBuffer, {
-      pageNumberOffset: batch.startPage - 1,
+      startPage: batch.startPage,
+      endPage: batch.endPage,
       knownIconTokens,
     });
   } catch (err) {
@@ -246,6 +248,11 @@ export async function POST(req) {
       { message: "Gemini extraction failed", error: String(err.message || err) },
       { status: 502 },
     );
+  }
+
+  // Log per-batch Gemini PDF parse usage for the admin dashboard.
+  if (extracted.usage) {
+    recordUsage({ purpose: "parse", model: "gemini-2.5-flash", usage: extracted.usage });
   }
 
   // Update icon tokens if this batch contributed any new ones (mostly batch 0).
@@ -288,6 +295,21 @@ export async function POST(req) {
         { status: 500 },
       );
     }
+
+    // Defensive diagnostic: if the markdown clearly has content but the
+    // chunker still produced 0 (or hit the unstructured-fallback path), log
+    // it loudly so we can spot extractor regressions in Vercel logs.
+    if (chunkResult.chunks.length === 0 && stitched.trim().length > 0) {
+      console.warn(
+        "[migrate-game/parse] chunker returned 0 chunks despite non-empty markdown",
+        {
+          bg_id: game._id.toString(),
+          markdownLength: stitched.length,
+          markdownFirst500: stitched.slice(0, 500),
+        },
+      );
+    }
+
     update.markdown = stitched;
     update.chunks = materializeDraftChunks(chunkResult.chunks);
     update.removedDuplicates = chunkResult.removedDuplicates;

@@ -142,6 +142,7 @@ export default function SourcePanel({ open, onClose, gameIds, focusChunkId }) {
                   onToggleChunk={toggleChunk}
                   query={query}
                   onlyVariants={onlyVariants}
+                  showTitle={gameIds.length > 1}
                 />
               ))}
             </div>
@@ -152,7 +153,7 @@ export default function SourcePanel({ open, onClose, gameIds, focusChunkId }) {
   );
 }
 
-function SourceBlock({ state, expandedChunks, onToggleChunk, query, onlyVariants }) {
+function SourceBlock({ state, expandedChunks, onToggleChunk, query, onlyVariants, showTitle = true }) {
   if (state === "loading" || state === undefined) {
     return (
       <div className="flex justify-center py-8">
@@ -176,24 +177,30 @@ function SourceBlock({ state, expandedChunks, onToggleChunk, query, onlyVariants
   }
 
   const { game, chunks } = state;
-  const filtered = useFilteredChunks(chunks, query, onlyVariants);
+  const filtered = useFilteredChunks(chunks, query, onlyVariants, game?.title);
+  const sections = useMemo(() => groupBySection(filtered), [filtered]);
 
   return (
     <div className="border-b border-border-muted last:border-b-0">
-      <div className="px-4 py-3 bg-surface-muted/40">
-        <p className="text-xs font-semibold text-foreground capitalize">{game.title}</p>
-        <p className="text-[10px] text-subtle">{filtered.length} of {chunks.length} sections</p>
-      </div>
-      <div className="divide-y divide-border-muted">
+      {(showTitle || filtered.length > 0) && (
+        <div className="px-4 py-3 bg-surface-muted/40">
+          {showTitle && (
+            <p className="text-xs font-semibold text-foreground capitalize">{game.title}</p>
+          )}
+          <p className="text-[10px] text-subtle">{filtered.length} of {chunks.length} sections</p>
+        </div>
+      )}
+      <div>
         {filtered.length === 0 && (
           <p className="px-4 py-6 text-center text-xs text-subtle">No matching sections</p>
         )}
-        {filtered.map((c) => (
-          <ChunkLeaf
-            key={c.chunkId}
-            chunk={c}
-            isExpanded={expandedChunks.has(c.chunkId)}
-            onToggle={() => onToggleChunk(c.chunkId)}
+        {sections.map((sec) => (
+          <SectionGroup
+            key={sec.section}
+            section={sec}
+            expandedChunks={expandedChunks}
+            onToggleChunk={onToggleChunk}
+            gameTitle={game?.title}
           />
         ))}
       </div>
@@ -201,51 +208,137 @@ function SourceBlock({ state, expandedChunks, onToggleChunk, query, onlyVariants
   );
 }
 
-function useFilteredChunks(chunks, query, onlyVariants) {
+// Strip the leading game-title segment from a breadcrumb. New chunker output
+// already omits this, but legacy v2 chunks committed before the chunker fix
+// still have "Catan > Setup > Initial placement" — trim the title client-side
+// so the TOC reads cleanly without re-migrating.
+function stripGameTitleFromBreadcrumb(breadcrumb, gameTitle) {
+  if (!breadcrumb || !gameTitle) return breadcrumb || "";
+  const parts = breadcrumb.split(" > ");
+  if (parts[0]?.trim().toLowerCase() === gameTitle.trim().toLowerCase()) {
+    return parts.slice(1).join(" > ");
+  }
+  return breadcrumb;
+}
+
+function useFilteredChunks(chunks, query, onlyVariants, gameTitle) {
   return useMemo(() => {
-    let out = chunks;
+    let out = chunks.map((c) => ({
+      ...c,
+      breadcrumb: stripGameTitleFromBreadcrumb(c.breadcrumb, gameTitle),
+    }));
     if (onlyVariants) out = out.filter((c) => c.scope === "variant");
     if (query.trim()) {
       const q = query.toLowerCase();
       out = out.filter(
         (c) =>
-          c.breadcrumb.toLowerCase().includes(q) ||
+          (c.breadcrumb || "").toLowerCase().includes(q) ||
           c.preview.toLowerCase().includes(q) ||
           c.text.toLowerCase().includes(q),
       );
     }
     return out;
-  }, [chunks, query, onlyVariants]);
+  }, [chunks, query, onlyVariants, gameTitle]);
 }
 
-function ChunkLeaf({ chunk, isExpanded, onToggle }) {
+// Bucket chunks by their first breadcrumb segment so the panel reads like a
+// rulebook's table of contents: top-level sections (Setup, Combat, Scoring)
+// each contain their sub-sections.
+function groupBySection(chunks) {
+  const order = [];
+  const map = new Map();
+  for (const c of chunks) {
+    const parts = (c.breadcrumb || "").split(" > ").filter(Boolean);
+    // Sentinel for chunks with no breadcrumb at all — `SectionGroup` resolves
+    // this to the game title at render time so the header reads meaningfully.
+    const section = parts[0] || "__untitled__";
+    const subPath = parts.slice(1).join(" > ");
+    if (!map.has(section)) {
+      map.set(section, { section, items: [], firstPage: null });
+      order.push(section);
+    }
+    const group = map.get(section);
+    group.items.push({ ...c, subPath });
+    if (c.page != null && (group.firstPage == null || c.page < group.firstPage)) {
+      group.firstPage = c.page;
+    }
+  }
+  return order.map((k) => map.get(k));
+}
+
+// One TOC section: bold uppercase header on top, indented chunk rows below.
+// The header summarises the section (page where it starts) so the panel
+// reads like a paper rulebook's table of contents.
+function SectionGroup({ section, expandedChunks, onToggleChunk, gameTitle }) {
+  // If a chunk has no breadcrumb at all it lands here as a placeholder section
+  // — show the game title instead so the row reads "Catan · p.3" rather than
+  // a meaningless "General".
+  const headerLabel = section.section === "__untitled__"
+    ? (gameTitle || "Untitled")
+    : section.section;
+
+  return (
+    <div className="border-b border-border-muted/60 last:border-b-0">
+      <div className="flex items-baseline justify-between gap-2 px-4 pt-4 pb-1.5">
+        <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground truncate">
+          {headerLabel}
+        </h4>
+        {section.firstPage != null && (
+          <span className="text-[10px] text-subtle font-mono tabular-nums">
+            p.{section.firstPage}
+          </span>
+        )}
+      </div>
+      <div>
+        {section.items.map((c) => (
+          <ChunkLeaf
+            key={c.chunkId}
+            chunk={c}
+            isExpanded={expandedChunks.has(c.chunkId)}
+            onToggle={() => onToggleChunk(c.chunkId)}
+            gameTitle={gameTitle}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ChunkLeaf({ chunk, isExpanded, onToggle, gameTitle }) {
   const Icon = ICONS_BY_TYPE[chunk.chunkType] || MdShortText;
   const isVariant = chunk.scope === "variant";
+  // Prefer the rest-of-breadcrumb after the section header; fall back to the
+  // section name itself if this chunk is the only one in its section; final
+  // fallback to the game title so a no-breadcrumb chunk still reads as
+  // "Catan · p.3" instead of "(untitled)".
+  const label = chunk.subPath || chunk.breadcrumb || gameTitle || "(untitled)";
 
   return (
     <div id={`source-chunk-${chunk.chunkId}`}>
       <button
         type="button"
         onClick={onToggle}
-        className={`w-full text-left px-4 py-2.5 flex items-start gap-2 hover:bg-surface-muted/60 transition-colors ${
+        className={`w-full text-left pl-6 pr-4 py-1.5 flex items-start gap-2 hover:bg-surface-muted/60 transition-colors ${
           isVariant ? "bg-amber-50/40 dark:bg-amber-500/5" : ""
         }`}>
         <span className="mt-0.5 text-subtle shrink-0">
-          {isExpanded ? <IoChevronDown size={12} /> : <IoChevronForward size={12} />}
+          {isExpanded ? <IoChevronDown size={11} /> : <IoChevronForward size={11} />}
         </span>
-        <Icon size={14} className={`mt-0.5 shrink-0 ${isVariant ? "text-amber-600 dark:text-amber-400" : "text-subtle"}`} />
+        <Icon size={13} className={`mt-0.5 shrink-0 ${isVariant ? "text-amber-600 dark:text-amber-400" : "text-subtle"}`} />
         <div className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-1.5 flex-wrap">
-            <p className="text-xs font-medium text-foreground truncate">
-              {chunk.breadcrumb || "(untitled)"}
-            </p>
-            {isVariant && (
-              <span className="text-[9px] px-1 py-0.5 rounded bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 font-semibold">
-                Variant
-              </span>
-            )}
+          <div className="flex items-baseline justify-between gap-2">
+            <div className="min-w-0 flex items-baseline gap-1.5 flex-wrap">
+              <p className="text-xs text-foreground truncate">{label}</p>
+              {isVariant && (
+                <span className="text-[9px] px-1 py-0.5 rounded bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 font-semibold">
+                  Variant
+                </span>
+              )}
+            </div>
             {chunk.page != null && (
-              <span className="text-[10px] text-subtle">p.{chunk.page}</span>
+              <span className="text-[10px] text-subtle font-mono tabular-nums shrink-0">
+                p.{chunk.page}
+              </span>
             )}
           </div>
           {!isExpanded && (
@@ -261,7 +354,7 @@ function ChunkLeaf({ chunk, isExpanded, onToggle }) {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="overflow-hidden">
-            <div className="px-10 pb-3 pr-4">
+            <div className="pl-12 pr-4 pb-3">
               <p className="text-[12px] text-foreground whitespace-pre-wrap leading-relaxed">
                 {chunk.text}
               </p>

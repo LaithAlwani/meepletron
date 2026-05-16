@@ -1,4 +1,6 @@
 import { retrieveForChat, rerankChunks } from "@/lib/vector-store";
+import { getSiteConfig } from "@/lib/site-config";
+import { recordUsage } from "@/lib/usage-tracker";
 import Boardgame from "@/models/boardgame";
 import Expansion from "@/models/expansion";
 import Chat from "@/models/chat";
@@ -15,7 +17,9 @@ import mongoose from "mongoose";
 const pinecone = new PineconeClient();
 const google = createGoogleGenerativeAI();
 const DAILY_TOKEN_LIMIT = 50_000;
-const RERANK_TOP_N = 3;
+const CHAT_MODEL = "gemini-2.5-flash";
+const RERANK_MODEL = "gemini-2.5-flash";
+const EMBED_MODEL = "text-embedding-3-small";
 
 // Resolve the set of source IDs the chat should retrieve from. Accepts the
 // new `boardgame_ids` array OR the legacy single `boardgame_id` string for
@@ -63,6 +67,19 @@ function formatLegendBlock(legendChunks) {
   return blocks.join("\n\n");
 }
 
+// `[WOOD]`, `[VP]`, `[SHEEP]` etc. — bracketed ALL-CAPS tokens that mean "icon".
+// We use this to decide whether to include the iconography legend in the
+// system prompt. If the user's question and the retrieved chunks contain no
+// such tokens, the legend is dead weight (100–800 tokens) and we skip it.
+const ICON_TOKEN_RE = /\[[A-Z][A-Z0-9_]*\]/;
+function needsIconLegend(question, chunks) {
+  if (ICON_TOKEN_RE.test(question)) return true;
+  for (const c of chunks) {
+    if (c.text && ICON_TOKEN_RE.test(c.text)) return true;
+  }
+  return false;
+}
+
 function formatSourceContext(chunks, sources) {
   // Build a name lookup so we can label v1 chunks (which lack bg_title metadata).
   const titleById = new Map(sources.map((s) => [s.id, s.title]));
@@ -93,54 +110,35 @@ function buildSystemPrompt({ sources, unloadedTitles, legendBlock, contextBlock 
   const sourceList = sources.map((s) => s.title).join(", ") || "this board game";
   const multiSource = sources.length > 1;
 
-  const overrideRule = multiSource
-    ? `
-
-- MULTIPLE SOURCES: The user has loaded ${sources.length} sources: ${sourceList}. When sources cover the same topic, present the base game's rule first, then call out the override explicitly: "In <Expansion name>, this changes: <rule>." Never silently mix sources. Variants apply only when chosen — always label variant rules as "Variant: <name>" before stating them.`
+  // Override rule only when relevant — single-source chats don't need it.
+  const overrideLine = multiSource
+    ? `\nMULTI-SOURCE: When sources cover the same topic, state the base rule first, then "In <Expansion>: <override>". Never blend. Label variant rules "Variant: <name>".`
     : "";
 
-  const legendSection = legendBlock
-    ? `
-
-Iconography (always available — use these to interpret bracketed tokens like [WOOD] or [VP] in the rulebook text):
-
-${legendBlock}`
+  // Unloaded-source guard only when there are unloaded sources to refuse.
+  const unloadedLine = unloadedTitles?.length
+    ? `\nUNLOADED (refuse if asked by name, do not use training data): ${unloadedTitles.join(", ")}. Respond: "That source isn't loaded in this chat. Open the side panel and check the box for <name> to enable it." Then stop.`
     : "";
 
-  const unloadedSection = unloadedTitles?.length
-    ? `
-
-UNLOADED SOURCES (these exist for this game but the user has explicitly NOT loaded them — you have ZERO information about them, do not paraphrase what you remember from training): ${unloadedTitles.join(", ")}.
-If the user asks about any of these by name, respond verbatim: "That source isn't loaded in this chat. Open the side panel and check the box for <name> to enable it." Then stop. Do not add tips, summaries, or 'in general' framing.`
+  // Icon-token rule only when the legend is present — otherwise dead weight.
+  const iconLine = legendBlock
+    ? `\nICONS: Replace bracketed icon tokens (e.g. [WOOD], [VP]) with their plain-English name from the Iconography section. Numeric citations [1], [2], [3] must stay.`
     : "";
 
-  return `You are a board game rules assistant.
+  const legendSection = legendBlock ? `\n\nIconography:\n${legendBlock}` : "";
 
-ACTIVE SOURCES (the ONLY rulebooks loaded in this conversation): ${sourceList}.${unloadedSection}
+  return `You are a board game rules assistant for: ${sourceList}.
 
-CONTEXT-ONLY RULE — read this twice:
-Your ONLY source of truth is the Context section at the bottom of this prompt. You must not use any general board game knowledge, prior training, or assumptions about games, expansions, or variants. If a fact is not in the Context, you do not know it. Period. This applies even when the user asks a confident, leading question that implies you should know the answer.
-
-Follow these rules exactly:
-
-- STRICT CITATION: Every factual rule statement MUST be backed by a source from the Context that LITERALLY contains that fact. Append the matching source number in square brackets: "Players draw 5 cards [2]." Cite multiple sources when relevant: "[1][3]". Never cite a source for a fact it doesn't contain. Never use a citation as decoration to make a training-derived statement look grounded. If you can't find a citation, you don't have the fact — fall back to "I couldn't find that in the rulebook."
-
-- don't skip any details. If the Context contains relevant information, include it in your answer, even if it seems minor or obvious.
-
-- ANSWER FOUND: If the Context clearly contains the answer, respond directly and completely. Cover every step of a process, every branch of an outcome, and every condition — do not stop at the first bullet. Include all numbers, card counts, point values, and table data. Use a numbered list for sequential steps, bullet points for parallel outcomes or options, and plain prose only for a single indivisible fact. No filler phrases ("Great question!", "Certainly!", "Based on the rulebook…").
-
-- VAGUE QUESTION: If the question is too broad to answer precisely from the Context (e.g. "how do I play?", "what are all the rules?", "explain the game"), do not guess. Instead respond: "That's a broad question — try asking something more specific, like:" followed by 2–3 example questions drawn from topics visible in the Context.
-
-- NOT IN CONTEXT: If the specific answer is not present in the Context, respond: "I couldn't find that in the rulebook." Then suggest 1–2 related topics from the Context the user could ask about instead.
-
-- ICON TOKENS: Rulebook text may use bracketed tokens like [WOOD], [VP], [ATTACK] to represent game icons; their meaning is defined in the Iconography section above. NEVER show these bracket tokens in your reply — ALWAYS replace each one with its plain-English name from the Iconography section. Write "discard a wood card," not "discard a [WOOD]." Write "score 3 victory points," not "score 3 [VP]." If an icon appears in the Context without a definition in the Iconography section, describe it in plain words (e.g. "the resource icon shown") rather than echoing the bracketed token. Numeric citation markers like [1], [2], [3] are different — those are required and must stay.
-
-Never tell the user to consult the rulebook or any external resource.${overrideRule}${legendSection}
+RULES (follow strictly):
+1. CONTEXT ONLY. Your only source of truth is the Context below. If a fact isn't in the Context, you don't know it — never fall back to training knowledge, even on a confident-sounding question.
+2. CITE EVERY FACT. Append the matching source number in square brackets, e.g. "Players draw 5 cards [2]." Cite multiple when relevant: "[1][3]". Never cite a source for a fact it doesn't contain. No citation = no statement (say "I couldn't find that in the rulebook").
+3. COMPLETE ANSWERS. Cover every step, branch, and condition. Include all numbers, costs, point values, and table data verbatim. Numbered lists for sequences, bullets for parallel options, prose for single facts. No filler ("Great question!", "Based on the rulebook…").
+4. NOT FOUND. If the answer isn't in the Context: "I couldn't find that in the rulebook." Then suggest 1–2 related topics from the Context.
+5. VAGUE QUESTIONS. If too broad ("how do I play?"): respond "That's a broad question — try asking something more specific, like:" + 2–3 examples drawn from the Context.
+6. NEVER tell the user to consult the rulebook or an external resource.${overrideLine}${unloadedLine}${iconLine}${legendSection}
 
 Context:
-${contextBlock}
-
-FINAL REMINDER: Answer ONLY from the Context above. If the answer is not literally in the Context, say "I couldn't find that in the rulebook." Do not fall back to your training data about board games. Do not cite a source for a fact that source doesn't contain.`;
+${contextBlock}`;
 }
 
 export async function POST(req) {
@@ -180,13 +178,22 @@ export async function POST(req) {
 
   const userQuestion = messages[messages.length - 1].content.trim();
 
+  // Pull the admin-mutable tuning knobs (v2TopK, v2ScoreThreshold, rerankTopN).
+  // Cached in-memory for 30 s so this isn't a hot-path Mongo hit.
+  const siteConfig = await getSiteConfig();
+
   // Retrieve: vector search (v1 and/or v2 depending on each source's pipeline)
   // + always-on legend chunks for v2 sources.
-  const { chunks: retrieved, legendChunks } = await retrieveForChat({
+  const { chunks: retrieved, legendChunks, embedUsage } = await retrieveForChat({
     client: pinecone,
     query: userQuestion,
     boardgames: sources,
+    config: siteConfig,
   });
+
+  if (embedUsage) {
+    recordUsage({ purpose: "chat-embed", model: EMBED_MODEL, usage: embedUsage });
+  }
 
   if ((!retrieved || retrieved.length === 0) && (!legendChunks || legendChunks.length === 0)) {
     return createDataStreamResponse({
@@ -206,12 +213,28 @@ export async function POST(req) {
   // Rerank with Gemini Flash — picks the top N most relevant for the actual
   // question, going beyond vector similarity. Falls back to top-by-score if
   // the model misbehaves.
-  const rerankedChunks =
-    retrieved.length > RERANK_TOP_N
-      ? await rerankChunks(userQuestion, retrieved, RERANK_TOP_N)
-      : retrieved;
+  const rerankTopN = siteConfig.rerankTopN ?? 3;
+  let rerankedChunks;
+  if (retrieved.length > rerankTopN) {
+    const { chunks: reranked, usage: rerankUsage } = await rerankChunks(
+      userQuestion,
+      retrieved,
+      rerankTopN,
+    );
+    rerankedChunks = reranked;
+    if (rerankUsage) {
+      recordUsage({ purpose: "chat-rerank", model: RERANK_MODEL, usage: rerankUsage });
+    }
+  } else {
+    rerankedChunks = retrieved;
+  }
 
-  const legendBlock = formatLegendBlock(legendChunks);
+  // Only include the iconography legend when something in this query actually
+  // touches a bracketed icon token — saves 100–800 prompt tokens on the
+  // questions that don't need it (the majority for non-icon-heavy games).
+  const legendBlock = needsIconLegend(userQuestion, rerankedChunks)
+    ? formatLegendBlock(legendChunks)
+    : "";
   const contextBlock = formatSourceContext(rerankedChunks, sources);
   // Defensive: ensure we only pass strings, and never list a title that's
   // also one of the active sources (e.g. if the frontend sent stale data).
@@ -221,6 +244,13 @@ export async function POST(req) {
     : [];
   const system = buildSystemPrompt({ sources, unloadedTitles, legendBlock, contextBlock });
 
+  // Cap conversation history. Older messages rarely matter for the current
+  // question and they're the biggest variable input-token cost in long chats.
+  // The slice keeps the most recent N (including the current question, which
+  // is the last entry).
+  const historyLimit = Math.max(1, siteConfig.historyMessageLimit ?? 6);
+  const trimmedMessages = messages.slice(-historyLimit);
+
   try {
     return createDataStreamResponse({
       execute: async (dataStream) => {
@@ -229,7 +259,7 @@ export async function POST(req) {
         const result = streamText({
           model: google("gemini-2.5-flash"),
           system,
-          messages,
+          messages: trimmedMessages,
           temperature: 0,
           frequencyPenalty: 0,
           presencePenalty: 0,
@@ -239,6 +269,9 @@ export async function POST(req) {
             chunking: "word",
           }),
           onFinish({ usage }) {
+            // Log the chat-answer token usage for the admin dashboard.
+            recordUsage({ purpose: "chat-answer", model: CHAT_MODEL, usage });
+
             // Attach the full reranked chunk set as a message annotation so
             // the frontend can render citation pills with hover previews.
             dataStream.writeMessageAnnotation({

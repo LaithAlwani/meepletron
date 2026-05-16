@@ -9,6 +9,7 @@ import MigrationDraft from "@/models/migrationDraft";
 import connectToDB from "@/utils/database";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { Pinecone } from "@pinecone-database/pinecone";
+import { recordUsage } from "@/lib/usage-tracker";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
@@ -68,6 +69,23 @@ export async function POST(req) {
   try {
     const inputs = accepted.map((c) => c.text);
     const embeddings = await embedder.embedDocuments(inputs);
+
+    // LangChain's OpenAIEmbeddings doesn't surface raw token usage — approximate
+    // from total input characters (≈ 4 chars/token) so the admin dashboard has
+    // a meaningful number.
+    const approxInputTokens = Math.ceil(
+      inputs.reduce((sum, t) => sum + (t?.length || 0), 0) / 4,
+    );
+    recordUsage({
+      purpose: "embed",
+      model: "text-embedding-3-small",
+      usage: {
+        promptTokens: approxInputTokens,
+        completionTokens: 0,
+        totalTokens: approxInputTokens,
+      },
+    });
+
     vectors = accepted.map((c, i) => ({
       id: `${draft.bg_id.toString()}-${c.tempId}`,
       values: embeddings[i],
