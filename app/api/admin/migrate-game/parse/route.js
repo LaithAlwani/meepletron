@@ -21,6 +21,7 @@ import {
   downloadPDF,
   extractMarkdownFromBuffer,
   extractIconTokens,
+  extractSectionHeadings,
 } from "@/lib/markdown-extractor";
 import {
   getPdfMeta,
@@ -173,6 +174,7 @@ export async function POST(req) {
           batchPlan: plan,
           markdownBatches: [],
           iconTokens: [],
+          sectionHeadings: [],
           markdown: "",
           chunks: [],
           removedDuplicates: 0,
@@ -231,9 +233,10 @@ export async function POST(req) {
     );
   }
 
-  // Pass already-known tokens to keep batches consistent. First batch has
-  // none yet, so this is empty.
+  // Pass already-known tokens AND already-established `##` section headings
+  // to keep batches consistent. First batch has none yet, so these are empty.
   const knownIconTokens = draft.iconTokens || [];
+  const knownSections = draft.sectionHeadings || [];
 
   let extracted;
   try {
@@ -241,6 +244,7 @@ export async function POST(req) {
       startPage: batch.startPage,
       endPage: batch.endPage,
       knownIconTokens,
+      knownSections,
     });
   } catch (err) {
     console.error("[migrate-game/parse] gemini failed:", err);
@@ -258,6 +262,12 @@ export async function POST(req) {
   // Update icon tokens if this batch contributed any new ones (mostly batch 0).
   const newTokens = extractIconTokens(extracted.markdown);
   const mergedTokens = Array.from(new Set([...knownIconTokens, ...newTokens]));
+
+  // Same idea for `##` section headings — accumulate so later batches know
+  // what major sections were established and can correctly emit `###` for
+  // their subsections instead of promoting them to `##`.
+  const newSections = extractSectionHeadings(extracted.markdown);
+  const mergedSections = Array.from(new Set([...knownSections, ...newSections]));
 
   // Upsert this batch into markdownBatches, replacing any prior entry at the
   // same index (idempotent — caller can retry a failed batch).
@@ -278,6 +288,7 @@ export async function POST(req) {
   const update = {
     markdownBatches: updatedBatches,
     iconTokens: mergedTokens,
+    sectionHeadings: mergedSections,
     geminiUsage: updatedUsage,
   };
 

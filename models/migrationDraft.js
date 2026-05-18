@@ -64,6 +64,11 @@ const migrationDraftSchema = new Schema(
     // Icon tokens extracted from the first batch's `## Iconography` block.
     // Passed to later batches so they reuse the same tokens consistently.
     iconTokens: { type: [String], default: [] },
+    // `##`-level section headings established by earlier batches. Passed to
+    // later batches so they correctly mark subsections as `###` instead of
+    // promoting them to `##` when their parent heading isn't visible on the
+    // current page range.
+    sectionHeadings: { type: [String], default: [] },
     markdown: { type: String, default: "" }, // stitched final markdown, for the preview pane
     chunks: { type: [draftChunkSchema], default: [] },
     removedDuplicates: { type: Number, default: 0 },

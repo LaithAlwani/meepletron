@@ -154,22 +154,6 @@ export default function MessageBubble({ message, user, isStreaming, baseGameId, 
 
         {!isUser && (
           <div className="flex items-center gap-2.5 px-1 flex-wrap">
-            {annotations?.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {annotations.map((ann, i) =>
-                  ann.url ? (
-                    <a
-                      key={i}
-                      href={ann.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[12px] font-medium px-2 py-0.5 rounded-full border border-border bg-surface text-subtle hover:border-primary hover:text-primary transition-colors">
-                      p.{ann.pageNumber}
-                    </a>
-                  ) : null,
-                )}
-              </div>
-            )}
             <RateMessage id={_id || id} existingRating={rating} user={user} />
           </div>
         )}
