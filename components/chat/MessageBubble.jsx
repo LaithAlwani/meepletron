@@ -52,6 +52,7 @@ function renderCitationsInChildren(children, chunkMap, baseGameId, onJump, keyPr
 
 function RateMessage({ id, existingRating, user }) {
   const [rating, setRating] = useState(existingRating || "");
+  const hasRated = rating === "correct" || rating === "wrong";
 
   const rateMessage = async (newRating) => {
     if (!user) return toast.error("Sign in to rate messages");
@@ -69,17 +70,30 @@ function RateMessage({ id, existingRating, user }) {
   };
 
   return (
-    <div className="flex items-center gap-1.5">
-      <button
-        onClick={() => rateMessage("wrong")}
-        className="p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
-        <FaThumbsDown size={14} className={rating === "wrong" ? "text-red-500" : "text-muted"} />
-      </button>
-      <button
-        onClick={() => rateMessage("correct")}
-        className="p-1 rounded-md hover:bg-green-50 dark:hover:bg-green-500/10 transition-all">
-        <FaThumbsUp size={14} className={rating === "correct" ? "text-green-500" : "text-muted"} />
-      </button>
+    <div className="flex items-center gap-2">
+      {!hasRated && (
+        <span className="text-[11px] text-subtle">Was this helpful?</span>
+      )}
+      <div className="flex items-center gap-1">
+        {(!hasRated || rating === "wrong") && (
+          <button
+            type="button"
+            onClick={() => rateMessage("wrong")}
+            aria-label="Mark answer as not helpful"
+            className="p-1.5 rounded-lg border border-border-muted hover:bg-red-50 dark:hover:bg-red-500/10 hover:border-red-200 dark:hover:border-red-500/30 transition-all">
+            <FaThumbsDown size={14} className={rating === "wrong" ? "text-red-500" : "text-muted"} />
+          </button>
+        )}
+        {(!hasRated || rating === "correct") && (
+          <button
+            type="button"
+            onClick={() => rateMessage("correct")}
+            aria-label="Mark answer as helpful"
+            className="p-1.5 rounded-lg border border-border-muted hover:bg-green-50 dark:hover:bg-green-500/10 hover:border-green-200 dark:hover:border-green-500/30 transition-all">
+            <FaThumbsUp size={14} className={rating === "correct" ? "text-green-500" : "text-muted"} />
+          </button>
+        )}
+      </div>
     </div>
   );
 }
