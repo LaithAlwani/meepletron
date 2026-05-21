@@ -115,8 +115,7 @@ export default function ChatPage() {
     }
     setMessages([]);
     try {
-      const { chat: c, messages: msgs, createdMessage } = await fetchOrCreateChat({ game, userId: user?.id });
-      if (createdMessage) toast.success(createdMessage);
+      const { chat: c, messages: msgs } = await fetchOrCreateChat({ game, userId: user?.id });
       setChat(c);
       if (msgs.length) {
         setMessages(msgs);

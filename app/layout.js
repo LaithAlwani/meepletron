@@ -126,7 +126,35 @@ export default function RootLayout({ children }) {
           className={`min-h-svh mx-auto bg-bg text-foreground ${geistSans.variable} ${geistMono.variable} ${poppins.variable} font-sans antialiased`}>
           <Providers>
             <ThemeColorMeta />
-            <Toaster position="top-right" containerClassName="relative" />
+            <Toaster
+              position="top-right"
+              containerClassName="relative"
+              toastOptions={{
+                duration: 3500,
+                // CSS vars from globals.css → automatic light/dark mode switching.
+                style: {
+                  background: "var(--color-surface)",
+                  color: "var(--color-text)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "12px",
+                  padding: "10px 14px",
+                  fontSize: "14px",
+                  lineHeight: "1.45",
+                  boxShadow: "0 8px 24px rgba(15, 23, 42, 0.12)",
+                  maxWidth: "400px",
+                },
+                success: {
+                  iconTheme: { primary: "#10b981", secondary: "var(--color-surface)" },
+                },
+                error: {
+                  iconTheme: { primary: "#ef4444", secondary: "var(--color-surface)" },
+                  duration: 5000,
+                },
+                loading: {
+                  iconTheme: { primary: "rgb(var(--color-primary))", secondary: "var(--color-surface)" },
+                },
+              }}
+            />
             <Navbar />
             <Suspense fallback={<Loading />}>
               <main className="w-full mx-auto min-h-svh">{children}</main>

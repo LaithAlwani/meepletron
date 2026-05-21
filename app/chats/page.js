@@ -70,7 +70,6 @@ export default function ChatsPage() {
     });
     const { message } = await res.json();
     if (!res.ok) return toast.error(message);
-    toast.custom((t) => <CustomToast message={message} id={t.id} />);
     try { localStorage.removeItem(`${USER_CHAT_KEY_PREFIX}${boardgame_id}`); } catch {}
     setChats((prev) => prev.filter((chat) => chat._id !== chat_id));
   };
