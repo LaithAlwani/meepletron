@@ -1,4 +1,4 @@
-import { transporter } from "@/utils/mail";
+import { sendContactAdminEmail, sendContactUserAutoReply } from "@/utils/mail";
 import { NextResponse } from "next/server";
 
 const RATE_LIMIT = new Map();
@@ -45,31 +45,11 @@ export async function POST(req) {
 
     RATE_LIMIT.set(ip, [...recent, now]);
 
-    // 📩 Send admin email
-    await transporter.sendMail({
-      from: process.env.MAIL_USER,
-      to: process.env.MAIL_USER,
-      subject: "New Contact Form Submission",
-      text: `Name: ${safeName}\nEmail: ${safeEmail}\nMessage:\n${safeMessage}`,
-      html: `
-        <p><b>Name:</b> ${safeName}</p>
-        <p><b>Email:</b> ${safeEmail}</p>
-        <p><b>Message:</b></p>
-        <p>${safeMessage}</p>
-      `,
-    });
+    // 📩 Notify admin (Reply goes to the visitor, not back to the support inbox)
+    await sendContactAdminEmail({ name: safeName, email: safeEmail, message: safeMessage });
 
-    // 📬 Auto-reply to user
-    await transporter.sendMail({
-      from: process.env.MAIL_USER,
-      to: safeEmail,
-      subject: "Thank You for Contacting Us",
-      html: `
-        <p>Hi ${safeName},</p>
-        <p>Thank you for reaching out to us. We will get back to you as soon as possible.</p>
-        <p>Best regards,<br />Meepletron Team</p>
-      `,
-    });
+    // 📬 Friendly auto-reply to the visitor
+    await sendContactUserAutoReply({ name: safeName, email: safeEmail });
 
     return NextResponse.json({ message: "Request sent successfully!" }, { status: 200 });
   } catch (err) {
