@@ -12,6 +12,12 @@ import { siteUrl } from "@/utils/siteUrl";
 import { minutesToISO8601 } from "@/utils/iso-duration";
 import { loadBoardgame } from "@/lib/server/boardgame-loader";
 
+// ISR: render once, then serve from cache for 24h. Game data is near-static,
+// so crawler/social-bot traffic is served from the CDN instead of re-rendering
+// (3 DB queries) on every hit. Edits are reflected immediately via on-demand
+// revalidatePath() in the admin add/update/delete routes.
+export const revalidate = 86400;
+
 const getBoardgame = loadBoardgame;
 
 export async function generateMetadata({ params }) {

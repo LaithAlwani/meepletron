@@ -58,6 +58,9 @@ const boardgameSchema = new Schema(
   { timestamps: true }
 );
 
+// /api/boardgames lists base games (is_expansion != true) sorted by createdAt.
+boardgameSchema.index({ is_expansion: 1, createdAt: -1 });
+
 boardgameSchema.pre("save", makeSlugHook((doc) => doc.title));
 
 const Boardgame = models.Boardgame || model("Boardgame", boardgameSchema);

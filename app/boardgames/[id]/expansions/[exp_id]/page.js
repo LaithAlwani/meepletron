@@ -12,6 +12,9 @@ import { siteUrl } from "@/utils/siteUrl";
 import { minutesToISO8601 } from "@/utils/iso-duration";
 import { loadExpansion } from "@/lib/server/boardgame-loader";
 
+// ISR: render once, then serve from cache for 24h (see /boardgames/[id]/page.js).
+export const revalidate = 86400;
+
 const getExpansion = loadExpansion;
 
 export async function generateMetadata({ params }) {

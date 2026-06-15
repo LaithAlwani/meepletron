@@ -14,6 +14,9 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
+// Looked up by clerk_id on nearly every authenticated request (chat, profile).
+UserSchema.index({ clerk_id: 1 });
+
 const User = models.User || model("User", UserSchema);
 
 export default User;

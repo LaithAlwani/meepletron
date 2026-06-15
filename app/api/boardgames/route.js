@@ -43,7 +43,17 @@ export async function GET(req) {
       Boardgame.countDocuments(filter),
     ]);
 
-    return NextResponse.json({ data: { boardgames, totalGames } }, { status: 200 });
+    // Cache the paginated list at the CDN edge. Vercel keys the cache on the
+    // full URL (incl. query string), so each page/filter combo caches separately.
+    return NextResponse.json(
+      { data: { boardgames, totalGames } },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "public, s-maxage=600, stale-while-revalidate=3600",
+        },
+      }
+    );
   } catch (err) {
     console.log(err);
     return NextResponse.json({ message: "failed to fetch data" }, { status: 500 });

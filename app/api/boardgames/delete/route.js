@@ -7,6 +7,7 @@ import connectToDB from "@/utils/database";
 import { DeleteObjectsCommand, S3Client } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -64,6 +65,10 @@ export async function POST(req) {
     // Delete expansions and the game itself
     await Expansion.deleteMany({ parent_id: game._id });
     await Boardgame.findByIdAndDelete(game._id);
+
+    // Purge the ISR cache so the deleted game/expansions stop being served.
+    revalidatePath("/boardgames/[id]", "page");
+    revalidatePath("/boardgames/[id]/expansions/[exp_id]", "page");
 
     return NextResponse.json({ message: `${game.title} deleted successfully` }, { status: 200 });
   } catch (err) {

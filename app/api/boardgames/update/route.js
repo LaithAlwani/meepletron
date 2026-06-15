@@ -3,6 +3,7 @@ import Expansion from "@/models/expansion";
 import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req) {
   const { sessionClaims } = await auth();
@@ -20,6 +21,11 @@ export async function POST(req) {
       doc = await Expansion.findByIdAndUpdate({ _id: boardgame_id }, updateData, { new: true });
     else doc = await Boardgame.findByIdAndUpdate({ _id: boardgame_id }, updateData, { new: true });
     //if parent_id is available we record to the expansion collection
+
+    // Refresh the ISR cache for the public pages so the edit is visible now.
+    revalidatePath("/boardgames/[id]", "page");
+    revalidatePath("/boardgames/[id]/expansions/[exp_id]", "page");
+
     return NextResponse.json(
       { data: doc, message: `${doc.title} update successfully` },
       { status: 201 }

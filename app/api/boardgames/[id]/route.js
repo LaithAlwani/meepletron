@@ -19,7 +19,17 @@ export async function GET(req, { params }) {
 
     if (!boardgame) return NextResponse.json({ message: "board game not found" }, { status: 404 });
 
-    return NextResponse.json({ data: boardgame }, { status: 200 });
+    // Cache at the CDN edge: game detail is near-static, so let Vercel serve
+    // repeat reads (client chat page, etc.) without re-hitting the function/DB.
+    return NextResponse.json(
+      { data: boardgame },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
+    );
   } catch (err) {
     console.log(err);
     return NextResponse.json({ message: "Error fetching boardgame: " + err }, { status: 500 });

@@ -5,6 +5,12 @@ export const alt = "Meepletron — Board Game Rules";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// Generate the PNG once, then serve from cache for 24h. ImageResponse (satori +
+// resvg) is the single most expensive call in the app (~2s of CPU each) and it
+// also fetches the S3 thumbnail at render time — caching avoids re-paying that
+// for every social-crawler / link-preview hit on the same game.
+export const revalidate = 86400;
+
 export default async function OG({ params }) {
   const { id } = await params;
   const bg = await loadBoardgame(id);

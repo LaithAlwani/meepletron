@@ -18,9 +18,11 @@ export async function GET(req, { params }) {
     }
     if (!expansion) return NextResponse.json({ message: "expansion not found" }, { status: 404 });
 
-    //adds +1 to board game counter
-    expansion.counter += 1;
-    await expansion.save();
+    // Increment the view counter atomically without blocking the response.
+    // `$inc` rewrites a single field; the prior `expansion.save()` revalidated
+    // and rewrote the whole document (and re-ran the slug pre-save hook) on
+    // every view.
+    Expansion.updateOne({ _id: expansion._id }, { $inc: { counter: 1 } }).catch(() => {});
 
     return NextResponse.json(expansion, { status: 200 });
   } catch (err) {

@@ -13,6 +13,9 @@ const MessageSchema = new Schema(
   { timestamps: true }
 );
 
+// Messages are fetched by chat_id and sorted by createdAt (latest N first).
+MessageSchema.index({ chat_id: 1, createdAt: -1 });
+
 const Message = models.Message || model("Message", MessageSchema);
 
 export default Message;

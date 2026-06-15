@@ -1,6 +1,7 @@
 import Boardgame from "@/models/boardgame";
 import connectToDB from "@/utils/database";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
@@ -103,6 +104,11 @@ export async function POST(req) {
         $push: { urls: { path: permanentUrl, isTextExtracted: false } },
       });
     }
+
+    // Drop the ISR cache for the public game/expansion pages so the new game
+    // appears immediately instead of waiting out the 24h revalidate window.
+    revalidatePath("/boardgames/[id]", "page");
+    revalidatePath("/boardgames/[id]/expansions/[exp_id]", "page");
 
     return NextResponse.json({ data: boardgame.title }, { status: 201 });
   } catch (err) {
