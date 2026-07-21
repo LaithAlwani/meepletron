@@ -11,9 +11,31 @@ import { InfoSection, ChipList } from "@/components/ui";
 import { siteUrl } from "@/utils/siteUrl";
 import { minutesToISO8601 } from "@/utils/iso-duration";
 import { loadExpansion } from "@/lib/server/boardgame-loader";
+import Expansion from "@/models/expansion";
+import connectToDB from "@/utils/database";
 
 // ISR: render once, then serve from cache for 24h (see /boardgames/[id]/page.js).
 export const revalidate = 86400;
+
+// REQUIRED for ISR to engage (see /boardgames/[id]/page.js). Builds the
+// parent-slug / expansion-slug pairs; unlisted pairs render on-demand and cache.
+export async function generateStaticParams() {
+  try {
+    await connectToDB();
+    const expansions = await Expansion.find()
+      .select("slug _id parent_id")
+      .populate("parent_id", "slug _id")
+      .lean();
+    return expansions
+      .filter((e) => e.parent_id)
+      .map((e) => ({
+        id: String(e.parent_id.slug || e.parent_id._id),
+        exp_id: String(e.slug || e._id),
+      }));
+  } catch {
+    return [];
+  }
+}
 
 const getExpansion = loadExpansion;
 

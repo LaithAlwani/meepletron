@@ -11,12 +11,28 @@ import { InfoSection, ChipList } from "@/components/ui";
 import { siteUrl } from "@/utils/siteUrl";
 import { minutesToISO8601 } from "@/utils/iso-duration";
 import { loadBoardgame } from "@/lib/server/boardgame-loader";
+import { getBoardgames } from "@/lib/functions";
 
 // ISR: render once, then serve from cache for 24h. Game data is near-static,
 // so crawler/social-bot traffic is served from the CDN instead of re-rendering
 // (3 DB queries) on every hit. Edits are reflected immediately via on-demand
 // revalidatePath() in the admin add/update/delete routes.
 export const revalidate = 86400;
+
+// REQUIRED for ISR to actually engage: without generateStaticParams a dynamic
+// segment stays `ƒ` (rendered on every request) and `revalidate` is ignored.
+// Prebuilds every game's page at build time; new/unlisted ids still render
+// on-demand and cache (dynamicParams defaults to true).
+export async function generateStaticParams() {
+  try {
+    const games = await getBoardgames({ fields: "slug _id" });
+    return (Array.isArray(games) ? games : []).map((g) => ({
+      id: String(g.slug || g._id),
+    }));
+  } catch {
+    return [];
+  }
+}
 
 const getBoardgame = loadBoardgame;
 

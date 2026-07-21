@@ -11,6 +11,14 @@ export const contentType = "image/png";
 // for every social-crawler / link-preview hit on the same game.
 export const revalidate = 86400;
 
+// REQUIRED for the revalidate cache to engage: without generateStaticParams the
+// image route stays `ƒ` (regenerated every request). `[]` opts it into the
+// static/ISR pipeline — each game's image renders on first request, then caches
+// (kept empty so we don't render hundreds of images at build time).
+export async function generateStaticParams() {
+  return [];
+}
+
 export default async function OG({ params }) {
   const { id } = await params;
   const bg = await loadBoardgame(id);
